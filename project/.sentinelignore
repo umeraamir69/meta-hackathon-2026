@@ -1,0 +1,5 @@
+# Planted demo secrets and this tool's local key file.
+# These rules apply only when the scan root is this directory.
+path fixtures/**
+path .env
+path .env.*

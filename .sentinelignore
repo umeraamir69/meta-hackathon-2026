@@ -1,0 +1,4 @@
+# Planted demo secrets and the local key file, when scanning the repo root.
+path project/fixtures/**
+path project/.env
+path project/.env.*

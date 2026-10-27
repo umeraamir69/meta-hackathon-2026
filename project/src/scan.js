@@ -1,87 +1,276 @@
-import { execSync } from 'node:child_process';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { execFileSync } from 'node:child_process';
+import { lstatSync, readFileSync, readdirSync, realpathSync } from 'node:fs';
+import { join, relative, sep } from 'node:path';
+import { neighborhood, pathClass, redactLine } from './context.js';
 import { RULES, mask } from './rules.js';
 
+const SKIP_DIRS = new Set(['.git', 'node_modules', 'dist']);
+
+function toPosix(path) {
+  return path.split(sep).join('/');
+}
+
 function walk(dir, out = []) {
-  for (const name of readdirSync(dir)) {
-    if (name === '.git' || name === 'node_modules' || name === 'dist') continue;
-    const p = join(dir, name);
-    const st = statSync(p);
-    if (st.isDirectory()) walk(p, out);
-    else if (st.isFile() && st.size < 2_000_000) out.push(p);
+  let names;
+  try {
+    names = readdirSync(dir);
+  } catch {
+    return out;
+  }
+  for (const name of names) {
+    if (SKIP_DIRS.has(name)) continue;
+    const path = join(dir, name);
+    let st;
+    try {
+      st = lstatSync(path);
+    } catch {
+      continue;
+    }
+    if (st.isSymbolicLink()) continue;
+    if (st.isDirectory()) walk(path, out);
+    else if (st.isFile() && st.size < 2_000_000) out.push(path);
   }
   return out;
 }
 
-function scanText(text, source, findings) {
+export function scanText(text, meta, findings) {
+  if (!text || text.includes('\0')) return findings;
   for (const rule of RULES) {
     rule.re.lastIndex = 0;
-    let m;
-    while ((m = rule.re.exec(text)) !== null) {
-      const line = text.slice(0, m.index).split('\n').length;
+    let match;
+    while ((match = rule.re.exec(text)) !== null) {
+      const line = meta.line ?? text.slice(0, match.index).split('\n').length;
+      const raw = match[1] || match[0];
+      const masked = mask(raw);
+      const path = meta.path ?? meta.source;
       findings.push({
         rule: rule.id,
         severity: rule.severity,
-        source,
+        source: meta.source,
+        path,
         line,
-        masked: mask(m[1] || m[0]),
+        commit: meta.commit || null,
+        removed: Boolean(meta.removed),
+        masked,
+        pathClass: pathClass(path),
+        context: neighborhood(text, raw, masked, line),
+        commitSubject: meta.commitSubject ? redactLine(meta.commitSubject).slice(0, 160) : null,
       });
+      if (match.index === rule.re.lastIndex) rule.re.lastIndex += 1;
     }
   }
+  return findings;
+}
+
+function git(root, args, maxBuffer = 32 * 1024 * 1024) {
+  return execFileSync('git', ['-C', root, '-c', 'core.quotepath=false', ...args], {
+    encoding: 'utf8',
+    maxBuffer,
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+}
+
+function gitOk(root, args) {
+  try {
+    return git(root, args).trim();
+  } catch {
+    return null;
+  }
+}
+
+function repoLayout(root) {
+  let here;
+  try {
+    here = realpathSync(root);
+  } catch {
+    return null;
+  }
+  const topRaw = gitOk(here, ['rev-parse', '--show-toplevel']);
+  if (!topRaw) return null;
+  let top;
+  try {
+    top = realpathSync(topRaw);
+  } catch {
+    return null;
+  }
+  const prefix = toPosix(relative(top, here));
+  if (prefix.startsWith('..')) return null;
+  return { here, top, prefix };
+}
+
+function stripPrefix(file, prefix) {
+  if (!file) return prefix ? null : 'unknown';
+  const path = file.replaceAll('\\', '/');
+  if (!prefix) return path;
+  if (path === prefix) return path.slice(path.lastIndexOf('/') + 1);
+  if (path.startsWith(`${prefix}/`)) return path.slice(prefix.length + 1);
+  return null;
+}
+
+export function scanPatch(patch, meta, findings) {
+  let file = null;
+  let newLine = 0;
+  let oldLine = 0;
+  let binary = false;
+  for (const line of patch.split('\n')) {
+    if (line.startsWith('diff --git ')) {
+      binary = false;
+      const match = line.match(/^diff --git a\/(.+) b\/(.+)$/);
+      file = match ? match[2] : null;
+      continue;
+    }
+    if (line.startsWith('GIT binary patch') || line.startsWith('Binary files ')) {
+      binary = true;
+      continue;
+    }
+    if (binary) continue;
+    const hunk = line.match(/^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@/);
+    if (hunk) {
+      oldLine = Number(hunk[1]);
+      newLine = Number(hunk[2]);
+      continue;
+    }
+    if (
+      line.startsWith('+++') ||
+      line.startsWith('---') ||
+      line.startsWith('index ') ||
+      line.startsWith('new file') ||
+      line.startsWith('deleted file') ||
+      line.startsWith('similarity ') ||
+      line.startsWith('rename ') ||
+      line.startsWith('old mode') ||
+      line.startsWith('new mode')
+    ) {
+      continue;
+    }
+    const visible = stripPrefix(file, meta.prefix);
+    if (line.startsWith('+')) {
+      if (visible !== null) scanText(line.slice(1), { ...meta, path: visible, line: newLine }, findings);
+      newLine += 1;
+      continue;
+    }
+    if (line.startsWith('-')) {
+      if (visible !== null) scanText(line.slice(1), { ...meta, path: visible, line: oldLine, removed: true }, findings);
+      oldLine += 1;
+      continue;
+    }
+    if (line.startsWith(' ')) {
+      newLine += 1;
+      oldLine += 1;
+    }
+  }
+  return findings;
+}
+
+function errorFinding(source) {
+  return {
+    rule: 'scan_error',
+    severity: 'medium',
+    source,
+    path: source,
+    line: 0,
+    commit: null,
+    removed: false,
+    masked: 'git command failed',
+    detail: 'The git command failed. This run is not a clean result.',
+  };
 }
 
 export function scanWorkingTree(root) {
   const findings = [];
   for (const file of walk(root)) {
+    let buf;
     try {
-      const text = readFileSync(file, 'utf8');
-      scanText(text, relative(root, file), findings);
-    } catch { /* binary / unreadable */ }
+      buf = readFileSync(file);
+    } catch {
+      continue;
+    }
+    if (buf.includes(0)) continue;
+    scanText(buf.toString('utf8'), { source: 'working-tree', path: toPosix(relative(root, file)) }, findings);
   }
   return findings;
 }
 
-export function scanGitHistory(root) {
+function commitLimit(maxCommits) {
+  const n = Number(maxCommits);
+  if (!Number.isFinite(n) || n <= 0 || n > 5000) return 200;
+  return Math.floor(n);
+}
+
+export function scanGitHistory(root, { maxCommits = 200 } = {}) {
   const findings = [];
-  try {
-    execSync('git -C "' + root + '" rev-parse --is-inside-work-tree', { stdio: 'ignore' });
-  } catch {
-    return findings; // not a git repo — skip history, working-tree scan still runs
-  }
-  try {
-    const log = execSync('git -C "' + root + '" log -p --all --max-count=200', {
-      encoding: 'utf8',
-      maxBuffer: 32 * 1024 * 1024,
+  const layout = repoLayout(root);
+  if (!layout) return findings;
+  const { here, prefix } = layout;
+  if (!prefix && gitOk(here, ['rev-parse', '--is-shallow-repository']) === 'true') {
+    findings.push({
+      rule: 'shallow_clone',
+      severity: 'high',
+      source: 'git-history',
+      path: '.git',
+      line: 0,
+      commit: null,
+      removed: false,
+      masked: 'history truncated',
+      detail: 'Checkout with fetch-depth: 0 so secrets deleted from HEAD stay visible.',
     });
-    scanText(log, 'git-history', findings);
-  } catch (e) {
-    findings.push({ rule: 'scan_error', severity: 'medium', source: 'git-history', line: 0, masked: String(e.message || e) });
+  }
+  let log;
+  try {
+    const args = ['log', '-p', '--all', `-n${commitLimit(maxCommits)}`, '--format=format:SENTINEL_COMMIT %H%n%B%nSENTINEL_ENDMSG'];
+    if (prefix) args.push('--', '.');
+    log = git(here, args);
+  } catch (error) {
+    const message = String(error.stderr || error.message || '');
+    if (/does not have any commits/.test(message)) return findings;
+    findings.push(errorFinding('git-history'));
+    return findings;
+  }
+  const chunks = log.split(/^SENTINEL_COMMIT /m).filter((chunk) => chunk.trim());
+  for (const chunk of chunks) {
+    const nl = chunk.indexOf('\n');
+    const sha = (nl === -1 ? chunk : chunk.slice(0, nl)).trim();
+    const rest = nl === -1 ? '' : chunk.slice(nl + 1);
+    const end = rest.indexOf('SENTINEL_ENDMSG');
+    const message = end === -1 ? '' : rest.slice(0, end);
+    const patch = end === -1 ? rest : rest.slice(end + 'SENTINEL_ENDMSG'.length);
+    const commitSubject = redactLine(message.split('\n')[0] || '').slice(0, 160);
+    if (!prefix) scanText(message, { source: 'git-history', path: 'commit-message', commit: sha, commitSubject }, findings);
+    scanPatch(patch, { source: 'git-history', commit: sha, prefix, commitSubject }, findings);
   }
   return findings;
+}
+
+function safeRev(rev) {
+  if (!rev || rev.startsWith('-') || !/^[A-Za-z0-9._/-]{1,200}$/.test(rev)) return null;
+  return rev;
 }
 
 export function scanPrDiff(root, base, head) {
   const findings = [];
-  if (!base || !head) return findings;
+  const baseRev = safeRev(base);
+  const headRev = safeRev(head);
+  if (!baseRev || !headRev) return findings;
+  const layout = repoLayout(root);
+  if (!layout) return findings;
+  const { here, prefix } = layout;
   try {
-    const diff = execSync(`git -C "${root}" diff ${base}...${head}`, {
-      encoding: 'utf8',
-      maxBuffer: 16 * 1024 * 1024,
-    });
-    scanText(diff, 'pr-diff', findings);
-  } catch (e) {
-    findings.push({ rule: 'scan_error', severity: 'medium', source: 'pr-diff', line: 0, masked: String(e.message || e) });
+    const args = ['diff', `${baseRev}...${headRev}`];
+    if (prefix) args.push('--', '.');
+    const diff = git(here, args, 16 * 1024 * 1024);
+    scanPatch(diff, { source: 'pr-diff', commit: headRev, prefix }, findings);
+  } catch {
+    findings.push(errorFinding('pr-diff'));
   }
   return findings;
 }
 
 export function dedupe(findings) {
   const seen = new Set();
-  return findings.filter((f) => {
-    const k = `${f.rule}|${f.masked}|${f.source}|${f.line}`;
-    if (seen.has(k)) return false;
-    seen.add(k);
+  return findings.filter((finding) => {
+    const key = [finding.rule, finding.masked, finding.source, finding.path, finding.line, finding.commit, finding.removed].join('|');
+    if (seen.has(key)) return false;
+    seen.add(key);
     return true;
   });
 }

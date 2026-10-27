@@ -1,23 +1,61 @@
 name: PR Diff Sentinel
-description: Fail the PR if secrets appear in the diff or git history. Muse Wonder explains findings when META_API_KEY is set.
+description: Fail the check if secrets appear in the working tree, pull request diff, or git history. Muse explains findings and never decides pass or fail.
 author: umeraamir69
 inputs:
   path:
-    description: Repo path to scan
+    description: Repository path to scan
+    required: false
     default: '.'
   history:
-    description: Also scan full git history
+    description: Also scan git history
+    required: false
     default: 'true'
   muse:
-    description: Call Muse Wonder to explain findings (needs META_API_KEY)
+    description: Ask Muse to explain findings. Needs a Model API key in the environment or model_api_key.
+    required: false
     default: 'true'
+  base:
+    description: Base revision for the three-dot pull request diff
+    required: false
+    default: ''
+  head:
+    description: Head revision for the three-dot pull request diff
+    required: false
+    default: ''
+  model_api_key:
+    description: Meta Model API key. Pass it from secrets.MODEL_API_KEY. Leave empty to use the local rotate checklist.
+    required: false
+    default: ''
+  classifier:
+    description: Muse Spark model that labels each finding. It cannot clear the gate.
+    required: false
+    default: muse-spark-1.3
+  github_token:
+    description: Token used to update one pull request comment. Leave empty to skip the comment.
+    required: false
+    default: ''
 runs:
   using: composite
   steps:
     - name: Run PR Diff Sentinel
       shell: bash
       env:
-        META_API_KEY: ${{ secrets.META_API_KEY }}
         SENTINEL_MUSE: ${{ inputs.muse }}
         SENTINEL_HISTORY: ${{ inputs.history }}
-      run: node "${{ github.action_path }}/src/cli.js" "${{ inputs.path }}"
+        SENTINEL_BASE: ${{ inputs.base }}
+        SENTINEL_HEAD: ${{ inputs.head }}
+        SENTINEL_CLASSIFIER: ${{ inputs.classifier }}
+        SENTINEL_GITHUB_TOKEN: ${{ inputs.github_token }}
+        SENTINEL_MODEL_API_KEY_INPUT: ${{ inputs.model_api_key }}
+      run: |
+        if [ -n "$SENTINEL_MODEL_API_KEY_INPUT" ]; then
+          export MODEL_API_KEY="$SENTINEL_MODEL_API_KEY_INPUT"
+        fi
+        unset SENTINEL_MODEL_API_KEY_INPUT
+        out="${RUNNER_TEMP:-/tmp}/sentinel-report.json"
+        set +e
+        node "${{ github.action_path }}/src/cli.js" "${{ inputs.path }}" > "$out"
+        code=$?
+        set -e
+        node "${{ github.action_path }}/src/github-comment.js" "$out" || true
+        exit "$code"

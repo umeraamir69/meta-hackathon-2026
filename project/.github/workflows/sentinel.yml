@@ -1,3 +1,5 @@
+# Copy to .github/workflows/ of the repository you want to protect.
+# This hackathon checkout runs .github/workflows/ci.yml at the repository root.
 name: PR Diff Sentinel
 on:
   pull_request:
@@ -5,6 +7,9 @@ on:
 jobs:
   scan:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -12,9 +17,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Scan diff + history
-        run: node src/cli.js .
-        env:
-          META_API_KEY: ${{ secrets.META_API_KEY }}
-          GITHUB_BASE_REF: ${{ github.event.pull_request.base.sha }}
-          GITHUB_HEAD_REF: ${{ github.event.pull_request.head.sha }}
+      - uses: ./
+        with:
+          path: .
+          base: ${{ github.event.pull_request.base.sha }}
+          head: ${{ github.event.pull_request.head.sha }}
+          model_api_key: ${{ secrets.MODEL_API_KEY }}
+          github_token: ${{ github.token }}

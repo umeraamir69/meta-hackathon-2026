@@ -2,5 +2,7 @@ node_modules/
 .DS_Store
 .env
 .env.*
+!.env.example
 *.log
 .meta-api-key
+project/.tmp/
