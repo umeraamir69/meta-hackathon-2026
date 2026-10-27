@@ -1,0 +1,113 @@
+:root {
+  --bg: #0e0f0c;
+  --ink: #f3f0e8;
+  --muted: #9a968c;
+  --faint: #6a675f;
+  --line: #2a2c27;
+  --accent: #e4ff57;
+  --fail: #ff5c39;
+  --pass: #c6f59a;
+  --panel: #151713;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  width: 340px;
+  margin: 0;
+  padding: 16px;
+  background: var(--bg);
+  color: var(--ink);
+  font: 13px/1.45 "Avenir Next", "Segoe UI", sans-serif;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.brand i {
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  display: block;
+}
+
+#state {
+  color: var(--faint);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+#state.fail { color: var(--fail); }
+#state.pass { color: var(--pass); }
+
+label {
+  display: block;
+  margin: 12px 0 6px;
+  color: var(--faint);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+input {
+  width: 100%;
+  background: var(--panel);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  padding: 10px 10px;
+  font: 13px/1.4 inherit;
+  outline: none;
+}
+
+input:focus { border-color: #5c5f54; }
+
+button {
+  width: 100%;
+  margin-top: 14px;
+  background: var(--accent);
+  color: #14150f;
+  border: 0;
+  height: 36px;
+  font: 13px/1 inherit;
+  cursor: pointer;
+}
+
+button:hover { filter: brightness(1.06); }
+button:disabled { opacity: 0.55; cursor: wait; }
+
+#message {
+  min-height: 1.2em;
+  margin: 10px 0 0;
+  color: var(--muted);
+}
+
+#message.error { color: var(--fail); }
+
+#report {
+  margin-top: 8px;
+  padding-top: 4px;
+}
+
+#report p { color: var(--muted); margin: 8px 0; }
+
+.row {
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+
+.row b { display: block; font-weight: 500; }
+.row span { color: var(--muted); }

@@ -16,7 +16,7 @@ node src/cli.js fixtures/leaky-repo
 node src/app.js
 ```
 
-The app serves a local report at http://127.0.0.1:4317. With no arguments it builds a demo repo: a key deleted from `config.env` (still in history, labeled live) and a documentation example that stays (labeled example). Both block the merge.
+The app serves a local report at http://127.0.0.1:4317. Paste a public GitHub repository or pull request link and press Scan. The clone stays on this computer. **Run the built-in demo** uses a repo where a key was deleted from `config.env` and a documentation example remains. Both block the merge.
 
 Exit `1` means the gate failed. Exit `0` means no findings. No `MODEL_API_KEY` is required. Without a key, labels and the rotation checklist are local.
 

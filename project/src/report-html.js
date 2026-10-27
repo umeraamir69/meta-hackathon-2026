@@ -14,10 +14,11 @@ function counts(labels) {
   return [...map].map(([name, count]) => `${count} ${name.replaceAll('_', ' ')}`).join(' · ') || 'No labels';
 }
 
-export function renderReport(report) {
-  const failed = !report.ok;
-  const labels = new Map((report.muse?.labels || []).map((label) => [label.where, label]));
-  const rows = (report.findings || []).map((finding) => {
+export function renderReport(report, options = {}) {
+  const hasReport = Boolean(report);
+  const failed = hasReport && !report.ok;
+  const labels = new Map((report?.muse?.labels || []).map((label) => [label.where, label]));
+  const rows = (report?.findings || []).map((finding) => {
     const where = `${finding.source} ${finding.path}:${finding.line}`;
     const shown = labels.get(whereOf(finding));
     const context = (finding.context || []).map((row) => `L${row.line}  ${row.text}`).join('\n');
@@ -29,10 +30,10 @@ export function renderReport(report) {
       <td>${escape(shown?.why || '')}${context ? `<pre>${escape(context)}</pre>` : ''}</td>
     </tr>`;
   }).join('');
-  const rotate = (report.muse?.rotate || []).map((item) => (
+  const rotate = (report?.muse?.rotate || []).map((item) => (
     `<li><code>${escape(item.where)}</code><ol>${(item.steps || []).map((step) => `<li>${escape(step)}</li>`).join('')}</ol></li>`
   )).join('');
-  const model = [report.muse?.classifier?.model, report.muse?.model].filter(Boolean).join(' then ') || 'local checklist';
+  const model = [report?.muse?.classifier?.model, report?.muse?.model].filter(Boolean).join(' then ') || 'local checklist';
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -60,7 +61,11 @@ export function renderReport(report) {
     section { margin-top: 28px; }
     h2 { font: 13px/1 ui-sans-serif, system-ui, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
     a { color: var(--accent); }
-    @media (max-width: 700px) { .stats { grid-template-columns: 1fr; } header { display: block; } }
+    form { display: flex; gap: 8px; margin: 24px 0 8px; }
+    input { flex: 1; min-width: 0; background: var(--panel); color: var(--text); border: 1px solid var(--line); padding: 12px 14px; font: 14px/1.4 ui-sans-serif, system-ui, sans-serif; }
+    button { background: var(--accent); color: #121417; border: 0; padding: 0 16px; font: 14px/1 ui-sans-serif, system-ui, sans-serif; cursor: pointer; }
+    .error { color: var(--fail); }
+    @media (max-width: 700px) { .stats, form { grid-template-columns: 1fr; display: grid; } header { display: block; } button { padding: 12px 16px; } }
   </style>
 </head>
 <body>
@@ -70,9 +75,17 @@ export function renderReport(report) {
         <h1>PR Diff Sentinel</h1>
         <p>Deterministic secret gate on the diff and git history. Muse labels hits. Muse does not clear them.</p>
       </div>
-      <div class="status">${failed ? 'Fail' : 'Pass'}</div>
+      ${hasReport ? `<div class="status">${failed ? 'Fail' : 'Pass'}</div>` : ''}
     </header>
-    <div class="stats">
+    <form method="post" action="/scan">
+      <label for="url" style="position:absolute;width:1px;height:1px;overflow:hidden;">GitHub repository or pull request</label>
+      <input id="url" name="url" type="text" required value="${escape(options.url || '')}" placeholder="https://github.com/owner/repo or a pull request link" autocomplete="off">
+      <button type="submit">Scan</button>
+    </form>
+    <p>Public GitHub repository or pull request. The clone runs on this computer, and secrets are masked before Muse sees them. <a href="/demo">Run the built-in demo</a></p>
+    ${options.error ? `<p class="error">${escape(options.error)}</p>` : ''}
+    ${options.source ? `<p>Scanned ${escape(options.source)}</p>` : ''}
+    ${hasReport ? `<div class="stats">
       <div class="stat"><b>${escape(report.count)}</b><span>Findings blocking merge</span></div>
       <div class="stat"><b>${escape(report.suppressed)}</b><span>Suppressed by .sentinelignore</span></div>
       <div class="stat"><b>${escape(counts(report.muse?.labels))}</b><span>${escape(report.muse?.provider || 'no model')} · ${escape(model)}</span></div>
@@ -85,10 +98,7 @@ export function renderReport(report) {
       <h2>Muse</h2>
       <p>${escape(report.muse?.summary || 'Nothing to explain.')}</p>
       ${rotate ? `<ol>${rotate}</ol>` : ''}
-    </section>
-    <section>
-      <p>Refresh to scan again. <a href="/">Rescan</a></p>
-    </section>
+    </section>` : ''}
   </main>
 </body>
 </html>`;
