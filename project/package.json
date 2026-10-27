@@ -10,7 +10,8 @@
     "test": "node --test test/*.test.js",
     "demo": "node scripts/demo-history.mjs",
     "app": "node src/app.js",
-    "check:muse": "node scripts/check-muse.mjs"
+    "check:muse": "node scripts/check-muse.mjs",
+    "install:hook": "node scripts/install-hook.mjs"
   },
   "engines": { "node": ">=20" }
 }

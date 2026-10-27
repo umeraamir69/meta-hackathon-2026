@@ -11,15 +11,24 @@
     <strong class="brand"><i></i>Sentinel</strong>
     <span id="state">Ready</span>
   </header>
-  <form id="scan">
-    <label for="url">GitHub link</label>
-    <input id="url" name="url" type="text" placeholder="Pull request or repository" required>
-    <label for="api">API</label>
-    <input id="api" name="api" type="text" spellcheck="false" value="http://127.0.0.1:3000">
-    <button type="submit">Scan</button>
-  </form>
-  <p id="message"></p>
-  <section id="report" hidden></section>
+  <main>
+    <form id="scan">
+      <div class="field">
+        <label for="url">GitHub link</label>
+        <input id="url" name="url" type="text" placeholder="Pull request or repository" required autocomplete="off" spellcheck="false">
+      </div>
+      <div class="field">
+        <label for="api">API</label>
+        <input id="api" name="api" type="text" spellcheck="false" value="http://127.0.0.1:3000" autocomplete="off">
+      </div>
+      <button type="submit">Scan</button>
+    </form>
+    <p id="message"></p>
+    <section id="report" hidden></section>
+  </main>
+  <footer id="foot" hidden>
+    <a id="full" href="#" target="_blank" rel="noreferrer">Open full report</a>
+  </footer>
   <script src="popup.js"></script>
 </body>
 </html>

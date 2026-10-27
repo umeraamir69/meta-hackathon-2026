@@ -109,12 +109,24 @@ test('pull request diff flags a secret introduced on the branch', () => {
 test('names such as MODEL_API_KEY are part of the gate', () => {
   const dir = mkdtempSync(join(tmpdir(), 'sentinel-generic-'));
   try {
-    const value = 'k'.repeat(24);
+    // Built in two parts so this test file itself never contains the pattern.
+    const value = ['K7mQ2vX9pL4rT6wY8', 'zA3dE5fG6'].join('');
     writeFileSync(join(dir, 'app.env'), `MODEL_API_KEY=${value}\n`);
     const hit = scanWorkingTree(dir).find((finding) => finding.rule === 'generic_api_key');
     assert.ok(hit);
     assert.equal(hit.line, 1);
     assert.equal(hit.masked.includes(value), false);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('a low-entropy labeled value is not a finding', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'sentinel-entropy-'));
+  try {
+    writeFileSync(join(dir, 'app.env'), `MODEL_API_KEY=${'k'.repeat(24)}\n`);
+    const hits = scanWorkingTree(dir);
+    assert.equal(hits.length, 0);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

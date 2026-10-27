@@ -4,6 +4,7 @@ import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { scanWorkingTree } from '../src/scan.js';
+import { triageOrder } from '../src/comment.js';
 import { reviewFindings, buildClassifyPrompt } from '../src/muse.js';
 import { renderReport } from '../src/report-html.js';
 import { awsExample } from './repo.js';
@@ -103,6 +104,62 @@ test('Spark labels and Wonder explains only the live hit', async () => {
   assert.match(review.summary, /Rotate the history key/);
   const classifyPrompt = buildClassifyPrompt([live, sample]);
   assert.equal(classifyPrompt.includes(awsExample), false);
+});
+
+test('triage order puts live history hits before examples', () => {
+  const live = { rule: 'aws_access_key', severity: 'critical', source: 'git-history', path: 'config.env', line: 1, removed: true, commit: 'abc123def456' };
+  const sample = { rule: 'aws_access_key', severity: 'critical', source: 'working-tree', path: 'docs/aws-example.md', line: 4, removed: false };
+  const order = triageOrder([sample, live], [
+    { where: 'working-tree:docs/aws-example.md:4', label: 'likely_example' },
+    { where: 'git-history:abc123d:config.env:1 (removed)', label: 'likely_live' },
+  ]);
+  assert.deepEqual(order, ['git-history:abc123d:config.env:1 (removed)', 'working-tree:docs/aws-example.md:4']);
+});
+
+test('pr comment carries triage, fix, and ignore sections', async () => {
+  const live = {
+    rule: 'aws_access_key',
+    severity: 'critical',
+    source: 'working-tree',
+    path: 'app/settings.py',
+    pathClass: 'app',
+    line: 3,
+    removed: false,
+    masked: 'AKIA••••MPLE',
+    context: [{ line: 3, text: 'KEY=AKIA••••MPLE' }],
+  };
+  const fetchImpl = async (_url, options) => {
+    const body = JSON.parse(options.body);
+    if (body.model === 'muse-spark-1.3') {
+      return new Response(JSON.stringify({
+        output_text: JSON.stringify({
+          labels: [{ where: 'working-tree:app/settings.py:3', label: 'likely_live', why: 'App config.' }],
+        }),
+      }), { status: 200 });
+    }
+    return new Response(JSON.stringify({
+      output_text: JSON.stringify({
+        summary: 'Rotate the app key.',
+        rotate: [{
+          rule: 'aws_access_key',
+          where: 'working-tree:app/settings.py:3',
+          why_live: 'Live config value.',
+          fix: { path: 'app/settings.py', before: 'KEY=AKIA••••MPLE', after: 'KEY=os.environ["APP_KEY"]' },
+          steps: ['Revoke it.'],
+        }],
+        ignore: [],
+      }),
+    }), { status: 200 });
+  };
+  const review = await reviewFindings([live], {
+    env: { MODEL_API_KEY: 'test-key-not-real' },
+    fetchImpl,
+  });
+  assert.match(review.comment, /### Triage/);
+  assert.match(review.comment, /1\. working-tree:app\/settings\.py:3/);
+  assert.match(review.comment, /```diff/);
+  assert.match(review.comment, /os\.environ/);
+  assert.match(review.comment, /Suggested \.sentinelignore/);
 });
 
 test('report page escapes markup', () => {

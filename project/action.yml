@@ -34,6 +34,14 @@ inputs:
     description: Token used to update one pull request comment. Leave empty to skip the comment.
     required: false
     default: ''
+  sarif_path:
+    description: Write SARIF 2.1.0 here for github/codeql-action/upload-sarif. Leave empty to skip.
+    required: false
+    default: ''
+outputs:
+  sarif_path:
+    description: Path of the written SARIF file, or empty when sarif_path was empty.
+    value: ${{ steps.sarif.outputs.path }}
 runs:
   using: composite
   steps:
@@ -59,3 +67,11 @@ runs:
         set -e
         node "${{ github.action_path }}/src/github-comment.js" "$out" || true
         exit "$code"
+    - name: Write SARIF
+      id: sarif
+      if: inputs.sarif_path != ''
+      shell: bash
+      run: |
+        out="${RUNNER_TEMP:-/tmp}/sentinel-report.json"
+        node --input-type=module -e "import { readFileSync, writeFileSync } from 'node:fs'; import { toSarif } from '${{ github.action_path }}/src/sarif.js'; writeFileSync(process.argv[1], toSarif(JSON.parse(readFileSync(process.argv[2], 'utf8'))));" "${{ inputs.sarif_path }}" "$out"
+        echo "path=${{ inputs.sarif_path }}" >> "$GITHUB_OUTPUT"

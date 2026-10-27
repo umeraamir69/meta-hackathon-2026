@@ -3,11 +3,12 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { gunzipSync } from 'node:zlib';
 import { extract } from 'tar';
-import { parseGitHubUrl } from '../../project/src/github-target.js';
-import { applyIgnore, loadIgnore } from '../../project/src/ignore.js';
-import { whereOf } from '../../project/src/judge.js';
-import { reviewFindings } from '../../project/src/muse.js';
-import { dedupe, scanPatch, scanText, scanWorkingTree } from '../../project/src/scan.js';
+import { parseGitHubUrl } from './sentinel/github-target.js';
+import { applyIgnore, loadIgnore } from './sentinel/ignore.js';
+import { whereOf } from './sentinel/judge.js';
+import { reviewFindings } from './sentinel/muse.js';
+import { configuredSecrets, scrubFindings } from './sentinel/redact.js';
+import { dedupe, markTreePresence, scanPatch, scanText, scanWorkingTree } from './sentinel/scan.js';
 
 const ARCHIVE_LIMIT = 25_000_000;
 const COMMIT_LIMIT = 8;
@@ -43,10 +44,16 @@ function scanCommit(commit, findings) {
   const sha = commit.sha;
   const message = commit.commit?.message || '';
   const subject = message.split('\n')[0] || '';
-  scanText(message, { source: 'git-history', path: 'commit-message', commit: sha, commitSubject: subject }, findings);
+  const meta = {
+    commit: sha,
+    commitAuthor: commit.commit?.author?.name || null,
+    commitDate: String(commit.commit?.author?.date || '').slice(0, 10) || null,
+    commitSubject: subject,
+  };
+  scanText(message, { source: 'git-history', path: 'commit-message', ...meta }, findings);
   for (const file of commit.files || []) {
     if (!file.patch || !file.filename) continue;
-    scanPatch(wrapPatch(file.filename, file.patch), { source: 'git-history', commit: sha, prefix: '', commitSubject: subject }, findings);
+    scanPatch(wrapPatch(file.filename, file.patch), { source: 'git-history', prefix: '', ...meta }, findings);
   }
 }
 
@@ -96,33 +103,36 @@ export async function scanRemote(input) {
   const target = parseGitHubUrl(input);
   if (!target) throw new Error('Use a public https://github.com/owner/repo link, or a pull request link.');
 
-  const findings = [];
+  const treeFindings = [];
+  const commitFindings = [];
   let scope = '';
   if (target.pull) {
     const files = await github(`/repos/${target.owner}/${target.repo}/pulls/${target.pull}/files?per_page=80`);
     for (const file of files) {
       if (!file.patch || !file.filename) continue;
-      scanPatch(wrapPatch(file.filename, file.patch), { source: 'pr-diff', commit: null, prefix: '' }, findings);
+      scanPatch(wrapPatch(file.filename, file.patch), { source: 'pr-diff', commit: null, prefix: '' }, commitFindings);
     }
     const listed = await github(`/repos/${target.owner}/${target.repo}/pulls/${target.pull}/commits?per_page=${COMMIT_LIMIT}`);
-    for (const item of listed) scanCommit(await github(`/repos/${target.owner}/${target.repo}/commits/${item.sha}`), findings);
+    for (const item of listed) scanCommit(await github(`/repos/${target.owner}/${target.repo}/commits/${item.sha}`), commitFindings);
     scope = `Pull request diff and ${listed.length} commit${listed.length === 1 ? '' : 's'} on that request.`;
   } else {
     const repo = await github(`/repos/${target.owner}/${target.repo}`);
-    await scanArchive(target.owner, target.repo, repo.default_branch, findings);
-    const commits = await scanRecentCommits(target.owner, target.repo, findings);
+    await scanArchive(target.owner, target.repo, repo.default_branch, treeFindings);
+    const commits = await scanRecentCommits(target.owner, target.repo, commitFindings);
     scope = `Current files on ${repo.default_branch}, plus the ${commits} most recent commits.`;
   }
 
-  const unique = dedupe(findings).slice(0, 40);
-  const muse = await reviewFindings(unique);
+  const merged = [...treeFindings, ...commitFindings];
+  const unique = dedupe(target.pull ? merged : markTreePresence(merged, treeFindings)).slice(0, 40);
+  const scrubbed = scrubFindings(unique, configuredSecrets());
+  const muse = await reviewFindings(scrubbed);
   const labels = new Map((muse?.labels || []).map((label) => [label.where, label]));
   return {
-    ok: unique.length === 0,
-    count: unique.length,
+    ok: scrubbed.length === 0,
+    count: scrubbed.length,
     source: target.label,
     scope,
-    findings: unique.map((finding) => {
+    findings: scrubbed.map((finding) => {
       const label = labels.get(whereOf(finding));
       return {
         severity: finding.severity,
@@ -131,6 +141,10 @@ export async function scanRemote(input) {
         path: finding.path,
         line: finding.line,
         removed: Boolean(finding.removed),
+        encoding: finding.encoding || null,
+        author: finding.author || null,
+        date: finding.date || null,
+        presentInTree: finding.presentInTree ?? null,
         masked: finding.masked,
         label: label?.label || null,
         why: label?.why || '',
@@ -141,6 +155,7 @@ export async function scanRemote(input) {
       model: muse.model,
       summary: muse.summary,
       classifier: muse.classifier || null,
+      rotate: muse.rotate || [],
     } : null,
   };
 }

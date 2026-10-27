@@ -278,6 +278,14 @@ h1 {
 }
 
 .finding-top b { font-weight: 560; font-size: 14px; }
+.finding-top .sev.critical, .finding-top .sev.high { color: var(--fail); }
+
+.findings .masked { color: var(--ink); }
+.findings .case { color: var(--accent); font-size: 12px; }
+
+.muse .rotate { margin: 12px 0 0; padding: 0; list-style: none; }
+.muse .rotate > li { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+.muse .rotate ul { margin: 6px 0 0; padding-left: 18px; color: var(--muted); font-size: 13px; line-height: 1.5; }
 
 .finding-top em {
   color: var(--accent);

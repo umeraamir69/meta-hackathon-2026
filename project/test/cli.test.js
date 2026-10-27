@@ -58,6 +58,23 @@ test('clean fixture passes', () => {
   assert.equal(report.muse, null);
 });
 
+test('--sarif prints SARIF and keeps the gate exit code', () => {
+  const result = runCli(['--sarif', 'fixtures/leaky-repo']);
+  assertNoCredential(result.stdout + result.stderr);
+  assert.equal(result.status, 1);
+  const doc = JSON.parse(result.stdout);
+  assert.equal(doc.version, '2.1.0');
+  assert.equal(doc.runs[0].tool.driver.name, 'PR Diff Sentinel');
+  assert.ok(doc.runs[0].results.length >= 1);
+});
+
+test('--help explains the flags', () => {
+  const result = runCli(['--help']);
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /--staged/);
+  assert.match(result.stdout, /--sarif/);
+});
+
 test('github annotations include the file and line', () => {
   const previous = process.env.GITHUB_ACTIONS;
   process.env.GITHUB_ACTIONS = 'true';

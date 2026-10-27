@@ -1,8 +1,10 @@
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { lstatSync, readFileSync, readdirSync, realpathSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { neighborhood, pathClass, redactLine } from './context.js';
-import { RULES, mask } from './rules.js';
+import { decodedChunks } from './decode.js';
+import { RULES, acceptHit, compositeHits, mask, shannonEntropy } from './rules.js';
 
 const SKIP_DIRS = new Set(['.git', 'node_modules', 'dist']);
 
@@ -33,30 +35,64 @@ function walk(dir, out = []) {
   return out;
 }
 
+export function fingerprintOf(raw) {
+  return createHash('sha256').update(String(raw || ''), 'utf8').digest('hex');
+}
+
+function pushHit(findings, rule, raw, meta, line, extra = {}) {
+  const masked = mask(raw);
+  const path = meta.path ?? meta.source;
+  findings.push({
+    rule: rule.id,
+    severity: rule.severity,
+    source: meta.source,
+    path,
+    line,
+    commit: meta.commit || null,
+    author: meta.commitAuthor || null,
+    date: meta.commitDate || null,
+    removed: Boolean(meta.removed),
+    encoding: extra.encoding || meta.encoding || null,
+    masked,
+    fingerprint: fingerprintOf(raw),
+    entropy: Math.round(shannonEntropy(raw) * 100) / 100,
+    pathClass: pathClass(path),
+    context: extra.context || neighborhood(extra.text ?? '', raw, masked, line),
+    commitSubject: meta.commitSubject ? redactLine(meta.commitSubject).slice(0, 160) : null,
+    presentInTree: null,
+  });
+  return findings;
+}
+
 export function scanText(text, meta, findings) {
   if (!text || text.includes('\0')) return findings;
+  const body = String(text);
+  const multiline = body.includes('\n');
+  const lines = multiline ? body.split('\n') : null;
   for (const rule of RULES) {
     rule.re.lastIndex = 0;
     let match;
-    while ((match = rule.re.exec(text)) !== null) {
-      const line = meta.line ?? text.slice(0, match.index).split('\n').length;
+    while ((match = rule.re.exec(body)) !== null) {
+      const line = meta.line ?? body.slice(0, match.index).split('\n').length;
       const raw = match[1] || match[0];
-      const masked = mask(raw);
-      const path = meta.path ?? meta.source;
-      findings.push({
-        rule: rule.id,
-        severity: rule.severity,
-        source: meta.source,
-        path,
-        line,
-        commit: meta.commit || null,
-        removed: Boolean(meta.removed),
-        masked,
-        pathClass: pathClass(path),
-        context: neighborhood(text, raw, masked, line),
-        commitSubject: meta.commitSubject ? redactLine(meta.commitSubject).slice(0, 160) : null,
-      });
+      const index = (meta.line == null && lines ? line - 1 : 0);
+      if (acceptHit(rule.id, raw, meta.line == null ? lines : null, index)) {
+        pushHit(findings, rule, raw, meta, line, { text: body });
+      }
       if (match.index === rule.re.lastIndex) rule.re.lastIndex += 1;
+    }
+  }
+  if (!meta.decoded) {
+    for (const chunk of decodedChunks(body)) {
+      const before = findings.length;
+      scanText(chunk.text, { ...meta, line: undefined, decoded: true, encoding: chunk.encodings.join('+') }, findings);
+      const sourceLine = meta.line ?? chunk.line;
+      for (let i = before; i < findings.length; i += 1) findings[i].line = sourceLine;
+    }
+    if (meta.line == null) {
+      for (const hit of compositeHits(body)) {
+        pushHit(findings, { id: hit.rule, severity: hit.severity }, hit.raw, meta, hit.line, { text: body });
+      }
     }
   }
   return findings;
@@ -217,7 +253,7 @@ export function scanGitHistory(root, { maxCommits = 200 } = {}) {
   }
   let log;
   try {
-    const args = ['log', '-p', '--all', `-n${commitLimit(maxCommits)}`, '--format=format:SENTINEL_COMMIT %H%n%B%nSENTINEL_ENDMSG'];
+    const args = ['log', '-p', '--all', `-n${commitLimit(maxCommits)}`, '--format=format:SENTINEL_COMMIT %H%nSENTINEL_AUTHOR %an%nSENTINEL_DATE %as%n%B%nSENTINEL_ENDMSG'];
     if (prefix) args.push('--', '.');
     log = git(here, args);
   } catch (error) {
@@ -228,15 +264,38 @@ export function scanGitHistory(root, { maxCommits = 200 } = {}) {
   }
   const chunks = log.split(/^SENTINEL_COMMIT /m).filter((chunk) => chunk.trim());
   for (const chunk of chunks) {
-    const nl = chunk.indexOf('\n');
-    const sha = (nl === -1 ? chunk : chunk.slice(0, nl)).trim();
-    const rest = nl === -1 ? '' : chunk.slice(nl + 1);
+    const header = chunk.split('\n');
+    const sha = (header[0] || '').trim();
+    const commitAuthor = (header[1] || '').startsWith('SENTINEL_AUTHOR ')
+      ? header[1].slice('SENTINEL_AUTHOR '.length).trim().slice(0, 120) || null
+      : null;
+    const commitDate = (header[2] || '').startsWith('SENTINEL_DATE ')
+      ? header[2].slice('SENTINEL_DATE '.length).trim().slice(0, 32) || null
+      : null;
+    const rest = header.slice(3).join('\n');
     const end = rest.indexOf('SENTINEL_ENDMSG');
     const message = end === -1 ? '' : rest.slice(0, end);
     const patch = end === -1 ? rest : rest.slice(end + 'SENTINEL_ENDMSG'.length);
     const commitSubject = redactLine(message.split('\n')[0] || '').slice(0, 160);
-    if (!prefix) scanText(message, { source: 'git-history', path: 'commit-message', commit: sha, commitSubject }, findings);
-    scanPatch(patch, { source: 'git-history', commit: sha, prefix, commitSubject }, findings);
+    const meta = { commit: sha, commitAuthor, commitDate, commitSubject };
+    if (!prefix) scanText(message, { source: 'git-history', path: 'commit-message', ...meta }, findings);
+    scanPatch(patch, { source: 'git-history', prefix, ...meta }, findings);
+  }
+  return findings;
+}
+
+export function scanStaged(root) {
+  const findings = [];
+  const layout = repoLayout(root);
+  if (!layout) return findings;
+  const { here, prefix } = layout;
+  try {
+    const args = ['diff', '--cached', '--no-ext-diff', '--no-textconv'];
+    if (prefix) args.push('--', '.');
+    const diff = git(here, args, 16 * 1024 * 1024);
+    scanPatch(diff, { source: 'staged', prefix }, findings);
+  } catch {
+    findings.push(errorFinding('staged'));
   }
   return findings;
 }
@@ -268,9 +327,27 @@ export function scanPrDiff(root, base, head) {
 export function dedupe(findings) {
   const seen = new Set();
   return findings.filter((finding) => {
-    const key = [finding.rule, finding.masked, finding.source, finding.path, finding.line, finding.commit, finding.removed].join('|');
+    const key = [finding.rule, finding.masked, finding.source, finding.path, finding.line, finding.commit, finding.removed, finding.encoding].join('|');
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
   });
+}
+
+/**
+ * Mark whether each non-tree finding also appears in the current files.
+ * A history hit with presentInTree=false is the incident this tool sells:
+ * deleted from the files, still recoverable from git.
+ */
+export function markTreePresence(findings, treeFindings) {
+  const inTree = new Set((treeFindings || []).map((finding) => `${finding.rule}|${finding.masked}`));
+  for (const finding of findings) {
+    if (!finding || !finding.fingerprint) continue;
+    if (finding.source === 'working-tree' || finding.source === 'staged') {
+      finding.presentInTree = true;
+    } else {
+      finding.presentInTree = inTree.has(`${finding.rule}|${finding.masked}`);
+    }
+  }
+  return findings;
 }

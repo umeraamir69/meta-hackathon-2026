@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "PR Diff Sentinel",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Scan the GitHub pull request in this tab. The gate fails if a secret is still in the diff or its commits.",
   "action": {
     "default_popup": "popup.html",
@@ -19,6 +19,7 @@
   },
   "permissions": ["storage", "activeTab"],
   "host_permissions": [
+    "https://github.com/*",
     "http://127.0.0.1/*",
     "http://localhost/*",
     "https://*.vercel.app/*"

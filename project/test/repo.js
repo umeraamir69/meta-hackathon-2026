@@ -1,10 +1,9 @@
 import { mkdtempSync, mkdirSync, rmSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 
-const projectRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
-const template = join(projectRoot, '.tmp', 'git-template');
+const template = join(tmpdir(), 'sentinel-git-template');
 
 export const awsExample = ['AKIA', 'IOSFODNN7EXAMPLE'].join('');
 
@@ -28,9 +27,9 @@ export function initRepo(dir) {
 }
 
 export function tempRepo() {
-  const root = join(projectRoot, '.tmp');
-  mkdirSync(root, { recursive: true });
-  const dir = mkdtempSync(join(root, 'repo-'));
+  // OS temp, not project/.tmp: test files run in parallel and the self-scan
+  // test walks the project tree, so scratch repos must live outside it.
+  const dir = mkdtempSync(join(tmpdir(), 'sentinel-repo-'));
   initRepo(dir);
   return dir;
 }

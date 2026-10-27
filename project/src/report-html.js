@@ -22,16 +22,32 @@ export function renderReport(report, options = {}) {
     const where = `${finding.source} ${finding.path}:${finding.line}`;
     const shown = labels.get(whereOf(finding));
     const context = (finding.context || []).map((row) => `L${row.line}  ${row.text}`).join('\n');
+    const caseBits = [];
+    if (finding.author) caseBits.push(`by ${finding.author}`);
+    if (finding.date) caseBits.push(finding.date);
+    if (finding.encoding) caseBits.push(`encoded ${finding.encoding}`);
+    if (finding.presentInTree === false) caseBits.push('deleted from current files, still in git');
+    if (finding.presentInTree === true && finding.source !== 'working-tree') caseBits.push('also in current files');
+    const caseLine = caseBits.length ? `<div class="case">${escape(caseBits.join(' · '))}</div>` : '';
+    const badges = [finding.removed ? 'removed' : '', finding.encoding ? `encoded ${finding.encoding}` : ''].filter(Boolean);
     return `<tr>
       <td>${escape(finding.severity)}</td>
       <td>${escape(finding.rule)}</td>
-      <td><code>${escape(where)}${finding.removed ? ' removed' : ''}</code></td>
+      <td><code>${escape(where)}${badges.length ? ` ${escape(badges.join(' '))}` : ''}</code><div class="masked">${escape(finding.masked || '')}</div></td>
       <td>${escape(shown?.label || 'unclear')}</td>
-      <td>${escape(shown?.why || '')}${context ? `<pre>${escape(context)}</pre>` : ''}</td>
+      <td>${caseLine}${escape(shown?.why || '')}${context ? `<pre>${escape(context)}</pre>` : ''}</td>
     </tr>`;
   }).join('');
   const rotate = (report?.muse?.rotate || []).map((item) => (
-    `<li><code>${escape(item.where)}</code><ol>${(item.steps || []).map((step) => `<li>${escape(step)}</li>`).join('')}</ol></li>`
+    `<li><code>${escape(item.where)}</code>`
+    + (item.why_live ? `<p>Why live: ${escape(item.why_live)}</p>` : '')
+    + (item.blast ? `<p>Blast radius: ${escape(item.blast)}</p>` : '')
+    + `<ol>${(item.steps || []).map((step) => `<li>${escape(step)}</li>`).join('')}</ol>`
+    + (item.fix ? `<p>Fix <code>${escape(item.fix.path)}</code>:</p><pre>- ${escape(item.fix.before)}\n+ ${escape(item.fix.after)}</pre>` : '')
+    + `</li>`
+  )).join('');
+  const ignore = (report?.muse?.ignore || []).map((item) => (
+    `<li><code>${escape(item.pattern)}</code> — ${escape(item.reason)}</li>`
   )).join('');
   const model = [report?.muse?.classifier?.model, report?.muse?.model].filter(Boolean).join(' then ') || 'local checklist';
   return `<!DOCTYPE html>
@@ -57,6 +73,8 @@ export function renderReport(report, options = {}) {
     th, td { text-align: left; vertical-align: top; padding: 10px 8px; border-top: 1px solid var(--line); }
     th { color: var(--muted); font-weight: 600; }
     code, pre { font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .masked { color: var(--muted); font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; margin-top: 4px; }
+    .case { color: var(--accent); font-size: 13px; margin-bottom: 4px; }
     pre { white-space: pre-wrap; color: var(--muted); margin: 8px 0 0; }
     section { margin-top: 28px; }
     h2 { font: 13px/1 ui-sans-serif, system-ui, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
@@ -98,6 +116,7 @@ export function renderReport(report, options = {}) {
       <h2>Muse</h2>
       <p>${escape(report.muse?.summary || 'Nothing to explain.')}</p>
       ${rotate ? `<ol>${rotate}</ol>` : ''}
+      ${ignore ? `<h2>Suggested .sentinelignore</h2><ul>${ignore}</ul>` : ''}
     </section>` : ''}
   </main>
 </body>

@@ -3,7 +3,10 @@
 import { useState } from 'react';
 
 export default function Scanner() {
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState(() => {
+    if (typeof window === 'undefined') return '';
+    return new URLSearchParams(window.location.search).get('url') || '';
+  });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [report, setReport] = useState(null);
@@ -77,12 +80,14 @@ function Report({ report }) {
           {report.findings.map((finding) => (
             <li key={`${finding.source}-${finding.path}-${finding.line}-${finding.rule}-${finding.removed}`}>
               <div className="finding-top">
-                <b>{finding.rule}</b>
+                <b className={`sev ${finding.severity || ''}`}>{finding.rule}</b>
                 <em>{pretty(finding.label) || 'unlabeled'}</em>
               </div>
               <code>
-                {finding.source} {finding.path}:{finding.line}{finding.removed ? ' removed' : ''}
+                {finding.source} {finding.path}:{finding.line}{finding.removed ? ' removed' : ''}{finding.encoding ? ` encoded ${finding.encoding}` : ''}
               </code>
+              {finding.masked ? <code className="masked">{finding.masked}</code> : null}
+              {caseLine(finding) ? <p className="case">{caseLine(finding)}</p> : null}
               {finding.why ? <p>{finding.why}</p> : null}
             </li>
           ))}
@@ -90,8 +95,20 @@ function Report({ report }) {
       )}
       {report.muse?.summary ? (
         <div className="muse">
-          <span>Muse</span>
+          <span>Muse · {report.muse.provider || 'local'}</span>
           <p>{report.muse.summary}</p>
+          {Array.isArray(report.muse.rotate) && report.muse.rotate.length > 0 ? (
+            <ol className="rotate">
+              {report.muse.rotate.slice(0, 6).map((item) => (
+                <li key={item.where}>
+                  <code>{item.where}</code>
+                  <ul>
+                    {(item.steps || []).slice(0, 3).map((step) => <li key={step}>{step}</li>)}
+                  </ul>
+                </li>
+              ))}
+            </ol>
+          ) : null}
         </div>
       ) : null}
     </div>
@@ -100,4 +117,12 @@ function Report({ report }) {
 
 function pretty(label) {
   return label ? String(label).replaceAll('_', ' ') : '';
+}
+
+function caseLine(finding) {
+  const bits = [];
+  if (finding.author) bits.push(`by ${finding.author}`);
+  if (finding.date) bits.push(finding.date);
+  if (finding.presentInTree === false) bits.push('deleted from current files, still in git');
+  return bits.join(' · ');
 }

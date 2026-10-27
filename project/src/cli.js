@@ -7,18 +7,27 @@ import { loadEnvFile } from './env.js';
 import { applyIgnore, loadIgnore } from './ignore.js';
 import { reviewFindings } from './muse.js';
 import { configuredSecrets, redactText, scrubFindings } from './redact.js';
-import { dedupe, scanGitHistory, scanPrDiff, scanWorkingTree } from './scan.js';
+import { toSarif } from './sarif.js';
+import { dedupe, markTreePresence, scanGitHistory, scanPrDiff, scanStaged, scanWorkingTree } from './scan.js';
 
 export async function collectReport(root, env = process.env) {
   loadEnvFile(join(dirname(fileURLToPath(import.meta.url)), '..', '.env'));
   const secrets = configuredSecrets(env);
+  if (env.SENTINEL_STAGED === 'true') {
+    const raw = dedupe(markTreePresence(scanStaged(root), []));
+    const { kept, suppressed } = applyIgnore(raw, loadIgnore(root));
+    const findings = scrubFindings(kept, secrets);
+    const muse = await reviewFindings(findings, { env });
+    return { ok: findings.length === 0, count: findings.length, suppressed: suppressed.length, findings, muse };
+  }
   const history = env.SENTINEL_HISTORY !== 'false';
   const maxCommits = env.SENTINEL_MAX_COMMITS || 200;
-  const raw = dedupe([
-    ...scanWorkingTree(root),
+  const tree = scanWorkingTree(root);
+  const rest = [
     ...(history ? scanGitHistory(root, { maxCommits }) : []),
     ...scanPrDiff(root, env.SENTINEL_BASE || '', env.SENTINEL_HEAD || ''),
-  ]);
+  ];
+  const raw = dedupe(markTreePresence([...tree, ...rest], tree));
   const { kept, suppressed } = applyIgnore(raw, loadIgnore(root));
   const findings = scrubFindings(kept, secrets);
   const muse = await reviewFindings(findings, { env });
@@ -31,12 +40,32 @@ export async function collectReport(root, env = process.env) {
   };
 }
 
-export async function run() {
-  const root = process.argv[2] || '.';
-  const report = await collectReport(root);
+const USAGE = `PR Diff Sentinel: deterministic secret gate on the working tree, PR diff, and git history.
+
+Usage:
+  node src/cli.js [root] [--staged] [--sarif]
+
+--staged scans only the staged diff (what the pre-commit hook checks).
+--sarif prints SARIF 2.1.0 instead of the JSON report.
+
+Exit 1 means the gate failed. Exit 0 means no findings.
+`;
+
+export async function run(argv = process.argv.slice(2)) {
+  const flags = new Set(argv.filter((arg) => arg.startsWith('--')));
+  const positionals = argv.filter((arg) => !arg.startsWith('--'));
+  if (flags.has('--help') || positionals[0] === 'help') {
+    process.stdout.write(USAGE);
+    return;
+  }
+  const root = positionals[0] || '.';
+  const env = { ...process.env };
+  if (flags.has('--staged')) env.SENTINEL_STAGED = 'true';
+  const report = await collectReport(root, env);
   const secrets = configuredSecrets();
   process.stderr.write(redactText(summaryText(report) + annotationText(report), secrets));
-  process.stdout.write(`${redactText(JSON.stringify(report, null, 2), secrets)}\n`);
+  const out = flags.has('--sarif') ? toSarif(report) : JSON.stringify(report, null, 2);
+  process.stdout.write(`${redactText(out, secrets)}\n`);
   process.exit(report.count ? 1 : 0);
 }
 

@@ -1,6 +1,6 @@
 # Meta Global AI Developer Hackathon — full status
 
-**Last updated:** 2026-10-26 ~11:55pm ET
+**Last updated:** 2026-10-27 (ET)
 **Owner:** Muhammad Umer Aamir (`umeraamir69`)
 **Event page:** https://cerebralvalley.ai/e/meta-ai-developer-hackathon
 **Notes:** Obsidian vault `/Users/umeraamir/Documents/Obsidian Vault/Meta Hackathon 2026`
@@ -9,7 +9,7 @@
 
 ## One-line status
 
-**ACCEPTED** · Indie track · **PR Diff Sentinel** · Regex gate, Muse Spark labels, Muse Wonder notes, local report app, history demo · Credits, rules click-through, demo video, and submission are still open.
+**ACCEPTED** · Indie track · **PR Diff Sentinel** · Regex gate, Muse Spark labels, Muse Wonder notes, local report app, history demo, Next.js site, Chrome extension · Credits, rules, and Discord done · Demo video and submission still open.
 
 ---
 
@@ -89,13 +89,16 @@ Urdu text-reuse FYP (back-translation + embeddings).
 - [x] Muse Wonder HTTP client. A verification call returned **HTTP 200** for `muse-wonder-1.0`. The gate does not use that response to pass or fail.
 - [x] Offline demo and unit tests (23 passing)
 - [x] Key file present locally at `project/.env` (gitignored). Names only: `MODEL_API_KEY`, `META_API_KEY`, `MUSE_API_KEY`.
+- [x] Submitted the **$150 credits form** and confirmed the grant on [Billing](https://ai.developer.meta.com/billing) (card on file, spend-limit notification at $150).
+- [x] Accepted **Official Rules** on Cerebral Valley.
+- [x] Joined Discord.
+- [x] Next.js site (`web/`) with `/api/scan` and Chrome MV3 extension (`extension/`).
+- [x] Pre-commit hook installer with tests, plus how-to docs for Vercel deploy, extension install, and protecting another repo.
+- [x] Muse triage upgrade: blast radius, `why_live`, fix patches, ignore candidates, triage order, prompt dedupe, findings cap (72 tests green).
+- [x] Docs: `project/FEATURES.md`, `SUBMISSION.md`, `DEMO_SCRIPT.md`.
 
 ### Still on you
 
-- [ ] Submit the **$150 credits form** from the Oct 26, 7:26 AM Cerebral Valley email. The link did not survive a paste; open that message and use “this form.”
-- [ ] On [Billing](https://ai.developer.meta.com/billing): confirm the free credit landed, confirm a card is on the account, and set a **spend-limit notification at $150**. A successful API call does not prove the grant is what paid for it.
-- [ ] Accept **Official Rules** on Cerebral Valley.
-- [ ] Join Discord from the event details page.
 - [ ] When this repo is on GitHub, add Actions secret `MODEL_API_KEY`. Do not put the value in the workflow file.
 - [ ] Record the demo (history fail → Muse explanation → rotate checklist).
 - [ ] Submit before **Nov 4, 9:00 PM ET**.
@@ -168,3 +171,6 @@ Not used. The explanation path is Meta Model API. The gate stays local.
 | 2026-10-26 11:30 | Day 1 scaffold |
 | 2026-10-26 23:20 | Private status repo |
 | 2026-10-26 23:55 | Gate, history, Action, Muse client, tests, Obsidian notes. Key stored only in `project/.env`. Muse verification HTTP 200. |
+| 2026-10-27 | Next.js site, Chrome extension, GitHub URL scan. Credits confirmed, rules accepted, Discord joined. |
+| 2026-10-27 | Pre-commit hook + how-to docs. Separate in-progress src/ edits (rules, scan, decode, rotate) broke the self-scan test; hook work is green. |
+| 2026-10-27 | Muse triage upgrade + docs. Blast radius, why_live, fix patches, ignore candidates, triage order, prompt dedupe, 25-finding cap. Full suite 72/72 green. |
