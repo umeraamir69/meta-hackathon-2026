@@ -26,3 +26,36 @@ jobs:
           path: .
           history: 'true'
           muse: 'false'
+  extension:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Popup syntax
+        run: node --check extension/popup.js
+      - name: Manifest and icons
+        run: node -e "const fs=require('fs');const m=JSON.parse(fs.readFileSync('extension/manifest.json','utf8'));if(m.manifest_version!==3)throw new Error('mv3');if(!m.host_permissions.includes('https://github.com/*'))throw new Error('github host permission');for(const i of Object.values(m.action.default_icon))fs.accessSync('extension/'+i);console.log('extension ok',m.version);"
+  web:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Sentinel core in sync
+        working-directory: web
+        run: node scripts/sync-sentinel.mjs --check
+      - name: Install
+        working-directory: web
+        run: npm ci
+      - name: Build
+        working-directory: web
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
