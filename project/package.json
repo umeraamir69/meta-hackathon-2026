@@ -1,0 +1,13 @@
+{
+  "name": "pr-diff-sentinel",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Deterministic secret gate on PR diff + git history; Muse Wonder explains findings (Meta Global AI Hackathon).",
+  "type": "module",
+  "bin": { "pr-diff-sentinel": "./src/cli.js" },
+  "scripts": {
+    "scan": "node src/cli.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": { "node": ">=20" }
+}

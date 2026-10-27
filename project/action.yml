@@ -1,0 +1,23 @@
+name: PR Diff Sentinel
+description: Fail the PR if secrets appear in the diff or git history. Muse Wonder explains findings when META_API_KEY is set.
+author: umeraamir69
+inputs:
+  path:
+    description: Repo path to scan
+    default: '.'
+  history:
+    description: Also scan full git history
+    default: 'true'
+  muse:
+    description: Call Muse Wonder to explain findings (needs META_API_KEY)
+    default: 'true'
+runs:
+  using: composite
+  steps:
+    - name: Run PR Diff Sentinel
+      shell: bash
+      env:
+        META_API_KEY: ${{ secrets.META_API_KEY }}
+        SENTINEL_MUSE: ${{ inputs.muse }}
+        SENTINEL_HISTORY: ${{ inputs.history }}
+      run: node "${{ github.action_path }}/src/cli.js" "${{ inputs.path }}"
