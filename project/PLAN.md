@@ -1,8 +1,11 @@
-# Build plan (Oct 26 – Nov 4 9pm ET)
+# Build plan (Oct 26 – Nov 4, 9:00 PM ET)
 
-- [x] Day 1: repo, Action stub, deterministic scanner, Muse stub, planted fixture
-- [ ] Day 2: Action on real PR with failing planted key in history
-- [ ] Day 3: Muse Wonder HTTP once Meta Model API access is live
-- [ ] Day 4–5: suppress list, CI annotations, 60s README reproduce
-- [ ] Day 6–8: demo video, hardening
-- [ ] Day 9–10: submission freeze
+- [x] Day 1: repo, Action, deterministic scanner, Muse stub, planted fixture
+- [x] History, pull-request diff, allowlist, CI annotations, tests, offline demo
+- [x] Muse Spark labels + Muse Wonder notes, with local fallback
+- [x] Local report app (`node src/app.js`) and history demo with live vs example
+- [ ] Confirm $150 credits on Billing, card on file, spend-limit notification
+- [ ] Accept Official Rules and join Discord
+- [ ] Push a protected repo and set the `MODEL_API_KEY` Actions secret
+- [ ] Demo video: history fail, Muse explanation, rotate checklist
+- [ ] Submission freeze before Nov 4, 9:00 PM ET
