@@ -6,7 +6,7 @@ import { neighborhood, pathClass, redactLine } from './context.js';
 import { decodedChunks } from './decode.js';
 import { RULES, acceptHit, compositeHits, mask, shannonEntropy } from './rules.js';
 
-const SKIP_DIRS = new Set(['.git', 'node_modules', 'dist']);
+const SKIP_DIRS = new Set(['.git', 'node_modules', 'dist', 'build', 'coverage', '.next', '.vercel', 'out']);
 
 function toPosix(path) {
   return path.split(sep).join('/');
