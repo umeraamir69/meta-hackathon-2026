@@ -5,6 +5,10 @@
   "description": "Deterministic secret gate on a pull request diff and git history. Muse Spark labels findings. Muse Wonder explains the live ones. Neither can pass the gate.",
   "type": "module",
   "bin": { "pr-diff-sentinel": "./src/cli.js" },
+  "files": ["src/", "scripts/", "action.yml", "README.md"],
+  "keywords": ["secrets", "gitleaks", "pre-commit", "github-action", "sarif", "security"],
+  "repository": { "type": "git", "url": "https://github.com/umeraamir69/meta-hackathon-2026.git", "directory": "project" },
+  "homepage": "https://github.com/umeraamir69/meta-hackathon-2026/tree/main/project",
   "scripts": {
     "scan": "node src/cli.js",
     "test": "node --test test/*.test.js",

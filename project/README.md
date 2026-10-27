@@ -20,6 +20,25 @@ The app serves a local report at http://127.0.0.1:4317. Paste a public GitHub re
 
 Exit `1` means the gate failed. Exit `0` means no findings. No `MODEL_API_KEY` is required. Without a key, labels and the rotation checklist are local.
 
+```bash
+node src/cli.js --staged        # staged diff only (what the hook checks)
+node src/cli.js --sarif > out.sarif
+node src/cli.js --help
+```
+
+## Detectors
+
+40+ rules: AWS (id, session, secret), GitHub (all token kinds), OpenAI,
+Anthropic, Google, Stripe, Slack, Discord, Telegram, Azure, Datadog,
+DigitalOcean, Groq, HuggingFace, Square, Shopify, GitLab, SendGrid, Twilio,
+npm, PyPI, xAI, Perplexity, private keys, GCP service keys, JWTs, Basic auth,
+database URLs, and labeled `API_KEY=` / `PASSWORD=` values with a Shannon
+entropy check. Base64, hex, and percent-encoded layers are unwrapped first
+(up to three deep), so an encoded key is still a finding with its encoding
+named. Every hit records author, date, a SHA-256 fingerprint, and whether the
+value is still in the current files. Documentation examples still fail the
+gate; Muse labels them, only a person clears them.
+
 ## Pre-commit hook
 
 The staged diff, on every commit. Muse stays off so it is fast and offline. CI still scans history; the hook checks only what you are about to commit.
@@ -78,6 +97,23 @@ jobs:
 ```
 
 If this repo ever goes public, replace `./project` with `umeraamir69/meta-hackathon-2026/project@<sha>`. Put the Model API key in that repo's Actions secrets as `MODEL_API_KEY`. Without it the gate fails exactly the same way; only the Muse labels fall back to local. Then enforce it: Settings → Branches → branch protection → require the `sentinel` status check before merging.
+
+### SARIF and code scanning
+
+The CLI prints SARIF 2.1.0 with `--sarif`, and the Action writes it when
+`sarif_path` is set. Upload it to get findings in the Security tab:
+
+```yaml
+- uses: ./project
+  with:
+    sarif_path: sentinel.sarif
+- uses: github/codeql-action/upload-sarif@v3
+  with:
+    sarif_file: sentinel.sarif
+```
+
+Findings carry file, line, SHA-256 fingerprint, severity, and the Muse label.
+Masked values only; raw secrets never leave the runner.
 
 ## What Muse is allowed to do
 
