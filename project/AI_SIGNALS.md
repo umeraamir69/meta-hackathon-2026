@@ -362,9 +362,14 @@ Sampling, 2026-10-28:
   (`eval/sample-humans-gh.mjs`). AIDev's `all_pull_request` table was
   unusable over the rows API (repeated server-side scan-limit 500s), so the
   human half comes from GitHub directly instead.
-- List: `eval/prs-full.json`. Run: `node eval/ai-signals.mjs --write --file prs-full.json`.
+- List: `eval/prs-full.json` (400 entries, 200/class). Run:
+  `node eval/ai-signals.mjs --write --file prs-full.json`.
+- Human-side notes: `postgres/postgres`, `torvalds/linux`,
+  `kubernetes/kubectl` 404'd as listed (skipped); `golang/go`,
+  `git/git`, `vim/vim` yielded 0 keepers under the bot/agent
+  filters; spare repos topped the class up to 200.
 
-Results and go/no-go: pending the run.
+Results and go/no-go: run in progress, recording below on completion.
 
 ## 11. References
 

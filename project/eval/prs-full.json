@@ -1,0 +1,3202 @@
+[
+  {
+    "url": "https://github.com/suyiiyii/AutoGLM-GUI/pull/80",
+    "expected": "agent",
+    "agent": "OpenAI_Codex",
+    "repo": "https://api.github.com/repos/suyiiyii/AutoGLM-GUI",
+    "user": "0verL1nk",
+    "title": "feat: 优化版本更新检查功能"
+  },
+  {
+    "url": "https://github.com/mnfst/manifest/pull/1082",
+    "expected": "agent",
+    "agent": "OpenAI_Codex",
+    "repo": "https://api.github.com/repos/mnfst/manifest",
+    "user": "guillaumegay13",
+    "title": "docs(readme): add manifest/auto switch examples"
+  },
+  {
+    "url": "https://github.com/Picocrypt-NG/Picocrypt-NG/pull/99",
+    "expected": "agent",
+    "agent": "OpenAI_Codex",
+    "repo": "https://api.github.com/repos/Picocrypt-NG/Picocrypt-NG",
+    "user": "Retengart",
+    "title": "ci: verify third-party download integrity in Windows legacy release workflow"
+  },
+  {
+    "url": "https://github.com/Picocrypt-NG/Picocrypt-NG/pull/100",
+    "expected": "agent",
+    "agent": "OpenAI_Codex",
+    "repo": "https://api.github.com/repos/Picocrypt-NG/Picocrypt-NG",
+    "user": "Retengart",
+    "title": "ci: verify third-party download integrity in Windows legacy release workflow"
+  },
+  {
+    "url": "https://github.com/mochilang/mochi/pull/10367",
+    "expected": "agent",
+    "agent": "OpenAI_Codex",
+    "repo": "https://api.github.com/repos/mochilang/mochi",
+    "user": "tamnd",
+    "title": "Improve OCaml transpiler"
+  },
+  {
+    "url": "https://github.com/mochilang/mochi/pull/10368",
+    "expected": "agent",
+    "agent": "OpenAI_Codex",
+    "repo": "https://api.github.com/repos/mochilang/mochi",
+    "user": "tamnd",
+    "title": "Add python query sort"
+  },
+  {
+    "url": "https://github.com/mochilang/mochi/pull/10369",
+    "expected": "agent",
+    "agent": "OpenAI_Codex",
+    "repo": "https://api.github.com/repos/mochilang/mochi",
+    "user": "tamnd",
+    "title": "Update Swift transpiler substring handling"
+  },
+  {
+    "url": "https://github.com/pikpikcu/airecon/pull/57",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/pikpikcu/airecon",
+    "user": "pikpikcu",
+    "title": "feat(agent): intelligence upgrades — attack chains, depth check, semantic dedup, adaptive thinking, cross-session memory"
+  },
+  {
+    "url": "https://github.com/vm0-ai/vm0/pull/4844",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/vm0-ai/vm0",
+    "user": "seven332",
+    "title": "ci: use filtered pnpm install for cli-e2e-03-runner chunks"
+  },
+  {
+    "url": "https://github.com/SciML/OrdinaryDiffEq.jl/pull/3130",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/SciML/OrdinaryDiffEq.jl",
+    "user": "ChrisRackauckas-Claude",
+    "title": "Use traits for composite algorithm checks to support SDE dispatch unification"
+  },
+  {
+    "url": "https://github.com/SciML/StochasticDiffEq.jl/pull/692",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/SciML/StochasticDiffEq.jl",
+    "user": "ChrisRackauckas-Claude",
+    "title": "Eliminate redundant SDEIntegrator dispatches using ODE infrastructure"
+  },
+  {
+    "url": "https://github.com/milvus-io/milvus/pull/48248",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/milvus-io/milvus",
+    "user": "buqian-zilliz",
+    "title": "feat: add scalar index version management with MaxVersion support"
+  },
+  {
+    "url": "https://github.com/nexi-lab/nexus/pull/3177",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/nexi-lab/nexus",
+    "user": "elfenlieds7",
+    "title": "fix(#1790): migrate zone_lifecycle out of kernel via ZoneWriteGuardHook"
+  },
+  {
+    "url": "https://github.com/nearai/ironclaw/pull/1413",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/nearai/ironclaw",
+    "user": "ilblackdragon",
+    "title": "fix: skip NEAR AI session check when backend is not nearai"
+  },
+  {
+    "url": "https://github.com/home-assistant/home-assistant.io/pull/44196",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/home-assistant/home-assistant.io",
+    "user": "johanzander",
+    "title": "Add data updates section to Growatt integration docs"
+  },
+  {
+    "url": "https://github.com/eigenpal/docx-editor/pull/202",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/eigenpal/docx-editor",
+    "user": "jedrazb",
+    "title": "fix: drop type:module — Next.js works without transpilePackages"
+  },
+  {
+    "url": "https://github.com/happo/happo/pull/438",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/happo/happo",
+    "user": "trotzig",
+    "title": "Re-introduce --skippedExamples option from legacy happo-e2e"
+  },
+  {
+    "url": "https://github.com/actionbook/actionbook/pull/234",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/actionbook/actionbook",
+    "user": "ZhangHanDong",
+    "title": "Fix PR #232 review issues — session detection alignment and error preservation"
+  },
+  {
+    "url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/pull/192",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/nextlevelbuilder/ui-ux-pro-max-skill",
+    "user": "tonymfer",
+    "title": "fix(cli): add 'droid' to valid AI types"
+  },
+  {
+    "url": "https://github.com/neondatabase/appdotbuild-agent/pull/120",
+    "expected": "agent",
+    "agent": "Devin",
+    "repo": "https://api.github.com/repos/neondatabase/appdotbuild-agent",
+    "user": "devin-ai-integration[bot]",
+    "title": "Extract Features from PR #104: Template Diff Implementation, and Agent API Client extract"
+  },
+  {
+    "url": "https://github.com/neondatabase/website/pull/3339",
+    "expected": "agent",
+    "agent": "Devin",
+    "repo": "https://api.github.com/repos/neondatabase/website",
+    "user": "devin-ai-integration[bot]",
+    "title": "docs: add note about Stack Auth provider support to Neon Auth docs"
+  },
+  {
+    "url": "https://github.com/saturday06/VRM-Addon-for-Blender/pull/785",
+    "expected": "agent",
+    "agent": "Devin",
+    "repo": "https://api.github.com/repos/saturday06/VRM-Addon-for-Blender",
+    "user": "devin-ai-integration[bot]",
+    "title": "docs: improve contribution wording in README"
+  },
+  {
+    "url": "https://github.com/neondatabase/website/pull/3340",
+    "expected": "agent",
+    "agent": "Devin",
+    "repo": "https://api.github.com/repos/neondatabase/website",
+    "user": "devin-ai-integration[bot]",
+    "title": "Highlight Prefetch lines in EXPLAIN output example"
+  },
+  {
+    "url": "https://github.com/crewAIInc/crewAI/pull/2633",
+    "expected": "agent",
+    "agent": "Devin",
+    "repo": "https://api.github.com/repos/crewAIInc/crewAI",
+    "user": "devin-ai-integration[bot]",
+    "title": "Fix segmentation fault in concurrent execution (issue #2632)"
+  },
+  {
+    "url": "https://github.com/neondatabase/website/pull/3343",
+    "expected": "agent",
+    "agent": "Devin",
+    "repo": "https://api.github.com/repos/neondatabase/website",
+    "user": "devin-ai-integration[bot]",
+    "title": "docs: update neon extension documentation and fix broken link"
+  },
+  {
+    "url": "https://github.com/crewAIInc/crewAI/pull/2635",
+    "expected": "agent",
+    "agent": "Devin",
+    "repo": "https://api.github.com/repos/crewAIInc/crewAI",
+    "user": "devin-ai-integration[bot]",
+    "title": "Fix output_json with custom OpenAI APIs"
+  },
+  {
+    "url": "https://github.com/saturday06/VRM-Addon-for-Blender/pull/788",
+    "expected": "agent",
+    "agent": "Devin",
+    "repo": "https://api.github.com/repos/saturday06/VRM-Addon-for-Blender",
+    "user": "devin-ai-integration[bot]",
+    "title": "docs: translate Japanese comments to English"
+  },
+  {
+    "url": "https://github.com/saturday06/VRM-Addon-for-Blender/pull/789",
+    "expected": "agent",
+    "agent": "Devin",
+    "repo": "https://api.github.com/repos/saturday06/VRM-Addon-for-Blender",
+    "user": "devin-ai-integration[bot]",
+    "title": "docs: translate Japanese comments to English"
+  },
+  {
+    "url": "https://github.com/quarylabs/sqruff/pull/1688",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/quarylabs/sqruff",
+    "user": "fank",
+    "title": "ci: add --no-fail-fast to cargo test commands"
+  },
+  {
+    "url": "https://github.com/ryoppippi/ccusage/pull/183",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/ryoppippi/ccusage",
+    "user": "phrazzld",
+    "title": "feat: add project filtering and grouping to daily command"
+  },
+  {
+    "url": "https://github.com/jeremylongshore/claude-code-plugins-plus-skills/pull/415",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/jeremylongshore/claude-code-plugins-plus-skills",
+    "user": "jeremylongshore",
+    "title": "feat(sentry-pack): build skill 25/30 — sentry-advanced-troubleshooting"
+  },
+  {
+    "url": "https://github.com/jeremylongshore/claude-code-plugins-plus-skills/pull/416",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/jeremylongshore/claude-code-plugins-plus-skills",
+    "user": "jeremylongshore",
+    "title": "feat(sentry-pack): build skill 26/30 — sentry-load-scale"
+  },
+  {
+    "url": "https://github.com/melonjs/melonJS/pull/1303",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/melonjs/melonJS",
+    "user": "obiot",
+    "title": "Fix ace-builds import for production build"
+  },
+  {
+    "url": "https://github.com/jeremylongshore/claude-code-plugins-plus-skills/pull/417",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/jeremylongshore/claude-code-plugins-plus-skills",
+    "user": "jeremylongshore",
+    "title": "feat(sentry-pack): build skill 28/30 — sentry-policy-guardrails"
+  },
+  {
+    "url": "https://github.com/SubtitleEdit/subtitleedit/pull/10381",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/SubtitleEdit/subtitleedit",
+    "user": "ivandrofly",
+    "title": "Fix Remove Text for Hearing Impaired not working in batch convert"
+  },
+  {
+    "url": "https://github.com/WordPress/gutenberg/pull/74903",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/WordPress/gutenberg",
+    "user": "adamsilverstein",
+    "title": "Add dimension validation to sideload endpoint"
+  },
+  {
+    "url": "https://github.com/rothgar/awesome-tuis/pull/510",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/rothgar/awesome-tuis",
+    "user": "arimxyer",
+    "title": "Add pass-cli and models TUIs"
+  },
+  {
+    "url": "https://github.com/mixpanel/mixpanel-swift/pull/696",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/mixpanel/mixpanel-swift",
+    "user": "IsaiahJTurner",
+    "title": "Add App Clip support with App Group storage and zeroed UUID handling"
+  },
+  {
+    "url": "https://github.com/nf-core/modules/pull/9765",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/nf-core/modules",
+    "user": "pinin4fjords",
+    "title": "feat: Add emit statements to support Nextflow workflow outputs"
+  },
+  {
+    "url": "https://github.com/google-agentic-commerce/a2a-x402/pull/58",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/google-agentic-commerce/a2a-x402",
+    "user": "aaitor",
+    "title": "docs: add CLAUDE.md, RUN.md, and .env.sample documentation"
+  },
+  {
+    "url": "https://github.com/danielgerlag/workflow-core/pull/1404",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/danielgerlag/workflow-core",
+    "user": "Copilot",
+    "title": "Fix NullReferenceException in WorkflowHost with .NET 8+ dependency injection"
+  },
+  {
+    "url": "https://github.com/bdunderscore/ndmf/pull/686",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/bdunderscore/ndmf",
+    "user": "Copilot",
+    "title": "Add auto-approve workflow for GitHub Copilot CI runs"
+  },
+  {
+    "url": "https://github.com/microsoft/vscode/pull/263175",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/microsoft/vscode",
+    "user": "Copilot",
+    "title": "Implement copilot_listCodeUsages tool with fallback from document to workspace symbols"
+  },
+  {
+    "url": "https://github.com/microsoft/vscode-copilot-release/pull/13898",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/microsoft/vscode-copilot-release",
+    "user": "Copilot",
+    "title": "Document Copy All functionality limitation in Copilot Chat"
+  },
+  {
+    "url": "https://github.com/radius-project/radius/pull/10239",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/radius-project/radius",
+    "user": "Copilot",
+    "title": "Add console output for transient errors in nightly CLI download test workflow"
+  },
+  {
+    "url": "https://github.com/mattlewis92/angular-calendar/pull/1773",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/mattlewis92/angular-calendar",
+    "user": "Copilot",
+    "title": "[WIP] 1. Migrate to the new control flow syntax via the schematic: https://angular.dev/reference/migrations/control-flow"
+  },
+  {
+    "url": "https://github.com/intellectronica/ruler/pull/155",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/intellectronica/ruler",
+    "user": "Copilot",
+    "title": "Add MCP capability-based filtering system and fix failing tests"
+  },
+  {
+    "url": "https://github.com/mattlewis92/angular-calendar/pull/1774",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/mattlewis92/angular-calendar",
+    "user": "Copilot",
+    "title": "feat: migrate to Angular's new control flow syntax and inline trackBy functions"
+  },
+  {
+    "url": "https://github.com/microsoft/Generative-AI-for-beginners-dotnet/pull/415",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/microsoft/Generative-AI-for-beginners-dotnet",
+    "user": "Copilot",
+    "title": "[WIP] Fix code mismatch in Core Techniques RAG tutorial"
+  },
+  {
+    "url": "https://github.com/Skipperlla/rn-swiper-list/pull/62",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/Skipperlla/rn-swiper-list",
+    "user": "Copilot",
+    "title": "Fix cards not showing when data length = 1"
+  },
+  {
+    "url": "https://github.com/Skipperlla/rn-swiper-list/pull/63",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/Skipperlla/rn-swiper-list",
+    "user": "Copilot",
+    "title": "Fix: Cards won't show up when data length = 1"
+  },
+  {
+    "url": "https://github.com/intel/PerfSpect/pull/518",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/intel/PerfSpect",
+    "user": "Copilot",
+    "title": "Add network interface coalesce settings collection via ethtool -c"
+  },
+  {
+    "url": "https://github.com/ROCm/rocm-libraries/pull/5154",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/ROCm/rocm-libraries",
+    "user": "SamuelReeder",
+    "title": "Add MatmulOperationDescriptor to backend C-API and frontend lowering"
+  },
+  {
+    "url": "https://github.com/googleworkspace/cli/pull/200",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/googleworkspace/cli",
+    "user": "priorwave",
+    "title": "fix: prevent gmail.metadata scope from blocking query parameters"
+  },
+  {
+    "url": "https://github.com/clerk/clerk-docs/pull/3184",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/clerk/clerk-docs",
+    "user": "jacekradko",
+    "title": "docs: Add buildSignInUrl guidance for satelliteAutoSync: false"
+  },
+  {
+    "url": "https://github.com/Aleph-Alpha/ts-rs/pull/484",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/Aleph-Alpha/ts-rs",
+    "user": "jcrugzz",
+    "title": "feat: opt-in auto-namespace by crate name to avoid type collisions"
+  },
+  {
+    "url": "https://github.com/dbt-labs/dbt-core/pull/12602",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/dbt-labs/dbt-core",
+    "user": "colin-rogers-dbt",
+    "title": "Fix duplicate CTE race condition in ephemeral model compilation"
+  },
+  {
+    "url": "https://github.com/rubyatscale/packs/pull/178",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/rubyatscale/packs",
+    "user": "dduugg",
+    "title": "Modernize dependencies, fix CI, and add rubocop-gusto"
+  },
+  {
+    "url": "https://github.com/woocommerce/woocommerce-gateway-stripe/pull/5099",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/woocommerce/woocommerce-gateway-stripe",
+    "user": "wjrosa",
+    "title": "Open Stripe OAuth flow in a new tab"
+  },
+  {
+    "url": "https://github.com/anthropics/skills/pull/66",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/anthropics/skills",
+    "user": "patrickyoung",
+    "title": "Add Python Architect skill based on Guido van Rossum's philosophy"
+  },
+  {
+    "url": "https://github.com/rocicorp/mono/pull/5071",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/rocicorp/mono",
+    "user": "aboodman",
+    "title": "feat(zero-cache): add configurable WebSocket compression"
+  },
+  {
+    "url": "https://github.com/nexi-lab/nexus/pull/284",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/nexi-lab/nexus",
+    "user": "joezhoujinjing",
+    "title": "Fix directory listing duplicates and Dockerfile env vars"
+  },
+  {
+    "url": "https://github.com/obra/packnplay/pull/5",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/obra/packnplay",
+    "user": "obra",
+    "title": "feat: add automated binary distribution with GoReleaser"
+  },
+  {
+    "url": "https://github.com/coreyhaines31/marketingskills/pull/68",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/coreyhaines31/marketingskills",
+    "user": "coreyhaines31",
+    "title": "Migrate context paths from .claude/ to .agents/"
+  },
+  {
+    "url": "https://github.com/bytebase/bytebase/pull/17988",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/bytebase/bytebase",
+    "user": "d-bytebase",
+    "title": "chore: update demo data"
+  },
+  {
+    "url": "https://github.com/lobehub/lobehub/pull/10059",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/lobehub/lobehub",
+    "user": "lobehubbot",
+    "title": "✅ test: add unit tests for S3 module"
+  },
+  {
+    "url": "https://github.com/liam-hq/liam/pull/3983",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/liam-hq/liam",
+    "user": "MH4GF",
+    "title": "refactor: replace custom pgTAP extension with native PGlite package"
+  },
+  {
+    "url": "https://github.com/vercel/turborepo/pull/11053",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/vercel/turborepo",
+    "user": "anthonyshew",
+    "title": "fix(boundaries): Enable import attributes parsing"
+  },
+  {
+    "url": "https://github.com/shakacode/react_on_rails/pull/1922",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/shakacode/react_on_rails",
+    "user": "justin808",
+    "title": "Fix Node.js 22 V8 crash in GitHub Actions workflows"
+  },
+  {
+    "url": "https://github.com/obie/claude-on-rails/pull/25",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/obie/claude-on-rails",
+    "user": "kurenn",
+    "title": "Improve agent interactions with delegation protocol and team coordination"
+  },
+  {
+    "url": "https://github.com/goruck/home-generative-agent/pull/342",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/goruck/home-generative-agent",
+    "user": "goruck",
+    "title": "feat: phone_battery_low_at_night_home static Sentinel rule (#341)"
+  },
+  {
+    "url": "https://github.com/shakacode/react_on_rails/pull/2799",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/shakacode/react_on_rails",
+    "user": "justin808",
+    "title": "DO NOT MERGE: Document view helper pattern for disabling SSR in CI (#2786)"
+  },
+  {
+    "url": "https://github.com/gsd-build/gsd-2/pull/1952",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/gsd-build/gsd-2",
+    "user": "jeremymcs",
+    "title": "fix: invalidate caches at start and before STATE rebuild in runGSDDoctor (#1885)"
+  },
+  {
+    "url": "https://github.com/pandas-dev/pandas/pull/64767",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/pandas-dev/pandas",
+    "user": "jbrockmendel",
+    "title": "BUG: MultiIndex.sortlevel raises TypeError for incomparable types"
+  },
+  {
+    "url": "https://github.com/docker/mcp-registry/pull/972",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/docker/mcp-registry",
+    "user": "kgprs",
+    "title": "Add Atlassian Remote MCP server"
+  },
+  {
+    "url": "https://github.com/camunda/camunda/pull/44749",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/camunda/camunda",
+    "user": "Copilot",
+    "title": "Fix history cleanup for standalone decision instances"
+  },
+  {
+    "url": "https://github.com/transloadit/uppy/pull/6156",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/transloadit/uppy",
+    "user": "Copilot",
+    "title": "Fix allowMultipleUploadBatches by preventing file operations during upload"
+  },
+  {
+    "url": "https://github.com/codemonkey85/PKMDS-Blazor/pull/290",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/codemonkey85/PKMDS-Blazor",
+    "user": "Copilot",
+    "title": "Automate versioning to yyyy.mm.dd.HHmm format with deployment tagging"
+  },
+  {
+    "url": "https://github.com/dotnet/android/pull/10727",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/dotnet/android",
+    "user": "Copilot",
+    "title": "Remove unnecessary Microsoft.Win32.Registry PackageReference"
+  },
+  {
+    "url": "https://github.com/elastic/kibana/pull/250587",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/elastic/kibana",
+    "user": "Copilot",
+    "title": "Fix route registration function naming consistency"
+  },
+  {
+    "url": "https://github.com/rommapp/romm/pull/3150",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/rommapp/romm",
+    "user": "Copilot",
+    "title": "Auto-select firmware when only one option is available"
+  },
+  {
+    "url": "https://github.com/home-assistant/core/pull/156248",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/home-assistant/core",
+    "user": "Copilot",
+    "title": "[WIP] Add new schema option for linter"
+  },
+  {
+    "url": "https://github.com/wp-cli/entity-command/pull/552",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/wp-cli/entity-command",
+    "user": "Copilot",
+    "title": "Add notes support documentation and tests for WordPress 6.9+"
+  },
+  {
+    "url": "https://github.com/microsoft/playwright.dev/pull/1916",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/microsoft/playwright.dev",
+    "user": "Copilot",
+    "title": "feat(roll): roll to ToT Playwright (roll/next-10-11-25)"
+  },
+  {
+    "url": "https://github.com/percona/percona-toolkit/pull/1086",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/percona/percona-toolkit",
+    "user": "Copilot",
+    "title": "Fix CI: resolve Go version mismatch between workflow and go.mod"
+  },
+  {
+    "url": "https://github.com/luost26/academic-homepage/pull/36",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/luost26/academic-homepage",
+    "user": "Copilot",
+    "title": "Add link to User Community section"
+  },
+  {
+    "url": "https://github.com/wysaid/CameraCapture/pull/19",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/wysaid/CameraCapture",
+    "user": "Copilot",
+    "title": "Add MSVC 2026 (Visual Studio 2026) and MinGW workflow support"
+  },
+  {
+    "url": "https://github.com/benbalter/benbalter.github.com/pull/982",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/benbalter/benbalter.github.com",
+    "user": "Copilot",
+    "title": "Add script to diff Jekyll and Next.js SSG build output"
+  },
+  {
+    "url": "https://github.com/Hack23/cia/pull/7965",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/Hack23/cia",
+    "user": "Copilot",
+    "title": "📚 Create comprehensive schema maintenance automation guide consolidating workflows, troubleshooting, and CI/CD integrat"
+  },
+  {
+    "url": "https://github.com/WCY-dt/MrRSS/pull/84",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/WCY-dt/MrRSS",
+    "user": "Copilot",
+    "title": "Improve feed discovery with real-time progress display and Wails-compatible polling"
+  },
+  {
+    "url": "https://github.com/primefaces-extensions/primefaces-extensions/pull/2271",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/primefaces-extensions/primefaces-extensions",
+    "user": "Copilot",
+    "title": "Upgrade TomEE to 10.2.0 for MyFaces 4.1+ compatibility"
+  },
+  {
+    "url": "https://github.com/neo4j-labs/agent-memory/pull/56",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/neo4j-labs/agent-memory",
+    "user": "Copilot",
+    "title": "Remove unused imports from investigations.py"
+  },
+  {
+    "url": "https://github.com/neo4j-labs/agent-memory/pull/57",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/neo4j-labs/agent-memory",
+    "user": "Copilot",
+    "title": "Remove unused `Any` import from investigation models"
+  },
+  {
+    "url": "https://github.com/neo4j-labs/agent-memory/pull/58",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/neo4j-labs/agent-memory",
+    "user": "Copilot",
+    "title": "Remove non-existent Vertex AI embedding models from VERTEX_MODEL_DIMENSIONS"
+  },
+  {
+    "url": "https://github.com/microsoft/typespec/pull/9620",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/microsoft/typespec",
+    "user": "Copilot",
+    "title": "feat(openapi3): add @nextLink decorator for x-ms-list-next-link extension"
+  },
+  {
+    "url": "https://github.com/mlflow/mlflow/pull/20985",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/mlflow/mlflow",
+    "user": "Copilot",
+    "title": "Activate stale PR automation workflow after verification"
+  },
+  {
+    "url": "https://github.com/LiorVainer/data-israel/pull/15",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/LiorVainer/data-israel",
+    "user": "Copilot",
+    "title": "Fix upsertThreadContext double-counting context window usage"
+  },
+  {
+    "url": "https://github.com/microsoft/vscode-copilot-chat/pull/3843",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/microsoft/vscode-copilot-chat",
+    "user": "Copilot",
+    "title": "Fix agent-customization hooks reference: correct field names and PostToolUse format"
+  },
+  {
+    "url": "https://github.com/microsoft/vscode-copilot-chat/pull/3844",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/microsoft/vscode-copilot-chat",
+    "user": "Copilot",
+    "title": "Fix hooks reference: correct field names and PostToolUse output format"
+  },
+  {
+    "url": "https://github.com/RocketChat/Rocket.Chat/pull/38794",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/RocketChat/Rocket.Chat",
+    "user": "Copilot",
+    "title": "fix: exclude vendor image formats from preview generation"
+  },
+  {
+    "url": "https://github.com/denoland/deno/pull/31742",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/denoland/deno",
+    "user": "Copilot",
+    "title": "Optimize string formatting to reduce allocations"
+  },
+  {
+    "url": "https://github.com/CoreWCF/CoreWCF/pull/1668",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/CoreWCF/CoreWCF",
+    "user": "Copilot",
+    "title": "[WIP] Add class-based service contract support to OperationParameterInjectionGenerator"
+  },
+  {
+    "url": "https://github.com/github/gh-aw/pull/9536",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/github/gh-aw",
+    "user": "Copilot",
+    "title": "Require authorization headers in MCP gateway output configuration"
+  },
+  {
+    "url": "https://github.com/johnsusek/praeco/pull/757",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/johnsusek/praeco",
+    "user": "Copilot",
+    "title": "Add Vue 2.7 Composition API migration guide"
+  },
+  {
+    "url": "https://github.com/kubernetes-sigs/headlamp/pull/4349",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/kubernetes-sigs/headlamp",
+    "user": "Copilot",
+    "title": "Add PR development builds feature with Sigstore signing, auto-refresh UI, build history selection, failed build detectio"
+  },
+  {
+    "url": "https://github.com/trycua/cua/pull/742",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/trycua/cua",
+    "user": "Copilot",
+    "title": "docs: add release process documentation with workflow diagrams"
+  },
+  {
+    "url": "https://github.com/chithi-dev/chithi/pull/40",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/chithi-dev/chithi",
+    "user": "Copilot",
+    "title": "Throw errors on auth/network failures instead of masking as empty arrays"
+  },
+  {
+    "url": "https://github.com/erikdarlingdata/DarlingData/pull/663",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/erikdarlingdata/DarlingData",
+    "user": "erikdarlingdata",
+    "title": "Fix 5 additional issues from round 2 code review"
+  },
+  {
+    "url": "https://github.com/nexi-lab/nexus/pull/1574",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/nexi-lab/nexus",
+    "user": "windoliver",
+    "title": "feat(#1520): Extract Search Module into Search Brick with SearchProtocol"
+  },
+  {
+    "url": "https://github.com/zeroclaw-labs/zeroclaw/pull/157",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/zeroclaw-labs/zeroclaw",
+    "user": "theonlyhennygod",
+    "title": "fix(daemon): reset supervisor backoff after successful component run"
+  },
+  {
+    "url": "https://github.com/open-mercato/open-mercato/pull/566",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/open-mercato/open-mercato",
+    "user": "idziakjakub",
+    "title": "spec: add SPEC-026a Entity Translations Phase 2"
+  },
+  {
+    "url": "https://github.com/CyberStrikeus/CyberStrike/pull/3",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/CyberStrikeus/CyberStrike",
+    "user": "badchars",
+    "title": "docs: update contributor docs for security platform"
+  },
+  {
+    "url": "https://github.com/neovim/neovim/pull/38426",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/neovim/neovim",
+    "user": "zeertzjq",
+    "title": "vim-patch:9.2.0223: Option handling for key:value suboptions is limited"
+  },
+  {
+    "url": "https://github.com/garrytan/gstack/pull/346",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/garrytan/gstack",
+    "user": "garrytan",
+    "title": "fix: Codex compatibility — 1024-char cap, duplicate skills, repo-local installs, kiro support (v0.11.2.0)"
+  },
+  {
+    "url": "https://github.com/aaddrick/claude-desktop-debian/pull/336",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/aaddrick/claude-desktop-debian",
+    "user": "aaddrick",
+    "title": "fix: debounced jiggle for same-size tiling WM workspace switches"
+  },
+  {
+    "url": "https://github.com/OffchainLabs/nitro/pull/4540",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/OffchainLabs/nitro",
+    "user": "joshuacolvin0",
+    "title": "Fix nil batchFetcher dereference"
+  },
+  {
+    "url": "https://github.com/jarrodwatts/claude-hud/pull/289",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/jarrodwatts/claude-hud",
+    "user": "saronic-brandyn",
+    "title": "feat: performance, resilience, and Windows compatibility improvements"
+  },
+  {
+    "url": "https://github.com/RedPlanetHQ/core/pull/722",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/RedPlanetHQ/core",
+    "user": "AggManik",
+    "title": "feat: add asana integration scaffold"
+  },
+  {
+    "url": "https://github.com/keikoproj/active-monitor/pull/289",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/keikoproj/active-monitor",
+    "user": "tekenstam",
+    "title": "Add critical unit and envtest tests for store, metrics, and controller"
+  },
+  {
+    "url": "https://github.com/openwallet-foundation/multipaz/pull/1643",
+    "expected": "agent",
+    "agent": "OpenAI_Codex",
+    "repo": "https://api.github.com/repos/openwallet-foundation/multipaz",
+    "user": "dmascord",
+    "title": "mdoc: fix readerAuth CBOR encoding order in DeviceRequest"
+  },
+  {
+    "url": "https://github.com/openwallet-foundation/multipaz/pull/1644",
+    "expected": "agent",
+    "agent": "OpenAI_Codex",
+    "repo": "https://api.github.com/repos/openwallet-foundation/multipaz",
+    "user": "dmascord",
+    "title": "mdoc: add MdocCompatibilityDefaults and harden presentment fallbacks"
+  },
+  {
+    "url": "https://github.com/sail-sg/envpool/pull/328",
+    "expected": "agent",
+    "agent": "OpenAI_Codex",
+    "repo": "https://api.github.com/repos/sail-sg/envpool",
+    "user": "Trinkle23897",
+    "title": "Make tuple index constexpr-safe; fix Python Protocol import; tighten XLA typings"
+  },
+  {
+    "url": "https://github.com/bruin-data/bruin/pull/768",
+    "expected": "agent",
+    "agent": "OpenAI_Codex",
+    "repo": "https://api.github.com/repos/bruin-data/bruin",
+    "user": "sabrikaragonen",
+    "title": "Support inline Snowflake private key"
+  },
+  {
+    "url": "https://github.com/henrygd/beszel/pull/1812",
+    "expected": "agent",
+    "agent": "OpenAI_Codex",
+    "repo": "https://api.github.com/repos/henrygd/beszel",
+    "user": "VACInc",
+    "title": "Charts: add max period up to 1 year"
+  },
+  {
+    "url": "https://github.com/ChurchApps/FreeShow/pull/3018",
+    "expected": "agent",
+    "agent": "OpenAI_Codex",
+    "repo": "https://api.github.com/repos/ChurchApps/FreeShow",
+    "user": "dpshde",
+    "title": "Add Route Bible scripture actions"
+  },
+  {
+    "url": "https://github.com/wieslawsoltes/Dock/pull/503",
+    "expected": "agent",
+    "agent": "OpenAI_Codex",
+    "repo": "https://api.github.com/repos/wieslawsoltes/Dock",
+    "user": "wieslawsoltes",
+    "title": "Add document tab layout options"
+  },
+  {
+    "url": "https://github.com/bionic-gpt/bionic-gpt/pull/913",
+    "expected": "agent",
+    "agent": "OpenAI_Codex",
+    "repo": "https://api.github.com/repos/bionic-gpt/bionic-gpt",
+    "user": "tiswas247",
+    "title": "Add system info page"
+  },
+  {
+    "url": "https://github.com/wieslawsoltes/Dock/pull/504",
+    "expected": "agent",
+    "agent": "OpenAI_Codex",
+    "repo": "https://api.github.com/repos/wieslawsoltes/Dock",
+    "user": "wieslawsoltes",
+    "title": "Add Dock as Document context option"
+  },
+  {
+    "url": "https://github.com/nk-crew/lazy-blocks/pull/366",
+    "expected": "agent",
+    "agent": "OpenAI_Codex",
+    "repo": "https://api.github.com/repos/nk-crew/lazy-blocks",
+    "user": "Fellan-91",
+    "title": "Fix grouped InspectorControls when metaboxes are active"
+  },
+  {
+    "url": "https://github.com/vinhnx/VTCode/pull/226",
+    "expected": "agent",
+    "agent": "OpenAI_Codex",
+    "repo": "https://api.github.com/repos/vinhnx/VTCode",
+    "user": "vinhnx",
+    "title": "feat: add configurable dot manager constructors"
+  },
+  {
+    "url": "https://github.com/davidmerfield/blot/pull/940",
+    "expected": "agent",
+    "agent": "OpenAI_Codex",
+    "repo": "https://api.github.com/repos/davidmerfield/blot",
+    "user": "davidmerfield",
+    "title": "Handle 304 responses in transformer download helper"
+  },
+  {
+    "url": "https://github.com/ruvnet/ruflo/pull/547",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/ruvnet/ruflo",
+    "user": "ruvnet",
+    "title": "docs: Update Discord invite link to new URL"
+  },
+  {
+    "url": "https://github.com/tokuhirom/dcv/pull/15",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/tokuhirom/dcv",
+    "user": "tokuhirom",
+    "title": "Add docker compose restart and start commands"
+  },
+  {
+    "url": "https://github.com/SciML/OrdinaryDiffEq.jl/pull/2792",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/SciML/OrdinaryDiffEq.jl",
+    "user": "ChrisRackauckas",
+    "title": "Fix documentation warnings in OrdinaryDiffEqRosenbrock"
+  },
+  {
+    "url": "https://github.com/apache/superset/pull/34429",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/apache/superset",
+    "user": "kasiazjc",
+    "title": "chore: Add bottom border to top navigation menu"
+  },
+  {
+    "url": "https://github.com/tphakala/birdnet-go/pull/1059",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/tphakala/birdnet-go",
+    "user": "tphakala",
+    "title": "fix: resolve analytics charts disappearing when applying filters"
+  },
+  {
+    "url": "https://github.com/sbwml/luci-app-mosdns/pull/344",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/sbwml/luci-app-mosdns",
+    "user": "rz467fzs7d",
+    "title": "fix: skip dnsmasq reload when dnsmasq is not enabled"
+  },
+  {
+    "url": "https://github.com/eakmanrq/sqlframe/pull/602",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/eakmanrq/sqlframe",
+    "user": "eakmanrq",
+    "title": "fix: preserve NULL in array_append for PySpark compatibility"
+  },
+  {
+    "url": "https://github.com/xchainjs/xchainjs-lib/pull/1634",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/xchainjs/xchainjs-lib",
+    "user": "Thorian1te",
+    "title": "chore: remove outdated txJammer tool"
+  },
+  {
+    "url": "https://github.com/shaun0927/openchrome/pull/63",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/shaun0927/openchrome",
+    "user": "shaun0927",
+    "title": "fix: stop killing user's Chrome — use temp profile by default"
+  },
+  {
+    "url": "https://github.com/akaza-im/akaza/pull/513",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/akaza-im/akaza",
+    "user": "tokuhirom",
+    "title": "Sudachi 辞書からカタカナ普通名詞を取り込み"
+  },
+  {
+    "url": "https://github.com/junh0328/prepare_frontend_interview/pull/38",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/junh0328/prepare_frontend_interview",
+    "user": "junh0328",
+    "title": "[docs] 아키텍처 답변 전략 가이드 추가"
+  },
+  {
+    "url": "https://github.com/voidzero-dev/vite-plus/pull/628",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/voidzero-dev/vite-plus",
+    "user": "branchseer",
+    "title": "fix: prefix snapshot version SHA with `g` to avoid semver leading zero error"
+  },
+  {
+    "url": "https://github.com/mikro-orm/mikro-orm/pull/7096",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/mikro-orm/mikro-orm",
+    "user": "Copilot",
+    "title": "chore: remove unused imports from decorators/utils.ts"
+  },
+  {
+    "url": "https://github.com/tenstorrent/tt-metal/pull/36186",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/tenstorrent/tt-metal",
+    "user": "Copilot",
+    "title": "Address review feedback for tilize/untilize work split"
+  },
+  {
+    "url": "https://github.com/devantler-tech/ksail/pull/1860",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/devantler-tech/ksail",
+    "user": "Copilot",
+    "title": "feat: Enhance CSI flag with Default/Enabled/Disabled options"
+  },
+  {
+    "url": "https://github.com/codemonkey85/PKMDS-Blazor/pull/250",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/codemonkey85/PKMDS-Blazor",
+    "user": "Copilot",
+    "title": "Migrate Router to NotFoundPage property"
+  },
+  {
+    "url": "https://github.com/RailtownAI/railtracks/pull/915",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/RailtownAI/railtracks",
+    "user": "Copilot",
+    "title": "Fix function_node to support instance and class methods"
+  },
+  {
+    "url": "https://github.com/royalicing/Orb/pull/54",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/royalicing/Orb",
+    "user": "Copilot",
+    "title": "Update Elixir to 1.19.3 and Erlang/OTP to 28.2"
+  },
+  {
+    "url": "https://github.com/FUjr/QModem/pull/142",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/FUjr/QModem",
+    "user": "Copilot",
+    "title": "Fix gcc 14.3+ compilation errors in vendor code"
+  },
+  {
+    "url": "https://github.com/camunda/camunda/pull/41351",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/camunda/camunda",
+    "user": "Copilot",
+    "title": "Add memory-based flush limit to RDBMS execution queue to prevent OOM"
+  },
+  {
+    "url": "https://github.com/docker/model-runner/pull/433",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/docker/model-runner",
+    "user": "Copilot",
+    "title": "Fix go-containerregistry module path mismatch causing import failures"
+  },
+  {
+    "url": "https://github.com/skeletonlabs/skeleton/pull/4136",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/skeletonlabs/skeleton",
+    "user": "Copilot",
+    "title": "Remove @/ path aliases from packages/*"
+  },
+  {
+    "url": "https://github.com/markmead/alpinejs-component/pull/37",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/markmead/alpinejs-component",
+    "user": "Copilot",
+    "title": "Add x-component directive support alongside HTML element"
+  },
+  {
+    "url": "https://github.com/github/gh-aw/pull/4469",
+    "expected": "agent",
+    "agent": "Copilot",
+    "repo": "https://api.github.com/repos/github/gh-aw",
+    "user": "Copilot",
+    "title": "Update github.com/Masterminds/semver/v3 from v3.3.0 to v3.4.0"
+  },
+  {
+    "url": "https://github.com/onetimesecret/onetimesecret/pull/1955",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/onetimesecret/onetimesecret",
+    "user": "delano",
+    "title": "i18n: Translation quality review and test suite improvements"
+  },
+  {
+    "url": "https://github.com/mengxi-ream/read-frog/pull/712",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/mengxi-ream/read-frog",
+    "user": "mengxi-ream",
+    "title": "build: add local development configuration support"
+  },
+  {
+    "url": "https://github.com/ding113/claude-code-hub/pull/137",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/ding113/claude-code-hub",
+    "user": "sususu98",
+    "title": "fix(proxy): 修复流式请求错误处理时的 orphan records 问题 && merge dev branch"
+  },
+  {
+    "url": "https://github.com/coollabsio/coolify/pull/7247",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/coollabsio/coolify",
+    "user": "andrasbacsai",
+    "title": "feat(proxy): enhance Traefik version notifications"
+  },
+  {
+    "url": "https://github.com/metabase/metabase/pull/65898",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/metabase/metabase",
+    "user": "github-actions[bot]",
+    "title": "Fix: BigQuery - Custom Expressions with space break when sorted"
+  },
+  {
+    "url": "https://github.com/online-go/online-go.com/pull/3322",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/online-go/online-go.com",
+    "user": "GreenAsJade",
+    "title": "Add Recently Blocked moderator page to UI"
+  },
+  {
+    "url": "https://github.com/vm0-ai/vm0/pull/44",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/vm0-ai/vm0",
+    "user": "lancy",
+    "title": "feat: implement phase 1 database schema and api framework with integration tests"
+  },
+  {
+    "url": "https://github.com/tuist/magnolia/pull/2",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/tuist/magnolia",
+    "user": "pepicrft",
+    "title": "feat: Add GitHub Actions marketplace support"
+  },
+  {
+    "url": "https://github.com/Dicklesworthstone/mcp_agent_mail/pull/27",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/Dicklesworthstone/mcp_agent_mail",
+    "user": "joyshmitz",
+    "title": "fix(integration): update Claude Code integration for 2025 MCP config standards"
+  },
+  {
+    "url": "https://github.com/raxe-ai/raxe-ce/pull/11",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/raxe-ai/raxe-ce",
+    "user": "CyberAmyntas",
+    "title": "Conduct comprehensive repository review"
+  },
+  {
+    "url": "https://github.com/tektoncd/pipelines-as-code/pull/2326",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/tektoncd/pipelines-as-code",
+    "user": "chmouel",
+    "title": "fix: crash on gitlab when token is invalid"
+  },
+  {
+    "url": "https://github.com/dyoshikawa/rulesync/pull/550",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/dyoshikawa/rulesync",
+    "user": "dyoshikawa",
+    "title": "chore: release v3.23.2"
+  },
+  {
+    "url": "https://github.com/Wei-Shaw/sub2api/pull/1193",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/Wei-Shaw/sub2api",
+    "user": "xilu0",
+    "title": "fix: correct log levels for thinking block signature retry flow"
+  },
+  {
+    "url": "https://github.com/Pluviobyte/Claude-Codex/pull/2",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/Pluviobyte/Claude-Codex",
+    "user": "tiagoalucard",
+    "title": "Tradução completa do projeto para português brasileiro (pt-BR)"
+  },
+  {
+    "url": "https://github.com/jazzband/Watson/pull/513",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/jazzband/Watson",
+    "user": "alsmola",
+    "title": "Fixes for Python 3.14"
+  },
+  {
+    "url": "https://github.com/cockroachdb/cockroach/pull/157767",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/cockroachdb/cockroach",
+    "user": "celiala",
+    "title": "clusterversion, *: bump MinSupported from v25.2 to v25.3"
+  },
+  {
+    "url": "https://github.com/jdx/mise/pull/6966",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/jdx/mise",
+    "user": "jdx",
+    "title": "fix(cli): handle `mise help` without requiring tasks"
+  },
+  {
+    "url": "https://github.com/jdx/hk/pull/416",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/jdx/hk",
+    "user": "jdx",
+    "title": "feat: add content-based file type matching"
+  },
+  {
+    "url": "https://github.com/cachix/devenv/pull/2285",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/cachix/devenv",
+    "user": "domenkozar",
+    "title": "feat: add profile field to devenv.yaml for setting default profiles"
+  },
+  {
+    "url": "https://github.com/stacklok/toolhive/pull/2572",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/stacklok/toolhive",
+    "user": "JAORMX",
+    "title": "Integrate composite tool workflows with vMCP request pipeline"
+  },
+  {
+    "url": "https://github.com/lobehub/lobehub/pull/10203",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/lobehub/lobehub",
+    "user": "arvinxx",
+    "title": "🐛 fix: filter out reasoning fields from messages in ChatCompletion API"
+  },
+  {
+    "url": "https://github.com/michaelmagan/cheatsheet/pull/6",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/michaelmagan/cheatsheet",
+    "user": "michaelmagan",
+    "title": "Add cell style updates and updateStyles tool"
+  },
+  {
+    "url": "https://github.com/modu-ai/moai-adk/pull/216",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/modu-ai/moai-adk",
+    "user": "GoosLab",
+    "title": "🔖 v0.25.1: Critical Bug Fixes Release"
+  },
+  {
+    "url": "https://github.com/Yeraze/meshmonitor/pull/592",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/Yeraze/meshmonitor",
+    "user": "Yeraze",
+    "title": "Fix connection indicator three-state status (#587)"
+  },
+  {
+    "url": "https://github.com/TanStack/db/pull/434",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/TanStack/db",
+    "user": "KyleAMathews",
+    "title": "fix: handle Temporal objects correctly in proxy deepClone and deepEqual"
+  },
+  {
+    "url": "https://github.com/Provenance-Emu/Provenance/pull/2995",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/Provenance-Emu/Provenance",
+    "user": "github-actions[bot]",
+    "title": "[Agent] fix(boot): prevent hang + show real progress on boot screen"
+  },
+  {
+    "url": "https://github.com/Provenance-Emu/Provenance/pull/2996",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/Provenance-Emu/Provenance",
+    "user": "github-actions[bot]",
+    "title": "[Agent] fix(stability): resolve lock-safety regressions causing UI/gameplay hangs"
+  },
+  {
+    "url": "https://github.com/Provenance-Emu/Provenance/pull/2997",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/Provenance-Emu/Provenance",
+    "user": "github-actions[bot]",
+    "title": "[Agent] fix(hud): fix touch blocking, JIT indicator gating, toggle button placement"
+  },
+  {
+    "url": "https://github.com/jetkvm/kvm/pull/1271",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/jetkvm/kvm",
+    "user": "flightlesstux",
+    "title": "fix(security): rate limit /device/setup endpoint"
+  },
+  {
+    "url": "https://github.com/ProjectOpenSea/opensea-js/pull/1935",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/ProjectOpenSea/opensea-js",
+    "user": "ryanio",
+    "title": "chore: bump version to 8.0.19"
+  },
+  {
+    "url": "https://github.com/videojs/v10/pull/895",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/videojs/v10",
+    "user": "sampotts",
+    "title": "fix(skin): standardize backdrop-filter and fix minimal root sizing"
+  },
+  {
+    "url": "https://github.com/ethereum-optimism/optimism/pull/19629",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/ethereum-optimism/optimism",
+    "user": "ajsutton",
+    "title": "feat(op-acceptance): add after-chain-head transition tests"
+  },
+  {
+    "url": "https://github.com/ClickHouse/agent-skills/pull/8",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/ClickHouse/agent-skills",
+    "user": "oatsandsugar",
+    "title": "feat: Add MooseStack TypeScript/Python examples to all ClickHouse best practices"
+  },
+  {
+    "url": "https://github.com/concord-consortium/codap/pull/2343",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/concord-consortium/codap",
+    "user": "bfinzer",
+    "title": "CODAP-212: fix boxplot hover tips being clipped in split graphs"
+  },
+  {
+    "url": "https://github.com/mujocolab/mjlab/pull/581",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/mujocolab/mjlab",
+    "user": "kevinzakka",
+    "title": "Fix flat patch fallback for sub-terrains without sampling and improve terrain docs"
+  },
+  {
+    "url": "https://github.com/openclaw/openclaw/pull/9144",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/openclaw/openclaw",
+    "user": "vishaltandale00",
+    "title": "Fix: Resolve symlinks in doctor state directory check to prevent false positives"
+  },
+  {
+    "url": "https://github.com/openclaw/openclaw/pull/9146",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/openclaw/openclaw",
+    "user": "vishaltandale00",
+    "title": "Fix: Allow null-origin WebSocket connections from loopback"
+  },
+  {
+    "url": "https://github.com/Red-Hat-AI-Innovation-Team/sdg_hub/pull/555",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/Red-Hat-AI-Innovation-Team/sdg_hub",
+    "user": "shivchander",
+    "title": "feat: Add SamplerBlock for random sampling from list columns"
+  },
+  {
+    "url": "https://github.com/oven-sh/bun/pull/26741",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/oven-sh/bun",
+    "user": "robobun",
+    "title": "fix(http): preserve binary data with null bytes in FormData multipart parsing"
+  },
+  {
+    "url": "https://github.com/suzuki-shunsuke/tfaction/pull/3560",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/suzuki-shunsuke/tfaction",
+    "user": "suzuki-shunsuke",
+    "title": "refactor: add tests for get-or-create-drift-issue"
+  },
+  {
+    "url": "https://github.com/suzuki-shunsuke/tfaction/pull/3561",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/suzuki-shunsuke/tfaction",
+    "user": "suzuki-shunsuke",
+    "title": "refactor: add tests for release-module"
+  },
+  {
+    "url": "https://github.com/23blocks-OS/ai-maestro/pull/150",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/23blocks-OS/ai-maestro",
+    "user": "jpelaez-23blocks",
+    "title": "chore: bump version to 0.20.5"
+  },
+  {
+    "url": "https://github.com/openclaw/openclaw/pull/9149",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/openclaw/openclaw",
+    "user": "vishaltandale00",
+    "title": "Fix: Allow QMD backend to work without OpenAI auth"
+  },
+  {
+    "url": "https://github.com/openshift/console/pull/15496",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/openshift/console",
+    "user": "TheRealJon",
+    "title": "OCPBUGS-42995: improve usage metrics roles"
+  },
+  {
+    "url": "https://github.com/slopus/happy-cli/pull/26",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/slopus/happy-cli",
+    "user": "Camaraterie",
+    "title": "Codex session fixes: persistence, metadata.flavor, and comprehensive testing - more incoming"
+  },
+  {
+    "url": "https://github.com/curl/curl/pull/23631",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/curl/curl",
+    "user": "cmeister2",
+    "title": "ci: fix circleci apt-get hanging"
+  },
+  {
+    "url": "https://github.com/curl/curl/pull/23604",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/curl/curl",
+    "user": "cmeister2",
+    "title": "smtp: avoid signed overflow in dot-stuffing"
+  },
+  {
+    "url": "https://github.com/nodejs/node/pull/67063",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/nodejs/node",
+    "user": "RafaelGSS",
+    "title": "deps: patch npm engines to accept alpha versions"
+  },
+  {
+    "url": "https://github.com/nodejs/node/pull/66962",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/nodejs/node",
+    "user": "panva",
+    "title": "test: fix TLS coalescing test for OpenSSL 4.1"
+  },
+  {
+    "url": "https://github.com/nodejs/node/pull/66900",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/nodejs/node",
+    "user": "panva",
+    "title": "crypto: fix BoringSSL RSA-PSS macro redefinitions"
+  },
+  {
+    "url": "https://github.com/nodejs/node/pull/66876",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/nodejs/node",
+    "user": "aduh95",
+    "title": "build,win: fix Perfetto"
+  },
+  {
+    "url": "https://github.com/nodejs/node/pull/66835",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/nodejs/node",
+    "user": "tamird",
+    "title": "test: send SNI in CA certificate test"
+  },
+  {
+    "url": "https://github.com/python/cpython/pull/160830",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/python/cpython",
+    "user": "orsenthil",
+    "title": "gh-57945: Document exceptions not wrapped by urlopen()"
+  },
+  {
+    "url": "https://github.com/python/cpython/pull/160785",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/python/cpython",
+    "user": "miss-islington",
+    "title": "[3.15] gh-160561: Close the duplicated descriptor when socket.fromfd() fails (GH-160579)"
+  },
+  {
+    "url": "https://github.com/python/cpython/pull/160730",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/python/cpython",
+    "user": "StanFromIreland",
+    "title": "[3.14] gh-130662: Remove unnecessary plus sign from a news entry (#160723)"
+  },
+  {
+    "url": "https://github.com/python/cpython/pull/160686",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/python/cpython",
+    "user": "miss-islington",
+    "title": "[3.15] gh-160513: Call connection_lost() when start_tls() handshake is lost (GH-160514)"
+  },
+  {
+    "url": "https://github.com/python/cpython/pull/160646",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/python/cpython",
+    "user": "miss-islington",
+    "title": "[3.14] gh-160300: Reject cookies with a negative version in http.cookiejar (GH-160301)"
+  },
+  {
+    "url": "https://github.com/rust-lang/rust/pull/165023",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/rust-lang/rust",
+    "user": "tgross35",
+    "title": "Rollup of 9 pull requests"
+  },
+  {
+    "url": "https://github.com/rust-lang/rust/pull/164958",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/rust-lang/rust",
+    "user": "Web4everyone32",
+    "title": "uefi: roll back env changes when `start_image` fails"
+  },
+  {
+    "url": "https://github.com/rust-lang/rust/pull/164903",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/rust-lang/rust",
+    "user": "tshepang",
+    "title": "rustc-dev-guide subtree update"
+  },
+  {
+    "url": "https://github.com/rust-lang/rust/pull/164880",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/rust-lang/rust",
+    "user": "estebank",
+    "title": "Add context span showing item that can't be annotated"
+  },
+  {
+    "url": "https://github.com/rust-lang/rust/pull/164846",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/rust-lang/rust",
+    "user": "hsanzg",
+    "title": "Remove contradictory inequalities from overflow safety docs"
+  },
+  {
+    "url": "https://github.com/microsoft/vscode/pull/344790",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/microsoft/vscode",
+    "user": "Yoyokrazy",
+    "title": "ci: run Linux PR checks on vscode-large-runners-ubuntu-8-core"
+  },
+  {
+    "url": "https://github.com/microsoft/vscode/pull/344733",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/microsoft/vscode",
+    "user": "benibenj",
+    "title": "agentHost: read fetch remotes of partial clones"
+  },
+  {
+    "url": "https://github.com/microsoft/vscode/pull/344670",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/microsoft/vscode",
+    "user": "rwoll",
+    "title": "chat: Attribute admin-enforced restrictions to \"your organization\""
+  },
+  {
+    "url": "https://github.com/microsoft/vscode/pull/344623",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/microsoft/vscode",
+    "user": "osortega",
+    "title": "Fix policy continuation presenter registration in web Sessions"
+  },
+  {
+    "url": "https://github.com/microsoft/vscode/pull/344582",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/microsoft/vscode",
+    "user": "meganrogge",
+    "title": "sessions: enable the new session composer layout on Stable"
+  },
+  {
+    "url": "https://github.com/react/react/pull/38007",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/react/react",
+    "user": "lazerg",
+    "title": "[RN] Call dispatchNativeEvent when the event target is null"
+  },
+  {
+    "url": "https://github.com/react/react/pull/37856",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/react/react",
+    "user": "zhoubiao188",
+    "title": "[Flight] Strip the full `<anonymous>.` type name prefix from I/O names"
+  },
+  {
+    "url": "https://github.com/react/react/pull/37796",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/react/react",
+    "user": "zhoubiao188",
+    "title": "[Fiber] Fix DEV crash when use() is passed a non-extensible thenable"
+  },
+  {
+    "url": "https://github.com/react/react/pull/37740",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/react/react",
+    "user": "acdlite",
+    "title": "Type host config capability flags as boolean"
+  },
+  {
+    "url": "https://github.com/react/react/pull/37622",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/react/react",
+    "user": "scttcper",
+    "title": "perf(compiler): Check component params before scanning bodies"
+  },
+  {
+    "url": "https://github.com/django/django/pull/22206",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/django/django",
+    "user": "nessita",
+    "title": "Fixed #37456 -- Converted contribution process diagram to plain SVG."
+  },
+  {
+    "url": "https://github.com/django/django/pull/22179",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/django/django",
+    "user": "MaybeSomeone-arc18",
+    "title": "Fixed #37395 -- Emitted 'none' for CSP directives left empty by an unused nonce."
+  },
+  {
+    "url": "https://github.com/django/django/pull/22141",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/django/django",
+    "user": "kedmenec",
+    "title": "Fixed #32980 -- Reduced cost of building M2M related managers."
+  },
+  {
+    "url": "https://github.com/django/django/pull/22112",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/django/django",
+    "user": "jacobtylerwalls",
+    "title": "Fixed #37411 -- Added compatibility for oracledb 26.0.0+."
+  },
+  {
+    "url": "https://github.com/django/django/pull/22093",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/django/django",
+    "user": "ryanakml",
+    "title": "Fixed #37397 -- Clarified DATA_UPLOAD_MAX_MEMORY_SIZE behavior on request.body vs request.POST."
+  },
+  {
+    "url": "https://github.com/rails/rails/pull/59403",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/rails/rails",
+    "user": "byroot",
+    "title": "Optimistically call `render_in` with `locals:`"
+  },
+  {
+    "url": "https://github.com/rails/rails/pull/59358",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/rails/rails",
+    "user": "amatsuda",
+    "title": "Use Symbol#name in Mime::Type.lookup_by_extension"
+  },
+  {
+    "url": "https://github.com/rails/rails/pull/59337",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/rails/rails",
+    "user": "dai199",
+    "title": "Name the Arel union and with node classes explicitly"
+  },
+  {
+    "url": "https://github.com/rails/rails/pull/59311",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/rails/rails",
+    "user": "kehra",
+    "title": "Fix find with select for composite primary key models"
+  },
+  {
+    "url": "https://github.com/rails/rails/pull/59278",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/rails/rails",
+    "user": "thomasklemm",
+    "title": "Reuse PostgreSQL result fields when casting"
+  },
+  {
+    "url": "https://github.com/kubernetes/kubernetes/pull/143505",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/kubernetes/kubernetes",
+    "user": "tosi3k",
+    "title": "Clean up residual v1alpha3 references in the scheduler tests"
+  },
+  {
+    "url": "https://github.com/kubernetes/kubernetes/pull/143436",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/kubernetes/kubernetes",
+    "user": "seans3",
+    "title": "e2e: check the container log in the WebSocket attach test"
+  },
+  {
+    "url": "https://github.com/kubernetes/kubernetes/pull/143356",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/kubernetes/kubernetes",
+    "user": "SEPURI-SAI-KRISHNA",
+    "title": "kubeadm: retry etcd member listing on transient errors"
+  },
+  {
+    "url": "https://github.com/kubernetes/kubernetes/pull/143328",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/kubernetes/kubernetes",
+    "user": "seans3",
+    "title": "kubectl: remove client-side OpenAPI v2 schema validation"
+  },
+  {
+    "url": "https://github.com/kubernetes/kubernetes/pull/143285",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/kubernetes/kubernetes",
+    "user": "liggitt",
+    "title": "Validate labels and annotations in pods/binding"
+  },
+  {
+    "url": "https://github.com/hashicorp/terraform/pull/39467",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/hashicorp/terraform",
+    "user": "hc-github-team-tf-core",
+    "title": "Prepare for 1.17.1 release"
+  },
+  {
+    "url": "https://github.com/hashicorp/terraform/pull/39430",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/hashicorp/terraform",
+    "user": "hc-github-team-tf-core",
+    "title": "Cleanup after 1.16.7 release"
+  },
+  {
+    "url": "https://github.com/hashicorp/terraform/pull/39404",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/hashicorp/terraform",
+    "user": "SarahFrench",
+    "title": "test: Fix flakey test `TestTest_DoubleInterrupt`"
+  },
+  {
+    "url": "https://github.com/hashicorp/terraform/pull/39383",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/hashicorp/terraform",
+    "user": "austinvalle",
+    "title": "Manual backport of Update `terraform test` command to work when testing modules that have deprecated outputs into v1.17"
+  },
+  {
+    "url": "https://github.com/hashicorp/terraform/pull/39351",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/hashicorp/terraform",
+    "user": "jbardin",
+    "title": "use target patterns in state commands (4/8)"
+  },
+  {
+    "url": "https://github.com/ansible/ansible/pull/87816",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/ansible/ansible",
+    "user": "bcoca",
+    "title": "strftime filter - fix example typo"
+  },
+  {
+    "url": "https://github.com/ansible/ansible/pull/87758",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/ansible/ansible",
+    "user": "bcoca",
+    "title": "[backport stable-2.20] ansible-galaxy - Validate the role name  (#87749)"
+  },
+  {
+    "url": "https://github.com/ansible/ansible/pull/87732",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/ansible/ansible",
+    "user": "mattclay",
+    "title": "ansible-test - Fix validate-modules base commit check"
+  },
+  {
+    "url": "https://github.com/ansible/ansible/pull/87703",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/ansible/ansible",
+    "user": "mattclay",
+    "title": "[stable-2.20] ansible-test - Remove unsupported FreeBSD 13.5 remote"
+  },
+  {
+    "url": "https://github.com/ansible/ansible/pull/87662",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/ansible/ansible",
+    "user": "mkrizek",
+    "title": "Ensure ansible-test-units-forked works without -v"
+  },
+  {
+    "url": "https://github.com/elastic/elasticsearch/pull/163802",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/elastic/elasticsearch",
+    "user": "richard-dennehy",
+    "title": "[9.6] apply field visibility to source_geometry (#162876)"
+  },
+  {
+    "url": "https://github.com/elastic/elasticsearch/pull/163776",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/elastic/elasticsearch",
+    "user": "amirpouya",
+    "title": "[9.5] test: Use near-duplicate vector in MMR kNN test (#163395)"
+  },
+  {
+    "url": "https://github.com/elastic/elasticsearch/pull/163748",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/elastic/elasticsearch",
+    "user": "chrisparrinello",
+    "title": "[9.5] Release scroll contexts when index removed  (#161556)"
+  },
+  {
+    "url": "https://github.com/elastic/elasticsearch/pull/163708",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/elastic/elasticsearch",
+    "user": "reugn",
+    "title": "[8.19] Reject non-positive size in composite aggregation (#163307)"
+  },
+  {
+    "url": "https://github.com/elastic/elasticsearch/pull/163677",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/elastic/elasticsearch",
+    "user": "dnhatn",
+    "title": "[9.6] Emit partial non-rate time-series aggs periodically (#163643)"
+  },
+  {
+    "url": "https://github.com/neovim/neovim/pull/42581",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/neovim/neovim",
+    "user": "justinmk",
+    "title": "test: runner loads Lua modules from system install"
+  },
+  {
+    "url": "https://github.com/neovim/neovim/pull/42512",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/neovim/neovim",
+    "user": "douglascamata",
+    "title": "fix(treesitter): injection clipped to an empty region parses whole buffer"
+  },
+  {
+    "url": "https://github.com/neovim/neovim/pull/42469",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/neovim/neovim",
+    "user": "lewis6991",
+    "title": "fix(lua): convert vim.opt values without write validation"
+  },
+  {
+    "url": "https://github.com/neovim/neovim/pull/42435",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/neovim/neovim",
+    "user": "listout",
+    "title": "fix(coverity/13755): fix NULL pointer dereference"
+  },
+  {
+    "url": "https://github.com/neovim/neovim/pull/42408",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/neovim/neovim",
+    "user": "chernetskyi",
+    "title": "fix(snippet): preserve the full TM_DIRECTORY path"
+  },
+  {
+    "url": "https://github.com/pytest-dev/pytest/pull/15246",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/pytest-dev/pytest",
+    "user": "simukappu",
+    "title": "Add `agentverify` to the plugin list"
+  },
+  {
+    "url": "https://github.com/pytest-dev/pytest/pull/15193",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/pytest-dev/pytest",
+    "user": "paneendrakumar0",
+    "title": "feat(mark): expose `pytest.ParameterSet` in public API (#13431)"
+  },
+  {
+    "url": "https://github.com/pytest-dev/pytest/pull/15179",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/pytest-dev/pytest",
+    "user": "scott-huberty",
+    "title": "DOC: crossref"
+  },
+  {
+    "url": "https://github.com/pytest-dev/pytest/pull/15127",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/pytest-dev/pytest",
+    "user": "phalberg",
+    "title": "docs: clarify typing for yield fixtures"
+  },
+  {
+    "url": "https://github.com/pytest-dev/pytest/pull/15058",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/pytest-dev/pytest",
+    "user": "mtcd001-tech",
+    "title": "Fix fixture discovery for bound methods in custom collectors"
+  },
+  {
+    "url": "https://github.com/psf/requests/pull/7609",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/psf/requests",
+    "user": "nateprewitt",
+    "title": "Update lock-issues.yml to latest dependencies"
+  },
+  {
+    "url": "https://github.com/psf/requests/pull/7576",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/psf/requests",
+    "user": "yamac-kurtulus",
+    "title": "Fix link to AI Policy in CONTRIBUTING.md"
+  },
+  {
+    "url": "https://github.com/psf/requests/pull/7539",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/psf/requests",
+    "user": "nateprewitt",
+    "title": "Inline pre-commit linting"
+  },
+  {
+    "url": "https://github.com/psf/requests/pull/7505",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/psf/requests",
+    "user": "nateprewitt",
+    "title": "Add hasattr checks for remaining protocol isinstance checks"
+  },
+  {
+    "url": "https://github.com/psf/requests/pull/7502",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/psf/requests",
+    "user": "LoicPernod",
+    "title": "Fix `_encode_files` detection for `__getattr__`-based file wrappers"
+  },
+  {
+    "url": "https://github.com/pallets/flask/pull/6168",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/pallets/flask",
+    "user": "davidism",
+    "title": "drop support for Python 3.10"
+  },
+  {
+    "url": "https://github.com/pallets/flask/pull/6133",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/pallets/flask",
+    "user": "davidism",
+    "title": "add `app.query` route decorator"
+  },
+  {
+    "url": "https://github.com/pallets/flask/pull/6096",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/pallets/flask",
+    "user": "lkk7",
+    "title": "Fix `.partition(\":\")` usage on potential IPv6 addresses"
+  },
+  {
+    "url": "https://github.com/pallets/flask/pull/6095",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/pallets/flask",
+    "user": "mgorny",
+    "title": "Replace the use of private `monkeypatch` fixture API"
+  },
+  {
+    "url": "https://github.com/pallets/flask/pull/6013",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/pallets/flask",
+    "user": "davidism",
+    "title": "autoescape selection uses case-insensitive comparison"
+  },
+  {
+    "url": "https://github.com/expressjs/express/pull/7565",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/expressjs/express",
+    "user": "skitscha",
+    "title": "deps: body-parser@~1.20.9"
+  },
+  {
+    "url": "https://github.com/expressjs/express/pull/7512",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/expressjs/express",
+    "user": "fmtappendf",
+    "title": "docs: fix typos and a stale API reference in lib comments"
+  },
+  {
+    "url": "https://github.com/expressjs/express/pull/7483",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/expressjs/express",
+    "user": "haimingZZ",
+    "title": "docs: add missing apostrophe in \"can\\u0027t\" (lib + example)"
+  },
+  {
+    "url": "https://github.com/expressjs/express/pull/7468",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/expressjs/express",
+    "user": "UlisesGascon",
+    "title": "Release: 5.3.0"
+  },
+  {
+    "url": "https://github.com/expressjs/express/pull/7464",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/expressjs/express",
+    "user": "UlisesGascon",
+    "title": "ci: add npm staged publication with dist-tag support"
+  },
+  {
+    "url": "https://github.com/webpack/webpack/pull/22983",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/webpack/webpack",
+    "user": "alexander-akait",
+    "title": "docs: surface a swallowed error before reproducing a failure"
+  },
+  {
+    "url": "https://github.com/webpack/webpack/pull/22949",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/webpack/webpack",
+    "user": "alexander-akait",
+    "title": "perf(javascript): one side-effects helper and more compression in the one-pass minifier"
+  },
+  {
+    "url": "https://github.com/webpack/webpack/pull/22927",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/webpack/webpack",
+    "user": "aryanraj45",
+    "title": "feat(minify): fold a pure call's value past another pure call"
+  },
+  {
+    "url": "https://github.com/webpack/webpack/pull/22906",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/webpack/webpack",
+    "user": "alexander-akait",
+    "title": "feat(css): let a visitor replace or remove the node it visits"
+  },
+  {
+    "url": "https://github.com/webpack/webpack/pull/22882",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/webpack/webpack",
+    "user": "alexander-akait",
+    "title": "feat(javascript): print a JavaScript source with SourceProcessor"
+  },
+  {
+    "url": "https://github.com/babel/babel/pull/18437",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/babel/babel",
+    "user": "saiyam-jain-dev",
+    "title": "fix(generator): preserve type modifier in TSImportEqualsDeclaration"
+  },
+  {
+    "url": "https://github.com/babel/babel/pull/18407",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/babel/babel",
+    "user": "JLHwung",
+    "title": "fix(parser): record start location in `startNodeAt`"
+  },
+  {
+    "url": "https://github.com/babel/babel/pull/18367",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/babel/babel",
+    "user": "JLHwung",
+    "title": "chore: update node flags"
+  },
+  {
+    "url": "https://github.com/babel/babel/pull/18324",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/babel/babel",
+    "user": "JLHwung",
+    "title": "fix: invalid `minified: true` output for new expression"
+  },
+  {
+    "url": "https://github.com/babel/babel/pull/18295",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/babel/babel",
+    "user": "JLHwung",
+    "title": "Bump regexpu-core to 6.5.3"
+  },
+  {
+    "url": "https://github.com/eslint/eslint/pull/21442",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/eslint/eslint",
+    "user": "xbinaryx",
+    "title": "fix: `no-invalid-this` crash on `accessor` fields without initializer"
+  },
+  {
+    "url": "https://github.com/eslint/eslint/pull/21400",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/eslint/eslint",
+    "user": "xbinaryx",
+    "title": "feat: fix property descriptor handling in `func-name-matching`"
+  },
+  {
+    "url": "https://github.com/eslint/eslint/pull/21364",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/eslint/eslint",
+    "user": "Cherry",
+    "title": "perf: cache normalized config globals per languageOptions"
+  },
+  {
+    "url": "https://github.com/eslint/eslint/pull/21335",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/eslint/eslint",
+    "user": "xbinaryx",
+    "title": "fix: support `TSFunctionType` in `getFunctionHeadLoc`"
+  },
+  {
+    "url": "https://github.com/eslint/eslint/pull/21311",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/eslint/eslint",
+    "user": "xbinaryx",
+    "title": "fix: ignore `__proto__` properties in `prefer-object-spread`"
+  },
+  {
+    "url": "https://github.com/prettier/prettier/pull/20391",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/prettier/prettier",
+    "user": "fisker",
+    "title": "Reduce size of postcss plugin"
+  },
+  {
+    "url": "https://github.com/prettier/prettier/pull/20347",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/prettier/prettier",
+    "user": "fisker",
+    "title": "Drop support for legacy flow enum body"
+  },
+  {
+    "url": "https://github.com/prettier/prettier/pull/20326",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/prettier/prettier",
+    "user": "fisker",
+    "title": "Improve comment attach in \"block-like\" node"
+  },
+  {
+    "url": "https://github.com/prettier/prettier/pull/20309",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/prettier/prettier",
+    "user": "sansynx",
+    "title": "Fix range formatting of TypeScript type parameters"
+  },
+  {
+    "url": "https://github.com/prettier/prettier/pull/20279",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/prettier/prettier",
+    "user": "0xvikram",
+    "title": "Keep Less indirect property lookups on variables tight"
+  },
+  {
+    "url": "https://github.com/vercel/next.js/pull/100847",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/vercel/next.js",
+    "user": "bgw",
+    "title": "Turbopack: Move reference to bincode's virtue dependency into a vercel-labs owned fork repository"
+  },
+  {
+    "url": "https://github.com/vercel/next.js/pull/100788",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/vercel/next.js",
+    "user": "sokra",
+    "title": "[CI] fix incorrect VERCEL_TEST_PROJECT in non-cache-components deploy…"
+  },
+  {
+    "url": "https://github.com/vercel/next.js/pull/100724",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/vercel/next.js",
+    "user": "sokra",
+    "title": "turbo-bitset: remove FixedBitSet and RoaringBitmap comparisons"
+  },
+  {
+    "url": "https://github.com/vercel/next.js/pull/100641",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/vercel/next.js",
+    "user": "sokra",
+    "title": "Fix `pnpm new-test` unit type generating no test file"
+  },
+  {
+    "url": "https://github.com/vercel/next.js/pull/100595",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/vercel/next.js",
+    "user": "mischnic",
+    "title": "ci: Only run upload-adapter-test-results on release"
+  },
+  {
+    "url": "https://github.com/sveltejs/svelte/pull/19110",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/sveltejs/svelte",
+    "user": "Rich-Harris",
+    "title": "chore: DRY out update_derived callsites"
+  },
+  {
+    "url": "https://github.com/sveltejs/svelte/pull/19014",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/sveltejs/svelte",
+    "user": "Rich-Harris",
+    "title": "chore: more passing async tests"
+  },
+  {
+    "url": "https://github.com/sveltejs/svelte/pull/18981",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/sveltejs/svelte",
+    "user": "Rich-Harris",
+    "title": "test: add async tests that already pass on main, unskip async-overlap-multiple-2"
+  },
+  {
+    "url": "https://github.com/sveltejs/svelte/pull/18879",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/sveltejs/svelte",
+    "user": "dummdidumm",
+    "title": "fix: read batch-local array on each-block commit"
+  },
+  {
+    "url": "https://github.com/sveltejs/svelte/pull/18839",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/sveltejs/svelte",
+    "user": "Rich-Harris",
+    "title": "fix: remove incorrect special handling of :export pseudo-selectors"
+  },
+  {
+    "url": "https://github.com/vuejs/core/pull/16046",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/vuejs/core",
+    "user": "danielroe",
+    "title": "fix(compiler-vapor): skip inline asset resolve for removed components"
+  },
+  {
+    "url": "https://github.com/vuejs/core/pull/16020",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/vuejs/core",
+    "user": "edison1105",
+    "title": "perf(compiler-vapor): resolve object v-bind props once per directive"
+  },
+  {
+    "url": "https://github.com/vuejs/core/pull/15971",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/vuejs/core",
+    "user": "edison1105",
+    "title": "fix(compiler-vapor): give a template of its own to a descendant the parser would close an ancestor at"
+  },
+  {
+    "url": "https://github.com/vuejs/core/pull/15945",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/vuejs/core",
+    "user": "edison1105",
+    "title": "fix(runtime-vapor): switch sibling v-if roots of slot content as one transition child"
+  },
+  {
+    "url": "https://github.com/vuejs/core/pull/15906",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/vuejs/core",
+    "user": "ValentinYoushkevich",
+    "title": "fix(runtime-vapor): normalize line breaks when hydrating text"
+  },
+  {
+    "url": "https://github.com/angular/angular/pull/71687",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/angular/angular",
+    "user": "clydin",
+    "title": "refactor(compiler-cli): move language service helpers out of the preprocessor core"
+  },
+  {
+    "url": "https://github.com/angular/angular/pull/71654",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/angular/angular",
+    "user": "JeanMeche",
+    "title": "refactor(compiler-cli): unconditionally use namespace imports for imported constructor tokens in ngp"
+  },
+  {
+    "url": "https://github.com/angular/angular/pull/71608",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/angular/angular",
+    "user": "aparzi",
+    "title": "fix(core): improve the warning for bindings on elements inside ICU expressions"
+  },
+  {
+    "url": "https://github.com/angular/angular/pull/71586",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/angular/angular",
+    "user": "MeAkib",
+    "title": "docs: update the ng test output in the testing overview"
+  },
+  {
+    "url": "https://github.com/angular/angular/pull/71554",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/angular/angular",
+    "user": "MeAkib",
+    "title": "docs(forms): show the validator message for compat errors in the migration guide"
+  },
+  {
+    "url": "https://github.com/spring-projects/spring-boot/pull/52438",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/spring-projects/spring-boot",
+    "user": "Ridzzz0Alam",
+    "title": "SSL bundle ciphers and enabled protocols are sometimes silently ignored when the underlying component does not support t"
+  },
+  {
+    "url": "https://github.com/spring-projects/spring-boot/pull/52367",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/spring-projects/spring-boot",
+    "user": "be-hase",
+    "title": "Tomcat's new 'maxLocaleCount' property cannot be easily configured"
+  },
+  {
+    "url": "https://github.com/spring-projects/spring-boot/pull/52299",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/spring-projects/spring-boot",
+    "user": "zhoubiao188",
+    "title": "ZipContent.Entry hasNameStartingWith ignores the offset of virtualized nested directory names"
+  },
+  {
+    "url": "https://github.com/spring-projects/spring-boot/pull/52276",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/spring-projects/spring-boot",
+    "user": "challa",
+    "title": "Closing the context can hang when Hikari pool suspension is enabled"
+  },
+  {
+    "url": "https://github.com/spring-projects/spring-boot/pull/52205",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/spring-projects/spring-boot",
+    "user": "zhoubiao188",
+    "title": "OriginTrackedResource does not implement equals correctly"
+  },
+  {
+    "url": "https://github.com/apache/kafka/pull/23982",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/apache/kafka",
+    "user": "chia7712",
+    "title": "MINOR: Refresh collaborators list"
+  },
+  {
+    "url": "https://github.com/apache/kafka/pull/23935",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/apache/kafka",
+    "user": "m1a2st",
+    "title": "MINOR: Move KAFKA-20464 upgrade note to Streams API changes in 4.3.2"
+  },
+  {
+    "url": "https://github.com/apache/kafka/pull/23900",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/apache/kafka",
+    "user": "michaelkoepf",
+    "title": "KAFKA-21324: Backport fix for wrong parameter order in WindowKeyQuery ctor"
+  },
+  {
+    "url": "https://github.com/apache/kafka/pull/23869",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/apache/kafka",
+    "user": "majialoong",
+    "title": "MINOR: Update documentation version references to 4.4"
+  },
+  {
+    "url": "https://github.com/apache/kafka/pull/23828",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/apache/kafka",
+    "user": "fvaleri",
+    "title": "KAFKA-21225: Add mirror exceptions"
+  },
+  {
+    "url": "https://github.com/redis/redis/pull/16104",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/redis/redis",
+    "user": "skaslev",
+    "title": "fixed: out-of-bounds read in cluster bus PING/PONG/MEET packet parsing"
+  },
+  {
+    "url": "https://github.com/redis/redis/pull/16044",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/redis/redis",
+    "user": "skaslev",
+    "title": "Keep XTRIM cursor valid after listpack flags re-encode"
+  },
+  {
+    "url": "https://github.com/redis/redis/pull/16017",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/redis/redis",
+    "user": "minchopaskal",
+    "title": "Fix Lua DoS because of long running string find (#1561)"
+  },
+  {
+    "url": "https://github.com/redis/redis/pull/15970",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/redis/redis",
+    "user": "paulorsousa",
+    "title": "Fix BITOP performance regression by looking up each source key only once"
+  },
+  {
+    "url": "https://github.com/redis/redis/pull/15890",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/redis/redis",
+    "user": "chenshi5012",
+    "title": "Fix bracketed IPv6 cluster CLI address parsing"
+  },
+  {
+    "url": "https://github.com/swiftlang/swift/pull/93722",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/swiftlang/swift",
+    "user": "al45tair",
+    "title": "[Backtracing][DWARF] Fix several bugs affecting inline frame information."
+  },
+  {
+    "url": "https://github.com/swiftlang/swift/pull/93661",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/swiftlang/swift",
+    "user": "ktoso",
+    "title": "[Concurrency] Mark custom_executors_job_unsafeCurrentTask UNSUPPORTED"
+  },
+  {
+    "url": "https://github.com/swiftlang/swift/pull/93618",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/swiftlang/swift",
+    "user": "tshortli",
+    "title": "SIL: Don't box a borrowed closure parameter captured by an escaping closure"
+  },
+  {
+    "url": "https://github.com/swiftlang/swift/pull/93567",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/swiftlang/swift",
+    "user": "tbkka",
+    "title": "Skip four tests on OS-stdlib and back-deployment bots"
+  },
+  {
+    "url": "https://github.com/swiftlang/swift/pull/93539",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/swiftlang/swift",
+    "user": "glessard",
+    "title": "[Sema] Propagate SK_Unavailable from multi-statement closure bodies"
+  },
+  {
+    "url": "https://github.com/dotnet/runtime/pull/136571",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/dotnet/runtime",
+    "user": "am11",
+    "title": "Add missing community platforms to package infra"
+  },
+  {
+    "url": "https://github.com/dotnet/runtime/pull/136477",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/dotnet/runtime",
+    "user": "max-charlamb",
+    "title": "Add universal DBI source manifest"
+  },
+  {
+    "url": "https://github.com/dotnet/runtime/pull/136423",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/dotnet/runtime",
+    "user": "am11",
+    "title": "Fix VersionConverter for versions without Build/Revision"
+  },
+  {
+    "url": "https://github.com/dotnet/runtime/pull/136388",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/dotnet/runtime",
+    "user": "jkotas",
+    "title": "Fix build break"
+  },
+  {
+    "url": "https://github.com/dotnet/runtime/pull/136340",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/dotnet/runtime",
+    "user": "steveisok",
+    "title": "Update enterprise authentication fixtures to Ubuntu 26.04"
+  },
+  {
+    "url": "https://github.com/flutter/flutter/pull/195488",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/flutter/flutter",
+    "user": "engine-flutter-autoroll",
+    "title": "Roll Packages from a8549ae8080b to 13d38e0d97a8 (9 revisions)"
+  },
+  {
+    "url": "https://github.com/flutter/flutter/pull/195429",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/flutter/flutter",
+    "user": "gaaclarke",
+    "title": "Pin basic_material_app_macos__compile to macOS 26"
+  },
+  {
+    "url": "https://github.com/flutter/flutter/pull/195379",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/flutter/flutter",
+    "user": "chingjun",
+    "title": "CP for b/577983492"
+  },
+  {
+    "url": "https://github.com/flutter/flutter/pull/195361",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/flutter/flutter",
+    "user": "justinmc",
+    "title": "Link migration guide in deprecation messages"
+  },
+  {
+    "url": "https://github.com/flutter/flutter/pull/195337",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/flutter/flutter",
+    "user": "reidbaker-agent",
+    "title": "Sync CHANGELOG.md from stable"
+  },
+  {
+    "url": "https://github.com/helm/helm/pull/32810",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/helm/helm",
+    "user": "TerryHowe",
+    "title": "chore: raise go directive to 1.27 and fix modernize findings"
+  },
+  {
+    "url": "https://github.com/helm/helm/pull/32761",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/helm/helm",
+    "user": "scottrigby",
+    "title": "[v3] chore(deps): bump k8s.io group to v0.37.1"
+  },
+  {
+    "url": "https://github.com/helm/helm/pull/32744",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/helm/helm",
+    "user": "ruslan-shaydullin",
+    "title": "fix(linters): update golangci-lint to v2.14.0"
+  },
+  {
+    "url": "https://github.com/helm/helm/pull/32685",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/helm/helm",
+    "user": "aadieng100",
+    "title": "refactor(registry): remove redundant ServerAddressFromHostname in Login (#32681)"
+  },
+  {
+    "url": "https://github.com/helm/helm/pull/32659",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/helm/helm",
+    "user": "aadieng100",
+    "title": "[dev-v3 backport] deps: bump google.golang.org/grpc@v1.83.2 for GO-2026-6348"
+  },
+  {
+    "url": "https://github.com/prometheus/prometheus/pull/20215",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/prometheus/prometheus",
+    "user": "roidelapluie",
+    "title": "ui: support PromQL bitwise operators"
+  },
+  {
+    "url": "https://github.com/prometheus/prometheus/pull/20170",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/prometheus/prometheus",
+    "user": "roidelapluie",
+    "title": "ui: support unquoted Unicode and dotted PromQL names"
+  },
+  {
+    "url": "https://github.com/prometheus/prometheus/pull/20126",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/prometheus/prometheus",
+    "user": "bwplotka",
+    "title": "tsdb/record: intern metadata strings per Decoder in (*Decoder).Metadata"
+  },
+  {
+    "url": "https://github.com/prometheus/prometheus/pull/20079",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/prometheus/prometheus",
+    "user": "krajorama",
+    "title": "fix(otlp): put downscaled exponential histogram counts in the right buckets"
+  },
+  {
+    "url": "https://github.com/prometheus/prometheus/pull/20029",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/prometheus/prometheus",
+    "user": "aknuds1",
+    "title": "otlp: sort exemplars by timestamp before appending"
+  },
+  {
+    "url": "https://github.com/grafana/grafana/pull/136329",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/grafana/grafana",
+    "user": "kristinademeshchik",
+    "title": "Dashboards: agent editing while Composer is off"
+  },
+  {
+    "url": "https://github.com/grafana/grafana/pull/136276",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/grafana/grafana",
+    "user": "macabu",
+    "title": "Dependencies: Update golang.org/x/net to v0.62.0"
+  },
+  {
+    "url": "https://github.com/grafana/grafana/pull/136217",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/grafana/grafana",
+    "user": "filewalkwithme",
+    "title": "Folders: Add Unchecked-delete support to ContentsCleaner for standalone cascade delete"
+  },
+  {
+    "url": "https://github.com/grafana/grafana/pull/136172",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/grafana/grafana",
+    "user": "juanicabanas",
+    "title": "Notebooks: Drop the search special case from the authorizer"
+  },
+  {
+    "url": "https://github.com/grafana/grafana/pull/136144",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/grafana/grafana",
+    "user": "rodrigopk",
+    "title": "Alerting: Add mapped hooks for routing trees and contact points"
+  },
+  {
+    "url": "https://github.com/mui/material-ui/pull/49594",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/mui/material-ui",
+    "user": "brijeshb42",
+    "title": "[code-infra] Bump shared Claude triage workflow"
+  },
+  {
+    "url": "https://github.com/mui/material-ui/pull/49531",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/mui/material-ui",
+    "user": "kkatalz",
+    "title": "[select] Fix matching option values of a different type on click and autofill"
+  },
+  {
+    "url": "https://github.com/mui/material-ui/pull/49519",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/mui/material-ui",
+    "user": "ZeeshanTamboli",
+    "title": "[code-infra] Remove redundant `only-allow` preinstall hook"
+  },
+  {
+    "url": "https://github.com/mui/material-ui/pull/49505",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/mui/material-ui",
+    "user": "xlb3055",
+    "title": "[docs][material-ui] Mark icon names for Algolia indexing in the icons search demo"
+  },
+  {
+    "url": "https://github.com/mui/material-ui/pull/49479",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/mui/material-ui",
+    "user": "shivenaggarwal",
+    "title": "[slider] Fix thumb lagging behind the pointer while dragging"
+  },
+  {
+    "url": "https://github.com/tailwindlabs/tailwindcss/pull/20594",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/tailwindlabs/tailwindcss",
+    "user": "RobinMalfait",
+    "title": "Add changelog entry for #20591"
+  },
+  {
+    "url": "https://github.com/tailwindlabs/tailwindcss/pull/20564",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/tailwindlabs/tailwindcss",
+    "user": "RobinMalfait",
+    "title": "Fix the Nuxt dev mode integration test"
+  },
+  {
+    "url": "https://github.com/tailwindlabs/tailwindcss/pull/20508",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/tailwindlabs/tailwindcss",
+    "user": "koreahghg",
+    "title": "Don't treat `\\` as an escape inside CSS comments"
+  },
+  {
+    "url": "https://github.com/tailwindlabs/tailwindcss/pull/20409",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/tailwindlabs/tailwindcss",
+    "user": "RobinMalfait",
+    "title": "rebase `ignore` crate from 0.4.24 to 0.4.33"
+  },
+  {
+    "url": "https://github.com/tailwindlabs/tailwindcss/pull/20374",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/tailwindlabs/tailwindcss",
+    "user": "supermadu7",
+    "title": "Fix extraction of quoted arbitrary variants in v3"
+  },
+  {
+    "url": "https://github.com/lodash/lodash/pull/6279",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/lodash/lodash",
+    "user": "jonchurch",
+    "title": "ci: update actions to latest versions"
+  },
+  {
+    "url": "https://github.com/lodash/lodash/pull/6196",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/lodash/lodash",
+    "user": "JetProc",
+    "title": "docs: fix typo contributing link in README"
+  },
+  {
+    "url": "https://github.com/lodash/lodash/pull/6173",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/lodash/lodash",
+    "user": "jonchurch",
+    "title": "`lodash-amd` fix(template): import arrayEach and assignWith"
+  },
+  {
+    "url": "https://github.com/lodash/lodash/pull/6164",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/lodash/lodash",
+    "user": "jonchurch",
+    "title": "release(minor): bump lodash to 4.18.0"
+  },
+  {
+    "url": "https://github.com/lodash/lodash/pull/6156",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/lodash/lodash",
+    "user": "jonchurch",
+    "title": "chore: regenerate es branch from main b9d70ee"
+  },
+  {
+    "url": "https://github.com/axios/axios/pull/11400",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/axios/axios",
+    "user": "jasonsaayman",
+    "title": "docs: add partners page and shared sponsor cards"
+  },
+  {
+    "url": "https://github.com/axios/axios/pull/11374",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/axios/axios",
+    "user": "Ghoscro",
+    "title": "docs: identify Axios errors independently of their name"
+  },
+  {
+    "url": "https://github.com/axios/axios/pull/11361",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/axios/axios",
+    "user": "jasonsaayman",
+    "title": "chore(ai): add repository OSS skills"
+  },
+  {
+    "url": "https://github.com/axios/axios/pull/11284",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/axios/axios",
+    "user": "Cyberhet",
+    "title": "docs: clarify that `npm test` requires playwright browsers"
+  },
+  {
+    "url": "https://github.com/axios/axios/pull/11249",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/axios/axios",
+    "user": "jasonsaayman",
+    "title": "docs: promote Axios v0 security updates"
+  },
+  {
+    "url": "https://github.com/celery/celery/pull/10979",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/celery/celery",
+    "user": "auvipy",
+    "title": "Update PR template with AI spamming guidelines"
+  },
+  {
+    "url": "https://github.com/celery/celery/pull/10922",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/celery/celery",
+    "user": "ChristianMurphy",
+    "title": "Don't mark a task REVOKED while another worker runs it"
+  },
+  {
+    "url": "https://github.com/celery/celery/pull/10882",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/celery/celery",
+    "user": "auvipy",
+    "title": "Update kombu version to 5.7.0rc1"
+  },
+  {
+    "url": "https://github.com/celery/celery/pull/10849",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/celery/celery",
+    "user": "IslamElsayed",
+    "title": "Send the worker hostname as the worker_process_init sender"
+  },
+  {
+    "url": "https://github.com/celery/celery/pull/10830",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/celery/celery",
+    "user": "ChristianMurphy",
+    "title": "fix(cache): keep chords alive past result_expires"
+  },
+  {
+    "url": "https://github.com/guardian/frontend/pull/29357",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/guardian/frontend",
+    "user": "ashishpuliyel",
+    "title": "Add Ashish Puliyel's details to humans.txt"
+  },
+  {
+    "url": "https://github.com/guardian/frontend/pull/29331",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/guardian/frontend",
+    "user": "williammead",
+    "title": "Crest Uploader V2"
+  },
+  {
+    "url": "https://github.com/guardian/frontend/pull/29304",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/guardian/frontend",
+    "user": "frederickobrien",
+    "title": "Tighten up `firstPublicationDate` with `getOrElse`"
+  },
+  {
+    "url": "https://github.com/guardian/frontend/pull/29278",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/guardian/frontend",
+    "user": "andrewHEguardian",
+    "title": "Add isLivePricing enabled function and flag"
+  },
+  {
+    "url": "https://github.com/guardian/frontend/pull/29241",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/guardian/frontend",
+    "user": "Jakeii",
+    "title": "Update identity libs and pan-domain-auth-play"
+  },
+  {
+    "url": "https://github.com/elastic/kibana/pull/301301",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/elastic/kibana",
+    "user": "lpetracca",
+    "title": "[9.4] [ResponseOps][Rules UI] suggest existing tags on rule creation (#300837)"
+  },
+  {
+    "url": "https://github.com/elastic/kibana/pull/301255",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/elastic/kibana",
+    "user": "kibanamachine",
+    "title": "[9.6] [data federation] Enable by default (#301147)"
+  },
+  {
+    "url": "https://github.com/elastic/kibana/pull/301193",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/elastic/kibana",
+    "user": "csr",
+    "title": "[9.5] [CI] Link failed tests to history and record flaky summaries (#293329)"
+  }
+]

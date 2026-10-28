@@ -10,7 +10,9 @@ const DS = 'hao-li/AIDev';
 
 function arg(name, fallback) {
   const i = process.argv.indexOf(name);
-  return i === -1 ? fallback : Number(process.argv[i + 1]) || fallback;
+  if (i === -1) return fallback;
+  const v = Number(process.argv[i + 1]);
+  return Number.isFinite(v) ? v : fallback;
 }
 const N_AGENT = arg('--agents', 200);
 const N_HUMAN = arg('--humans', 200);
