@@ -40,19 +40,27 @@ test('message trailers and phrases are signals', () => {
   assert.equal(hits.length, 1);
   assert.equal(hits[0].rule, 'ai_trailer');
   assert.match(hits[0].descriptor, /trailer/);
-  const bot = aiMessageHits(build(['Ship it\n\nCo-Authored-By: ', 'greeter[bot] <x@y.z>']));
+  const bot = aiMessageHits(build(['Ship it\n\nCo-Authored-By: ', 'copilot[bot] <x@y.z>']));
   assert.equal(bot.length, 1);
+  const greeter = aiMessageHits('Ship it\n\nCo-Authored-By: greeter[bot] <x@y.z>');
+  assert.equal(greeter.length, 0);
   const human = aiMessageHits('Fix the race\n\nCo-Authored-By: Dana <dana@example.com>');
   assert.equal(human.length, 0);
   const phrase = aiMessageHits('Update docs\n\nThis section is ai-generated, please review.');
   assert.equal(phrase.length, 1);
 });
 
-test('authors match bots and assistant names', () => {
-  assert.equal(isAiAuthor('github-actions[bot]'), true);
+test('authors match agent bots and assistant names, not CI bots', () => {
+  assert.equal(isAiAuthor('copilot[bot]'), true);
+  assert.equal(isAiAuthor('claude[bot]'), true);
+  assert.equal(isAiAuthor('my-agent[bot]'), true);
   assert.equal(isAiAuthor('Claude'), true);
   assert.equal(isAiAuthor('codex [bot] <a@b.c>'), true);
+  assert.equal(isAiAuthor('github-actions[bot]'), false);
+  assert.equal(isAiAuthor('dependabot[bot]'), false);
+  assert.equal(isAiAuthor('renovate[bot]'), false);
   assert.equal(isAiAuthor('Sentinel'), false);
+  assert.equal(isAiAuthor('Agent Smith'), false);
   assert.equal(isAiAuthor('Dana'), false);
   assert.equal(isAiAuthor(''), false);
 });

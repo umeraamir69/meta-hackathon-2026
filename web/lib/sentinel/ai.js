@@ -9,7 +9,10 @@ import { matchGlob } from './ignore.js';
 
 const ASSISTANTS = 'claude|codex|copilot|chatgpt|openai|anthropic|gemini|cursor|aider|devin';
 const ASSISTANT_WORD = new RegExp(`\\b(?:${ASSISTANTS})\\b`, 'i');
-const BOT_NAME = /(?:\[bot\]|bot\b)/i;
+// A [bot] suffix alone proves automation, not AI authorship: Dependabot,
+// Renovate, and CI apps must not fire. Only agent-named bots count.
+const BOT_SUFFIX = /\[bot\]\s*$/i;
+const AGENT_BOT = /(claude|codex|copilot|cursor|devin|aider|gemini|agent)/i;
 
 // Assistant-name forms only, so this matcher cannot match its own source.
 // Trailers stay in message mode: in file content the colon form matches
@@ -51,7 +54,8 @@ const ARTIFACTS = [
 export function isAiAuthor(name) {
   const text = String(name || '');
   if (!text) return false;
-  return BOT_NAME.test(text) || ASSISTANT_WORD.test(text);
+  if (BOT_SUFFIX.test(text)) return AGENT_BOT.test(text.replace(BOT_SUFFIX, ''));
+  return ASSISTANT_WORD.test(text);
 }
 
 export function isAiPath(path) {
@@ -101,7 +105,7 @@ export function aiMessageHits(message) {
   let match;
   while ((match = TRAILER.exec(body)) !== null) {
     const value = (match[2] || '').trim();
-    if (value && (ASSISTANT_WORD.test(value) || BOT_NAME.test(value))) {
+    if (value && isAiAuthor(value)) {
       out.push({
         rule: 'ai_trailer',
         descriptor: `trailer: ${match[1]}: ${value}`.slice(0, 160),
