@@ -350,7 +350,23 @@ Per-path signal stats cut as low value for the remaining time.
 4. Should the local app show branch signals for clones? It cannot see the
    PR ref reliably — proposal: hosted scan only.
 
-## 10. References
+## 10. Full eval (200+200, in progress)
+
+Sampling, 2026-10-28:
+
+- Agents (200): AIDev `hao-li/AIDev`, `pull_request` config, stratified
+  random offsets (`eval/sample-aidev.mjs`, seed 20261028). Mix: Claude Code
+  116, Copilot 56, Codex 19, Devin 9; 169 repos; no Cursor rows drawn.
+- Humans (200): GitHub API, recent merged PRs from ~40 diverse human-driven
+  repos, bots and agent-looking branches/trailers excluded
+  (`eval/sample-humans-gh.mjs`). AIDev's `all_pull_request` table was
+  unusable over the rows API (repeated server-side scan-limit 500s), so the
+  human half comes from GitHub directly instead.
+- List: `eval/prs-full.json`. Run: `node eval/ai-signals.mjs --write --file prs-full.json`.
+
+Results and go/no-go: pending the run.
+
+## 11. References
 
 - Meta Muse Wonder/Spark pricing, context, API ids (Oct 2026):
   [The Batch](https://www.deeplearning.ai/the-batch/meta-releases-wonder-opens-spark),
