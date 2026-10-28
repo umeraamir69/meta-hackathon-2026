@@ -425,14 +425,30 @@ function addUsage(left, right) {
 
 export async function reviewFindings(findings, options = {}) {
   if (!findings?.length) return null;
-  const classified = await classifyFindings(findings, options);
-  const focus = findings.filter((finding) => {
+  const blocking = findings.filter((finding) => !finding.advisory);
+  if (!blocking.length) {
+    return {
+      provider: 'local-fallback',
+      model: null,
+      http_status: null,
+      summary: 'Only advisory AI signals. Nothing blocks the merge.',
+      rotate: [],
+      ignore: [],
+      note: null,
+      usage: null,
+      classifier: { provider: 'local-fallback', model: null },
+      labels: [],
+      comment: renderComment(findings, [], null),
+    };
+  }
+  const classified = await classifyFindings(blocking, options);
+  const focus = blocking.filter((finding) => {
     const label = classified.labels.find((item) => item.where === whereOf(finding));
     return label?.label === 'likely_live' || label?.label === 'unclear';
   });
   let explanation;
   if (classified.offline) {
-    explanation = await explainFindings(findings, options);
+    explanation = await explainFindings(blocking, options);
   } else if (focus.length) {
     explanation = await explainFindings(focus, options);
   } else {
@@ -441,12 +457,12 @@ export async function reviewFindings(findings, options = {}) {
       model: classified.model,
       http_status: classified.http_status,
       summary: 'Every finding looks like an example, fixture, or test. The merge gate still fails until a person rotates or removes it.',
-      rotate: localReport(findings).rotate,
+      rotate: localReport(blocking).rotate,
       note: classified.note || null,
       usage: classified.usage,
     };
   }
-  const localIgnore = ignoreSuggestions(findings, classified.labels);
+  const localIgnore = ignoreSuggestions(blocking, classified.labels);
   const seen = new Set((explanation.ignore || []).map((item) => item?.pattern));
   explanation = {
     ...explanation,

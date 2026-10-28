@@ -92,6 +92,7 @@ after the allowlist, so no test may contain a literal secret.
 ## Docs
 
 - `README.md` — run it, hook it, Action it.
+- `AI_SIGNALS.md` — AI-authorship signals: research, two-layer design, prompts, eval gate.
 - `../SUBMISSION.md` — hackathon submission draft.
 - `../DEMO_SCRIPT.md` — 3-minute demo video script.
 - `PLAN.md` — build plan and remaining checklist.

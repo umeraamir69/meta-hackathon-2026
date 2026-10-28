@@ -65,6 +65,8 @@ function Waiting({ busy }) {
 }
 
 function Report({ report }) {
+  const blocking = (report.findings || []).filter((finding) => !finding.advisory);
+  const advisory = (report.findings || []).filter((finding) => finding.advisory);
   return (
     <div className="report">
       <div className="verdict">
@@ -73,11 +75,11 @@ function Report({ report }) {
       </div>
       <p className="source">{report.source}</p>
       <p className="scope">{report.scope}</p>
-      {report.findings.length === 0 ? (
+      {blocking.length === 0 ? (
         <p className="clear">Nothing in this scan blocks the merge.</p>
       ) : (
         <ul className="findings">
-          {report.findings.map((finding) => (
+          {blocking.map((finding) => (
             <li key={`${finding.source}-${finding.path}-${finding.line}-${finding.rule}-${finding.removed}`}>
               <div className="finding-top">
                 <b className={`sev ${finding.severity || ''}`}>{finding.rule}</b>
@@ -93,6 +95,20 @@ function Report({ report }) {
           ))}
         </ul>
       )}
+      {advisory.length > 0 ? (
+        <div className="ai-signals">
+          <span>AI signals · advisory, never blocks</span>
+          <ul>
+            {advisory.map((finding) => (
+              <li key={`${finding.rule}-${finding.path}-${finding.line}`}>
+                <b>{finding.rule}</b>
+                <code>{finding.source} {finding.path}:{finding.line}</code>
+                {finding.masked ? <p>{finding.masked}</p> : null}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
       {report.muse?.summary ? (
         <div className="muse">
           <span>Muse · {report.muse.provider || 'local'}</span>

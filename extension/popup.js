@@ -61,10 +61,14 @@ function render(body, apiBase, url) {
   report.hidden = false;
   foot.hidden = false;
   report.replaceChildren();
-  const findings = body.findings || [];
+  const findings = (body.findings || []).filter((finding) => !finding.advisory);
   const count = body.count ?? findings.length;
+  const advisory = body.advisory ?? (body.findings || []).filter((finding) => finding.advisory).length;
   report.append(el('p', 'scope', `${body.source || ''} — ${body.scope || ''}`));
   report.append(el('p', 'count', `${count} finding${count === 1 ? '' : 's'}${body.ok ? '' : ' blocking merge'}`));
+  if (advisory > 0) {
+    report.append(el('p', 'ai', `${advisory} AI signal${advisory === 1 ? '' : 's'} (advisory, see full report)`));
+  }
   if (!findings.length) {
     report.append(el('p', 'empty', 'No findings. Nothing in this scan blocks the merge.'));
   }

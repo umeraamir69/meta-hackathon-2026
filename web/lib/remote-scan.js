@@ -9,6 +9,7 @@ import { whereOf } from './sentinel/judge.js';
 import { reviewFindings } from './sentinel/muse.js';
 import { configuredSecrets, scrubFindings } from './sentinel/redact.js';
 import { dedupe, markTreePresence, scanPatch, scanText, scanWorkingTree } from './sentinel/scan.js';
+import { aiBranchDescriptor, aiHit, isAiAuthor, scanAiMessage } from './sentinel/ai.js';
 
 const ARCHIVE_LIMIT = 25_000_000;
 const COMMIT_LIMIT = 8;
@@ -51,10 +52,25 @@ function scanCommit(commit, findings) {
     commitSubject: subject,
   };
   scanText(message, { source: 'git-history', path: 'commit-message', ...meta }, findings);
+  if (meta.commitAuthor && isAiAuthor(meta.commitAuthor)) {
+    findings.push(aiHit('ai_author', `author: ${meta.commitAuthor}`, { source: 'git-history', path: 'commit', ...meta }, 1));
+  }
   for (const file of commit.files || []) {
     if (!file.patch || !file.filename) continue;
     scanPatch(wrapPatch(file.filename, file.patch), { source: 'git-history', prefix: '', ...meta }, findings);
   }
+}
+
+function scanPullMeta(pull, findings) {
+  const meta = { source: 'pr-diff', path: 'pull-request' };
+  const login = pull?.user?.login || '';
+  if (login && isAiAuthor(login)) {
+    findings.push(aiHit('ai_author', `author: ${login}`, meta, 1));
+  }
+  const branch = aiBranchDescriptor(pull?.head?.ref || '');
+  if (branch) findings.push(aiHit('ai_branch', branch, meta, 1));
+  const text = `${pull?.title || ''}\n${pull?.body || ''}`;
+  if (text.trim()) scanAiMessage(text, meta, findings);
 }
 
 async function readCapped(response) {
@@ -107,6 +123,7 @@ export async function scanRemote(input) {
   const commitFindings = [];
   let scope = '';
   if (target.pull) {
+    scanPullMeta(await github(`/repos/${target.owner}/${target.repo}/pulls/${target.pull}`), commitFindings);
     const files = await github(`/repos/${target.owner}/${target.repo}/pulls/${target.pull}/files?per_page=80`);
     for (const file of files) {
       if (!file.patch || !file.filename) continue;
@@ -123,19 +140,31 @@ export async function scanRemote(input) {
   }
 
   const merged = [...treeFindings, ...commitFindings];
-  const unique = dedupe(target.pull ? merged : markTreePresence(merged, treeFindings)).slice(0, 40);
-  const scrubbed = scrubFindings(unique, configuredSecrets());
+  const unique = dedupe(target.pull ? merged : markTreePresence(merged, treeFindings));
+  if (process.env.SENTINEL_AI_STRICT === 'true') {
+    for (const finding of unique) {
+      if (finding.advisory) {
+        finding.advisory = false;
+        finding.severity = 'low';
+      }
+    }
+  }
+  const blocking = unique.filter((finding) => !finding.advisory).slice(0, 40);
+  const advisory = unique.filter((finding) => finding.advisory).slice(0, 10);
+  const scrubbed = scrubFindings([...blocking, ...advisory], configuredSecrets());
   const muse = await reviewFindings(scrubbed);
   const labels = new Map((muse?.labels || []).map((label) => [label.where, label]));
   return {
-    ok: scrubbed.length === 0,
-    count: scrubbed.length,
+    ok: blocking.length === 0,
+    count: blocking.length,
+    advisory: advisory.length,
     source: target.label,
     scope,
     findings: scrubbed.map((finding) => {
       const label = labels.get(whereOf(finding));
       return {
         severity: finding.severity,
+        advisory: Boolean(finding.advisory),
         rule: finding.rule,
         source: finding.source,
         path: finding.path,

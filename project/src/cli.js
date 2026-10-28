@@ -10,15 +10,37 @@ import { configuredSecrets, redactText, scrubFindings } from './redact.js';
 import { toSarif } from './sarif.js';
 import { dedupe, markTreePresence, scanGitHistory, scanPrDiff, scanStaged, scanWorkingTree } from './scan.js';
 
+function applyStrict(findings, env) {
+  if (env.SENTINEL_AI_STRICT !== 'true') return findings;
+  for (const finding of findings) {
+    if (finding.advisory) {
+      finding.advisory = false;
+      finding.severity = 'low';
+    }
+  }
+  return findings;
+}
+
+async function finishReport(raw, root, env, secrets) {
+  const { kept, suppressed } = applyIgnore(raw, loadIgnore(root));
+  const findings = applyStrict(scrubFindings(kept, secrets), env);
+  const blocking = findings.filter((finding) => !finding.advisory);
+  const muse = await reviewFindings(findings, { env });
+  return {
+    ok: blocking.length === 0,
+    count: blocking.length,
+    advisory: findings.length - blocking.length,
+    suppressed: suppressed.length,
+    findings,
+    muse,
+  };
+}
+
 export async function collectReport(root, env = process.env) {
   loadEnvFile(join(dirname(fileURLToPath(import.meta.url)), '..', '.env'));
   const secrets = configuredSecrets(env);
   if (env.SENTINEL_STAGED === 'true') {
-    const raw = dedupe(markTreePresence(scanStaged(root), []));
-    const { kept, suppressed } = applyIgnore(raw, loadIgnore(root));
-    const findings = scrubFindings(kept, secrets);
-    const muse = await reviewFindings(findings, { env });
-    return { ok: findings.length === 0, count: findings.length, suppressed: suppressed.length, findings, muse };
+    return finishReport(dedupe(markTreePresence(scanStaged(root), [])), root, env, secrets);
   }
   const history = env.SENTINEL_HISTORY !== 'false';
   const maxCommits = env.SENTINEL_MAX_COMMITS || 200;
@@ -27,17 +49,7 @@ export async function collectReport(root, env = process.env) {
     ...(history ? scanGitHistory(root, { maxCommits }) : []),
     ...scanPrDiff(root, env.SENTINEL_BASE || '', env.SENTINEL_HEAD || ''),
   ];
-  const raw = dedupe(markTreePresence([...tree, ...rest], tree));
-  const { kept, suppressed } = applyIgnore(raw, loadIgnore(root));
-  const findings = scrubFindings(kept, secrets);
-  const muse = await reviewFindings(findings, { env });
-  return {
-    ok: findings.length === 0,
-    count: findings.length,
-    suppressed: suppressed.length,
-    findings,
-    muse,
-  };
+  return finishReport(dedupe(markTreePresence([...tree, ...rest], tree)), root, env, secrets);
 }
 
 const USAGE = `PR Diff Sentinel: deterministic secret gate on the working tree, PR diff, and git history.

@@ -39,6 +39,15 @@ named. Every hit records author, date, a SHA-256 fingerprint, and whether the
 value is still in the current files. Documentation examples still fail the
 gate; Muse labels them, only a person clears them.
 
+## AI signals (advisory)
+
+Self-declared signs of agent authorship: bot trailers and authors, agent
+branch prefixes, workspace artifacts (`AGENTS.md`, `.claude/`), and
+generated-by banners. They are reported as `info` findings with
+`advisory: true` and never fail the gate — except with
+`SENTINEL_AI_STRICT=true` (Action: `ai_strict: 'true'`), which promotes
+them to `low` blockers. Signals, not proof; see `AI_SIGNALS.md`.
+
 ## Pre-commit hook
 
 The staged diff, on every commit. Muse stays off so it is fast and offline. CI still scans history; the hook checks only what you are about to commit.

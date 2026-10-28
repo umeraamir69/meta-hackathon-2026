@@ -18,7 +18,12 @@ export function renderReport(report, options = {}) {
   const hasReport = Boolean(report);
   const failed = hasReport && !report.ok;
   const labels = new Map((report?.muse?.labels || []).map((label) => [label.where, label]));
-  const rows = (report?.findings || []).map((finding) => {
+  const blocking = (report?.findings || []).filter((finding) => !finding.advisory);
+  const advisory = (report?.findings || []).filter((finding) => finding.advisory);
+  const aiRows = advisory.map((finding) => (
+    `<tr><td>${escape(finding.rule)}</td><td><code>${escape(`${finding.source} ${finding.path}:${finding.line}`)}</code><div class="masked">${escape(finding.masked || '')}</div></td></tr>`
+  )).join('');
+  const rows = blocking.map((finding) => {
     const where = `${finding.source} ${finding.path}:${finding.line}`;
     const shown = labels.get(whereOf(finding));
     const context = (finding.context || []).map((row) => `L${row.line}  ${row.text}`).join('\n');
@@ -65,7 +70,7 @@ export function renderReport(report, options = {}) {
     h1 { font-size: 32px; line-height: 1.1; margin: 0; letter-spacing: -0.03em; }
     .status { font: 13px/1 ui-sans-serif, system-ui, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; color: ${failed ? 'var(--fail)' : 'var(--pass)'}; }
     p { color: var(--muted); }
-    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 24px 0; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 24px 0; }
     .stat { background: var(--panel); padding: 14px 16px; }
     .stat b { display: block; font: 22px/1.2 ui-sans-serif, system-ui, sans-serif; color: var(--text); }
     .stat span { color: var(--muted); font: 13px/1.4 ui-sans-serif, system-ui, sans-serif; }
@@ -106,12 +111,14 @@ export function renderReport(report, options = {}) {
     ${hasReport ? `<div class="stats">
       <div class="stat"><b>${escape(report.count)}</b><span>Findings blocking merge</span></div>
       <div class="stat"><b>${escape(report.suppressed)}</b><span>Suppressed by .sentinelignore</span></div>
+      <div class="stat"><b>${escape(report.advisory ?? 0)}</b><span>Advisory AI signals</span></div>
       <div class="stat"><b>${escape(counts(report.muse?.labels))}</b><span>${escape(report.muse?.provider || 'no model')} · ${escape(model)}</span></div>
     </div>
     <table>
       <thead><tr><th>Severity</th><th>Rule</th><th>Where</th><th>Label</th><th>Why</th></tr></thead>
       <tbody>${rows || '<tr><td colspan="5">No findings.</td></tr>'}</tbody>
     </table>
+    ${aiRows ? `<section><h2>AI signals (advisory, never blocks)</h2><table><thead><tr><th>Signal</th><th>Where</th></tr></thead><tbody>${aiRows}</tbody></table></section>` : ''}
     <section>
       <h2>Muse</h2>
       <p>${escape(report.muse?.summary || 'Nothing to explain.')}</p>

@@ -5,7 +5,11 @@ export function summaryText(report) {
     const removed = finding.removed ? ' removed' : '';
     const commit = finding.commit ? ` ${String(finding.commit).slice(0, 7)}` : '';
     const shown = finding.detail || finding.masked;
-    lines.push(`  ${finding.severity} ${finding.rule} ${where}${removed}${commit} ${shown}`);
+    const advisory = finding.advisory ? ' advisory' : '';
+    lines.push(`  ${finding.severity} ${finding.rule} ${where}${removed}${commit}${advisory} ${shown}`);
+  }
+  if (report.advisory) {
+    lines.push(`${report.advisory} advisory AI signal(s). The gate ignores them unless SENTINEL_AI_STRICT=true.`);
   }
   if (report.muse) {
     const model = report.muse.model ? ` ${report.muse.model}` : '';
@@ -24,13 +28,14 @@ export function annotationText(report) {
   const findings = Array.isArray(report) ? report : report.findings || [];
   if (process.env.GITHUB_ACTIONS !== 'true') return '';
   const errors = findings.map((finding) => {
-    const usablePath = finding.path && finding.path !== 'commit-message' && !finding.path.includes(' ') && !finding.path.includes(',');
+    const usablePath = finding.path && finding.path !== 'commit-message' && finding.path !== 'commit' && !finding.path.includes(' ') && !finding.path.includes(',');
     const loc = usablePath ? ` file=${finding.path}${finding.line ? `,line=${finding.line}` : ''}` : '';
     const msg = `${finding.severity} ${finding.rule} ${finding.detail || finding.masked}`
       .replaceAll('%', '%25')
       .replaceAll('\r', '%0D')
       .replaceAll('\n', '%0A');
-    return `::error${loc} title=PR Diff Sentinel::${msg}`;
+    const level = finding.advisory ? 'notice' : 'error';
+    return `::${level}${loc} title=PR Diff Sentinel::${msg}`;
   });
   const summary = Array.isArray(report) ? '' : (report.muse?.summary || '');
   if (summary) {

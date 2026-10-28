@@ -8,6 +8,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const FILES = [
+  'ai.js',
   'rules.js',
   'decode.js',
   'rotate.js',

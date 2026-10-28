@@ -38,6 +38,10 @@ inputs:
     description: Write SARIF 2.1.0 here for github/codeql-action/upload-sarif. Leave empty to skip.
     required: false
     default: ''
+  ai_strict:
+    description: Fail the check on AI-authorship signals too (bot authors, trailers, agent artifacts). Default false keeps them advisory.
+    required: false
+    default: 'false'
 outputs:
   sarif_path:
     description: Path of the written SARIF file, or empty when sarif_path was empty.
@@ -50,6 +54,7 @@ runs:
       env:
         SENTINEL_MUSE: ${{ inputs.muse }}
         SENTINEL_HISTORY: ${{ inputs.history }}
+        SENTINEL_AI_STRICT: ${{ inputs.ai_strict }}
         SENTINEL_BASE: ${{ inputs.base }}
         SENTINEL_HEAD: ${{ inputs.head }}
         SENTINEL_CLASSIFIER: ${{ inputs.classifier }}

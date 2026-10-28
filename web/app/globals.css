@@ -279,6 +279,15 @@ h1 {
 
 .finding-top b { font-weight: 560; font-size: 14px; }
 .finding-top .sev.critical, .finding-top .sev.high { color: var(--fail); }
+.finding-top .sev.low { color: var(--muted); }
+
+.ai-signals { margin-top: 8px; padding-top: 16px; border-top: 1px solid var(--line); }
+.ai-signals > span { color: var(--faint); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; }
+.ai-signals ul { margin: 10px 0 0; padding: 0; list-style: none; }
+.ai-signals li { padding: 10px 0; border-top: 1px solid var(--line); }
+.ai-signals b { font-weight: 560; font-size: 13px; }
+.ai-signals code { display: block; margin-top: 4px; color: var(--muted); font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
+.ai-signals p { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
 
 .findings .masked { color: var(--ink); }
 .findings .case { color: var(--accent); font-size: 12px; }

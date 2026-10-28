@@ -5,6 +5,7 @@ import { join, relative, sep } from 'node:path';
 import { neighborhood, pathClass, redactLine } from './context.js';
 import { decodedChunks } from './decode.js';
 import { RULES, acceptHit, compositeHits, mask, shannonEntropy } from './rules.js';
+import { aiHit, isAiAuthor, isAiPath, scanAiContent, scanAiMessage } from './ai.js';
 
 const SKIP_DIRS = new Set(['.git', 'node_modules', 'dist', 'build', 'coverage', '.next', '.vercel', 'out']);
 
@@ -82,6 +83,8 @@ export function scanText(text, meta, findings) {
       if (match.index === rule.re.lastIndex) rule.re.lastIndex += 1;
     }
   }
+  scanAiContent(body, meta, findings);
+  if (meta.path === 'commit-message') scanAiMessage(body, meta, findings);
   if (!meta.decoded) {
     for (const chunk of decodedChunks(body)) {
       const before = findings.length;
@@ -153,6 +156,10 @@ export function scanPatch(patch, meta, findings) {
       binary = false;
       const match = line.match(/^diff --git a\/(.+) b\/(.+)$/);
       file = match ? match[2] : null;
+      const seen = stripPrefix(file, meta.prefix);
+      if (seen && isAiPath(seen)) {
+        findings.push(aiHit('ai_artifact', `tracked file: ${seen}`, { ...meta, path: seen }, 1));
+      }
       continue;
     }
     if (line.startsWith('GIT binary patch') || line.startsWith('Binary files ')) {
@@ -222,7 +229,11 @@ export function scanWorkingTree(root) {
       continue;
     }
     if (buf.includes(0)) continue;
-    scanText(buf.toString('utf8'), { source: 'working-tree', path: toPosix(relative(root, file)) }, findings);
+    const rel = toPosix(relative(root, file));
+    if (isAiPath(rel)) {
+      findings.push(aiHit('ai_artifact', `tracked file: ${rel}`, { source: 'working-tree', path: rel }, 1));
+    }
+    scanText(buf.toString('utf8'), { source: 'working-tree', path: rel }, findings);
   }
   return findings;
 }
@@ -278,6 +289,9 @@ export function scanGitHistory(root, { maxCommits = 200 } = {}) {
     const patch = end === -1 ? rest : rest.slice(end + 'SENTINEL_ENDMSG'.length);
     const commitSubject = redactLine(message.split('\n')[0] || '').slice(0, 160);
     const meta = { commit: sha, commitAuthor, commitDate, commitSubject };
+    if (commitAuthor && isAiAuthor(commitAuthor)) {
+      findings.push(aiHit('ai_author', `author: ${commitAuthor}`, { source: 'git-history', path: 'commit', ...meta }, 0));
+    }
     if (!prefix) scanText(message, { source: 'git-history', path: 'commit-message', ...meta }, findings);
     scanPatch(patch, { source: 'git-history', prefix, ...meta }, findings);
   }
@@ -342,7 +356,7 @@ export function dedupe(findings) {
 export function markTreePresence(findings, treeFindings) {
   const inTree = new Set((treeFindings || []).map((finding) => `${finding.rule}|${finding.masked}`));
   for (const finding of findings) {
-    if (!finding || !finding.fingerprint) continue;
+    if (!finding || !finding.fingerprint || finding.advisory) continue;
     if (finding.source === 'working-tree' || finding.source === 'staged') {
       finding.presentInTree = true;
     } else {

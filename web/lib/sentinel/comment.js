@@ -28,12 +28,17 @@ export function triageOrder(findings, labels) {
 
 export function renderComment(findings, labels, explanation) {
   const byWhere = new Map((labels || []).map((label) => [label.where, label]));
-  const gate = findings?.length ? 'FAIL' : 'PASS';
-  const rows = (findings || []).map((finding) => {
+  const blocking = (findings || []).filter((finding) => !finding.advisory);
+  const advisory = (findings || []).filter((finding) => finding.advisory);
+  const gate = blocking.length ? 'FAIL' : 'PASS';
+  const rows = blocking.map((finding) => {
     const label = byWhere.get(whereOf(finding));
     return `| ${cell(finding.severity)} | ${cell(finding.rule)} | ${cell(whereOf(finding))} | ${cell(label?.label || 'unclear')} | ${cell(label?.why || '')} |`;
   });
-  const triage = triageOrder(findings, labels);
+  const aiRows = advisory.map((finding) => (
+    `| ${cell(finding.rule)} | ${cell(whereOf(finding))} | ${cell(finding.masked)} |`
+  ));
+  const triage = triageOrder(blocking, labels);
   const rotate = (explanation?.rotate || []).flatMap((item) => {
     const lines = [`- ${cell(item.where)}`];
     if (item.why_live) lines.push(`  Why live: ${cell(item.why_live)}`);
@@ -74,5 +79,15 @@ export function renderComment(findings, labels, explanation) {
     '',
     ...(ignore.length ? ignore : ['- None. Every hit looks live or unclear.']),
     '',
+    ...(advisory.length ? [
+      '### AI signals (advisory, never blocks)',
+      '',
+      'Self-declared signs of agent authorship. Signals, not proof.',
+      '',
+      '| Signal | Where | Detail |',
+      '| --- | --- | --- |',
+      ...aiRows,
+      '',
+    ] : []),
   ].join('\n').slice(0, 12000);
 }
