@@ -2,6 +2,7 @@
 import { realpathSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { isStrictFor } from './ai.js';
 import { annotationText, summaryText } from './annotate.js';
 import { renderComment } from './comment.js';
 import { loadEnvFile } from './env.js';
@@ -12,9 +13,8 @@ import { toSarif } from './sarif.js';
 import { dedupe, markTreePresence, scanGitHistory, scanPrDiff, scanStaged, scanWorkingTree } from './scan.js';
 
 function applyStrict(findings, env) {
-  if (env.SENTINEL_AI_STRICT !== 'true') return findings;
   for (const finding of findings) {
-    if (finding.advisory) {
+    if (finding.advisory && isStrictFor(env, finding.rule)) {
       finding.advisory = false;
       finding.severity = 'low';
     }

@@ -51,6 +51,18 @@ const ARTIFACTS = [
   '**/ai-instructions*',
 ];
 
+/**
+ * Strict scope: 'true' promotes every advisory signal; a comma list
+ * promotes only those rules (e.g. 'ai_author,ai_trailer'). Anything
+ * else (including unset) keeps signals advisory.
+ */
+export function isStrictFor(env, rule) {
+  const raw = String(env?.SENTINEL_AI_STRICT || '').trim().toLowerCase();
+  if (!raw || raw === 'false' || raw === '0' || raw === 'no') return false;
+  if (raw === 'true' || raw === '1' || raw === 'yes') return true;
+  return raw.split(',').map((part) => part.trim()).includes(String(rule || '').toLowerCase());
+}
+
 export function isAiAuthor(name) {
   const text = String(name || '');
   if (!text) return false;

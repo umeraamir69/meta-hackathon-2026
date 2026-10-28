@@ -10,7 +10,7 @@ import { assessAiSignals, reviewFindings } from './sentinel/muse.js';
 import { renderComment } from './sentinel/comment.js';
 import { configuredSecrets, scrubFindings } from './sentinel/redact.js';
 import { dedupe, markTreePresence, scanPatch, scanText, scanWorkingTree } from './sentinel/scan.js';
-import { aiBranchDescriptor, aiHit, isAiAuthor, scanAiMessage } from './sentinel/ai.js';
+import { aiBranchDescriptor, aiHit, isAiAuthor, isStrictFor, scanAiMessage } from './sentinel/ai.js';
 
 const ARCHIVE_LIMIT = 25_000_000;
 const COMMIT_LIMIT = 8;
@@ -142,12 +142,10 @@ export async function scanRemote(input) {
 
   const merged = [...treeFindings, ...commitFindings];
   const unique = dedupe(target.pull ? merged : markTreePresence(merged, treeFindings));
-  if (process.env.SENTINEL_AI_STRICT === 'true') {
-    for (const finding of unique) {
-      if (finding.advisory) {
-        finding.advisory = false;
-        finding.severity = 'low';
-      }
+  for (const finding of unique) {
+    if (finding.advisory && isStrictFor(process.env, finding.rule)) {
+      finding.advisory = false;
+      finding.severity = 'low';
     }
   }
   const blocking = unique.filter((finding) => !finding.advisory).slice(0, 40);

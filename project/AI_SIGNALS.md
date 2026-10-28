@@ -324,10 +324,12 @@ grounding), live `unclear` abstention not yet observed in the wild
 Also in Phase 2: one-paragraph privacy note on the site (nothing stored,
 §6) before any hosted verdict goes live.
 
-### Phase 3 — polish (only if Phases 1–2 land early)
+### Phase 3 — polish (done 2026-10-28)
 
-Preset bundles (e.g. strictness aliases), per-path signal stats on the
-report page, demo-video segment (bot PR → advisory → strict block).
+Shipped as: rule-scoped strict (`SENTINEL_AI_STRICT=true` or a comma
+rule list like `'ai_author,ai_trailer'`, mirrored in the Action input),
+README + demo-script encore segment (bot PR → advisory → strict block).
+Per-path signal stats cut as low value for the remaining time.
 
 ### Risks and mitigations
 

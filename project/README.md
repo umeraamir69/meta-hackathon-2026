@@ -46,7 +46,8 @@ branch prefixes, workspace artifacts (`AGENTS.md`, `.claude/`), and
 generated-by banners. They are reported as `info` findings with
 `advisory: true` and never fail the gate — except with
 `SENTINEL_AI_STRICT=true` (Action: `ai_strict: 'true'`), which promotes
-them to `low` blockers. Signals, not proof; see `AI_SIGNALS.md`.
+them to `low` blockers (`'true'` for all, or a comma rule list like
+`'ai_author,ai_trailer'`). Signals, not proof; see `AI_SIGNALS.md`.
 
 ## Pre-commit hook
 

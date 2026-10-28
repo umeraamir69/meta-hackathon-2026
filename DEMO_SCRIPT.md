@@ -34,8 +34,17 @@ it; use the real `MODEL_API_KEY` for the Muse segment to prove the live call.
 
 1. Quick cuts: pre-commit hook blocking a commit, the hosted site scanning a
    PR link, the Chrome extension popup.
-2. `node --test test/*.test.js` → 72 passing.
+2. `node --test test/*.test.js` → 92 passing.
 3. Closing line: "Rules block the merge. Muse explains. Secrets stay masked."
+
+## 3:00–3:30 — Encore: AI signals (optional, live Muse call)
+
+1. Scan a Copilot PR on the site. Verdict banner stays green: PASS.
+2. Scroll to AI signals: `ai_author`, `ai_branch`, Copilot trailer.
+3. Show the Muse verdict: `likely_agent`, evidence bullets, review-focus
+   notes. Say: "Signals, not proof — advisory, never blocking."
+4. Flip `ai_strict: 'true'` in CI on a second tab; same PR goes red.
+   Say: "And strict mode for teams that want to require disclosure."
 
 ## Checklist before recording
 

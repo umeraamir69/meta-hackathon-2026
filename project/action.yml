@@ -39,7 +39,7 @@ inputs:
     required: false
     default: ''
   ai_strict:
-    description: Fail the check on AI-authorship signals too (bot authors, trailers, agent artifacts). Default false keeps them advisory.
+    description: Fail on AI-authorship signals too. 'true' promotes all; a comma rule list (e.g. 'ai_author,ai_trailer') promotes only those. Default false keeps them advisory.
     required: false
     default: 'false'
 outputs:
