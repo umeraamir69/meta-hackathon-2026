@@ -2,11 +2,15 @@
 import { createServer } from 'node:http';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { collectReport } from './cli.js';
+import { loadEnvFile } from './env.js';
 import { writeDemoRepo } from './demo-repo.js';
 import { parseGitHubUrl, withGitHubCheckout } from './github-target.js';
 import { renderReport } from './report-html.js';
+
+loadEnvFile(join(dirname(fileURLToPath(import.meta.url)), '..', '.env'));
 
 const port = Number(process.env.SENTINEL_PORT || 4317);
 const state = { report: null, url: '', error: '', source: '', busy: false };

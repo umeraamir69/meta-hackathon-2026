@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 
 /** Fill empty environment variables from a .env file. Never logs values. */
-export function loadEnvFile(path) {
+export function loadEnvFile(path, target = process.env) {
   if (!path || !existsSync(path)) return;
   let text = readFileSync(path, 'utf8');
   if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
@@ -18,7 +18,7 @@ export function loadEnvFile(path) {
       value = value.slice(1, -1);
     }
     if (!value) continue;
-    if (process.env[key]) continue;
-    process.env[key] = value;
+    if (target[key]) continue;
+    target[key] = value;
   }
 }

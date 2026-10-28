@@ -42,7 +42,7 @@ async function finishReport(raw, root, env, secrets) {
 }
 
 export async function collectReport(root, env = process.env) {
-  loadEnvFile(join(dirname(fileURLToPath(import.meta.url)), '..', '.env'));
+  loadEnvFile(join(dirname(fileURLToPath(import.meta.url)), '..', '.env'), env);
   const secrets = configuredSecrets(env);
   if (env.SENTINEL_STAGED === 'true') {
     return finishReport(dedupe(markTreePresence(scanStaged(root), [])), root, env, secrets);
@@ -69,6 +69,7 @@ Exit 1 means the gate failed. Exit 0 means no findings.
 `;
 
 export async function run(argv = process.argv.slice(2)) {
+  loadEnvFile(join(dirname(fileURLToPath(import.meta.url)), '..', '.env'));
   const flags = new Set(argv.filter((arg) => arg.startsWith('--')));
   const positionals = argv.filter((arg) => !arg.startsWith('--'));
   if (flags.has('--help') || positionals[0] === 'help') {
