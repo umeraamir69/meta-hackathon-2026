@@ -3,9 +3,10 @@ import { realpathSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { annotationText, summaryText } from './annotate.js';
+import { renderComment } from './comment.js';
 import { loadEnvFile } from './env.js';
 import { applyIgnore, loadIgnore } from './ignore.js';
-import { reviewFindings } from './muse.js';
+import { assessAiSignals, reviewFindings } from './muse.js';
 import { configuredSecrets, redactText, scrubFindings } from './redact.js';
 import { toSarif } from './sarif.js';
 import { dedupe, markTreePresence, scanGitHistory, scanPrDiff, scanStaged, scanWorkingTree } from './scan.js';
@@ -26,6 +27,10 @@ async function finishReport(raw, root, env, secrets) {
   const findings = applyStrict(scrubFindings(kept, secrets), env);
   const blocking = findings.filter((finding) => !finding.advisory);
   const muse = await reviewFindings(findings, { env });
+  if (muse) {
+    muse.assessment = await assessAiSignals(findings, { env });
+    if (muse.assessment) muse.comment = renderComment(findings, muse.labels, muse);
+  }
   return {
     ok: blocking.length === 0,
     count: blocking.length,

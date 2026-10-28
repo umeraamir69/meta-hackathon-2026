@@ -283,6 +283,7 @@ h1 {
 
 .ai-signals { margin-top: 8px; padding-top: 16px; border-top: 1px solid var(--line); }
 .ai-signals > span { color: var(--faint); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; }
+.ai-signals .verdict { color: var(--accent); font-size: 13px; margin: 8px 0 0; }
 .ai-signals ul { margin: 10px 0 0; padding: 0; list-style: none; }
 .ai-signals li { padding: 10px 0; border-top: 1px solid var(--line); }
 .ai-signals b { font-weight: 560; font-size: 13px; }

@@ -67,7 +67,9 @@ function render(body, apiBase, url) {
   report.append(el('p', 'scope', `${body.source || ''} — ${body.scope || ''}`));
   report.append(el('p', 'count', `${count} finding${count === 1 ? '' : 's'}${body.ok ? '' : ' blocking merge'}`));
   if (advisory > 0) {
-    report.append(el('p', 'ai', `${advisory} AI signal${advisory === 1 ? '' : 's'} (advisory, see full report)`));
+    const verdict = body.muse?.assessment?.verdict;
+    const extra = verdict ? ` · ${String(verdict).replaceAll('_', ' ')}` : '';
+    report.append(el('p', 'ai', `${advisory} AI signal${advisory === 1 ? '' : 's'}${extra} (advisory, see full report)`));
   }
   if (!findings.length) {
     report.append(el('p', 'empty', 'No findings. Nothing in this scan blocks the merge.'));

@@ -423,6 +423,154 @@ function addUsage(left, right) {
   return { input_tokens: input, output_tokens: output };
 }
 
+const ASSESS_VERDICTS = new Set(['likely_agent', 'likely_human', 'mixed', 'unclear']);
+const ASSESS_CONFIDENCE = new Set(['high', 'medium', 'low']);
+
+function signalBlock(finding) {
+  return `signal=${finding.rule} where=${whereOf(finding)} detail=${finding.masked || ''}`;
+}
+
+function buildAssessPrompt(signals) {
+  return [
+    'You assess whether a pull request shows signs of AI-agent authorship.',
+    'You do not decide anything about merging. You accuse no one.',
+    'Base the verdict ONLY on the listed signals below.',
+    'Stylistic hunches without a cited signal are forbidden: if the signals are thin, reply "unclear" and say what is missing.',
+    '"likely_human" requires positive evidence; absence of signals alone means "unclear".',
+    'Never invent filenames, authors, or signal text.',
+    'Reply with JSON only: {"verdict": "likely_agent|likely_human|mixed|unclear", "confidence": "high|medium|low", "evidence": [{"signal": string, "why": string}], "review_focus": [string]}',
+    'Keep every string under 280 characters.',
+    '',
+    ...signals.slice(0, 20).map(signalBlock),
+  ].join('\n');
+}
+
+function buildAssessNotesPrompt(assessment, signals) {
+  const evidence = (assessment.evidence || []).map((item) => `${item.signal}: ${item.why}`).join(' | ').slice(0, 800);
+  const paths = [...new Set(signals.map((finding) => finding.path))].slice(0, 20).join(', ');
+  return [
+    `An agentic-PR triage flagged this pull request as ${assessment.verdict} with evidence: ${evidence}.`,
+    'The deterministic secret gate already ran separately.',
+    'Write short review-focus notes for the human reviewer: which classes of defect to scrutinize (auth, input handling, migrations, tests that assert nothing), grounded in these changed paths:',
+    paths,
+    'Do not rewrite code. Do not restate the verdict as fact; say "signals suggest".',
+    'Reply with JSON only: {"notes": [{"path": string, "focus": string}]}',
+    'Keep every string under 280 characters.',
+  ].join('\n');
+}
+
+function coerceEvidence(value) {
+  if (!Array.isArray(value)) return [];
+  return value.slice(0, 10).map((item) => ({
+    signal: String(item?.signal || '').slice(0, 280),
+    why: String(item?.why || '').slice(0, 280),
+  })).filter((item) => item.signal && item.why);
+}
+
+function coerceNotes(value) {
+  if (!Array.isArray(value)) return [];
+  return value.slice(0, 10).map((item) => ({
+    path: String(item?.path || '').slice(0, 280),
+    focus: String(item?.focus || '').slice(0, 280),
+  })).filter((item) => item.path && item.focus);
+}
+
+function unclearAssessment(provider, model, note, usage = null) {
+  return {
+    provider,
+    model,
+    verdict: 'unclear',
+    confidence: 'low',
+    evidence: [],
+    review_focus: [],
+    notes: [],
+    usage,
+    usage_wonder: null,
+    note,
+  };
+}
+
+/**
+ * Layer 2: one Spark verdict call plus, for likely_agent/mixed, one Wonder
+ * review-focus call. Grounded in Layer-1 signals only; null without signals
+ * or without a key. Never affects the gate.
+ */
+async function postAssessPrompt(fetchImpl, key, model, prompt, limit) {
+  let result = await postResponses(fetchImpl, key, { model, input: prompt, reasoning: { effort: 'minimal' } }, limit);
+  if (result.status === 400) {
+    result = await postResponses(fetchImpl, key, { model, input: prompt }, limit);
+  }
+  if (!result.ok) return { ok: false, status: result.status, output: '', usage: null };
+  let body;
+  try {
+    body = JSON.parse(result.text);
+  } catch {
+    return { ok: false, status: result.status, output: '', usage: null };
+  }
+  const output = extractOutputText(body);
+  if (output.includes(key)) return { ok: false, status: result.status, output: '', usage: null, echoed: true };
+  return { ok: true, status: result.status, output, usage: usageOf(body) };
+}
+
+export async function assessAiSignals(findings, options = {}) {
+  const signals = (findings || []).filter((finding) => finding.advisory);
+  if (!signals.length) return null;
+  const env = options.env || process.env;
+  if (env.SENTINEL_MUSE === 'false') return null;
+  const key = apiKey(env);
+  if (!key) return null;
+  const fetchImpl = options.fetchImpl || globalThis.fetch;
+  const classifier = env.SENTINEL_CLASSIFIER || 'muse-spark-1.3';
+  const model = env.SENTINEL_MODEL || 'muse-wonder-1.0';
+  const refused = [classifier, model].find((name) => String(name).endsWith('-contributor'));
+  if (refused) {
+    return unclearAssessment('local-fallback', null, `Refusing ${refused}: contributor-tier models are blocked.`);
+  }
+  const timeout = Number(env.SENTINEL_MUSE_TIMEOUT_MS || 20000);
+  const limit = Number.isFinite(timeout) && timeout > 0 ? timeout : 20000;
+  const truncated = signals.length > 20 ? `Assessed 20 of ${signals.length} signals.` : null;
+  let spark;
+  try {
+    spark = await postAssessPrompt(fetchImpl, key, classifier, buildAssessPrompt(signals), limit);
+  } catch (error) {
+    const timedOut = error?.name === 'TimeoutError' || error?.name === 'AbortError';
+    return unclearAssessment('local-fallback', classifier, timedOut ? 'Assessment call failed (timeout).' : 'Assessment call failed (network).');
+  }
+  if (!spark.ok) {
+    return unclearAssessment('local-fallback', classifier, spark.echoed
+      ? 'Assessment reply was discarded because it echoed credential material.'
+      : `Assessment call failed (HTTP ${spark.status}).`);
+  }
+  const parsed = parseModelJson(spark.output);
+  if (!parsed || !ASSESS_VERDICTS.has(parsed.verdict)) {
+    return unclearAssessment('meta-model-api', classifier, 'The assessment reply was not valid JSON.', spark.usage);
+  }
+  const verdict = {
+    provider: String(classifier).startsWith('muse-spark') ? 'muse-spark' : 'meta-model-api',
+    model: classifier,
+    verdict: parsed.verdict,
+    confidence: ASSESS_CONFIDENCE.has(parsed.confidence) ? parsed.confidence : 'low',
+    evidence: coerceEvidence(parsed.evidence),
+    review_focus: Array.isArray(parsed.review_focus) ? parsed.review_focus.map((s) => String(s).slice(0, 280)).slice(0, 8) : [],
+    notes: [],
+    usage: spark.usage,
+    usage_wonder: null,
+    note: truncated,
+  };
+  if (verdict.verdict !== 'likely_agent' && verdict.verdict !== 'mixed') return verdict;
+  try {
+    const wonder = await postAssessPrompt(fetchImpl, key, model, buildAssessNotesPrompt(verdict, signals), limit);
+    if (wonder.ok) {
+      verdict.notes = coerceNotes(parseModelJson(wonder.output)?.notes);
+      verdict.usage_wonder = wonder.usage;
+    }
+    if (!verdict.notes.length) verdict.note = [verdict.note, 'Review-focus notes were empty.'].filter(Boolean).join(' ');
+  } catch (error) {
+    verdict.note = [verdict.note, `Notes call failed: ${String(error?.message || error).slice(0, 160)}`].filter(Boolean).join(' ');
+  }
+  return verdict;
+}
+
 export async function reviewFindings(findings, options = {}) {
   if (!findings?.length) return null;
   const blocking = findings.filter((finding) => !finding.advisory);

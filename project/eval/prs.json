@@ -1,0 +1,10 @@
+[
+  { "url": "https://github.com/makr-code/ThemisDB/pull/7312", "expected": "agent", "why": "Author Copilot on a copilot/ branch" },
+  { "url": "https://github.com/makr-code/ThemisDB/pull/7311", "expected": "agent", "why": "Author Copilot on a copilot/ branch" },
+  { "url": "https://github.com/MrLynchWAMS/MrLynchWAMS.github.io/pull/118", "expected": "agent", "why": "Author Copilot on a copilot/ branch" },
+  { "url": "https://github.com/makr-code/ThemisDB/pull/7284", "expected": "agent", "why": "Relabeled after inspection: PR body carries an AI-Generated Code header plus Copilot trailers (owner discloses agent assistance)" },
+  { "url": "https://github.com/makr-code/ThemisDB/pull/7281", "expected": "agent", "why": "Relabeled after inspection: AI-Generated Code header plus Copilot trailers" },
+  { "url": "https://github.com/makr-code/ThemisDB/pull/7280", "expected": "agent", "why": "Relabeled after inspection: AI-Generated Code header plus Copilot trailers" },
+  { "url": "https://github.com/curl/curl-www/pull/652", "expected": "human", "why": "Long-time maintainer (bagder) prose fix on a human branch" },
+  { "url": "https://github.com/curl/curl/pull/23631", "expected": "human", "why": "Maintainer CI fix on a human branch" }
+]

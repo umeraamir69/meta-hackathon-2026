@@ -6,7 +6,8 @@ import { extract } from 'tar';
 import { parseGitHubUrl } from './sentinel/github-target.js';
 import { applyIgnore, loadIgnore } from './sentinel/ignore.js';
 import { whereOf } from './sentinel/judge.js';
-import { reviewFindings } from './sentinel/muse.js';
+import { assessAiSignals, reviewFindings } from './sentinel/muse.js';
+import { renderComment } from './sentinel/comment.js';
 import { configuredSecrets, scrubFindings } from './sentinel/redact.js';
 import { dedupe, markTreePresence, scanPatch, scanText, scanWorkingTree } from './sentinel/scan.js';
 import { aiBranchDescriptor, aiHit, isAiAuthor, scanAiMessage } from './sentinel/ai.js';
@@ -153,6 +154,10 @@ export async function scanRemote(input) {
   const advisory = unique.filter((finding) => finding.advisory).slice(0, 10);
   const scrubbed = scrubFindings([...blocking, ...advisory], configuredSecrets());
   const muse = await reviewFindings(scrubbed);
+  if (muse) {
+    muse.assessment = await assessAiSignals(scrubbed);
+    if (muse.assessment) muse.comment = renderComment(scrubbed, muse.labels, muse);
+  }
   const labels = new Map((muse?.labels || []).map((label) => [label.where, label]));
   return {
     ok: blocking.length === 0,
@@ -185,6 +190,7 @@ export async function scanRemote(input) {
       summary: muse.summary,
       classifier: muse.classifier || null,
       rotate: muse.rotate || [],
+      assessment: muse.assessment || null,
     } : null,
   };
 }

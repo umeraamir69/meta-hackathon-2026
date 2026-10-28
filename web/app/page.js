@@ -26,6 +26,10 @@ export default function HomePage() {
                 <span>Muse</span>
                 <p>Labels the hit. The pass or fail stays with the rules.</p>
               </li>
+              <li>
+                <span>AI signals</span>
+                <p>Advisory authorship notes from public PR metadata. Nothing is stored.</p>
+              </li>
             </ul>
           </div>
           <Scanner />

@@ -15,7 +15,8 @@ import {
 } from '../src/ai.js';
 import { annotationText } from '../src/annotate.js';
 import { collectReport } from '../src/cli.js';
-import { reviewFindings } from '../src/muse.js';
+import { renderComment } from '../src/comment.js';
+import { assessAiSignals, reviewFindings } from '../src/muse.js';
 import { scanGitHistory } from '../src/scan.js';
 import { git, removeTemp, tempRepo } from './repo.js';
 
@@ -166,6 +167,79 @@ test('review skips Muse calls when only advisory signals exist', async () => {
   assert.equal(review.provider, 'local-fallback');
   assert.deepEqual(review.labels, []);
   assert.match(review.comment, /PASS/);
+});
+
+function mockFetch(replies) {
+  const calls = [];
+  const impl = async (url, options) => {
+    calls.push(JSON.parse(options.body));
+    const next = replies[Math.min(calls.length - 1, replies.length - 1)];
+    return { ok: true, status: 200, text: async () => JSON.stringify(next) };
+  };
+  return { impl, calls };
+}
+
+function replyJson(payload, model = 'muse-spark-1.3') {
+  return { model, output_text: JSON.stringify(payload) };
+}
+
+function advisoryFinding() {
+  return aiHit('ai_trailer', 'trailer: Co-Authored-By: Claude', { source: 'git-history', path: 'commit-message', commit: 'abc123' }, 3);
+}
+
+test('assessment parses a verdict and fetches notes for likely_agent', async () => {
+  const { impl, calls } = mockFetch([
+    replyJson({ verdict: 'likely_agent', confidence: 'high', evidence: [{ signal: 'ai_trailer', why: 'Self-declared bot trailer.' }], review_focus: ['Check auth paths.'] }),
+    replyJson({ notes: [{ path: 'app.py', focus: 'Signals suggest review of input handling.' }] }, 'muse-wonder-1.0'),
+  ]);
+  const assessment = await assessAiSignals([advisoryFinding()], { env: { MODEL_API_KEY: 'test-key-not-real-0000' }, fetchImpl: impl });
+  assert.equal(assessment.verdict, 'likely_agent');
+  assert.equal(assessment.confidence, 'high');
+  assert.equal(assessment.evidence.length, 1);
+  assert.equal(assessment.notes.length, 1);
+  assert.equal(calls.length, 2);
+  assert.equal(calls[0].model, 'muse-spark-1.3');
+  assert.equal(calls[1].model, 'muse-wonder-1.0');
+  assert.match(calls[0].input, /Base the verdict ONLY on the listed signals/);
+});
+
+test('unclear verdict skips the notes call', async () => {
+  const { impl, calls } = mockFetch([
+    replyJson({ verdict: 'unclear', confidence: 'low', evidence: [], review_focus: [] }),
+  ]);
+  const assessment = await assessAiSignals([advisoryFinding()], { env: { MODEL_API_KEY: 'test-key-not-real-0000' }, fetchImpl: impl });
+  assert.equal(assessment.verdict, 'unclear');
+  assert.equal(calls.length, 1);
+});
+
+test('invalid assessment JSON falls back to unclear', async () => {
+  const { impl } = mockFetch([{ model: 'muse-spark-1.3', output_text: 'not json' }]);
+  const assessment = await assessAiSignals([advisoryFinding()], { env: { MODEL_API_KEY: 'test-key-not-real-0000' }, fetchImpl: impl });
+  assert.equal(assessment.verdict, 'unclear');
+  assert.match(assessment.note, /not valid JSON/);
+});
+
+test('assessment returns null without signals, key, or muse', async () => {
+  const throwing = async () => { throw new Error('must not call'); };
+  assert.equal(await assessAiSignals([], { env: { MODEL_API_KEY: 'test-key-not-real-0000' }, fetchImpl: throwing }), null);
+  assert.equal(await assessAiSignals([advisoryFinding()], { env: {}, fetchImpl: throwing }), null);
+  assert.equal(await assessAiSignals([advisoryFinding()], { env: { MODEL_API_KEY: 'test-key-not-real-0000', SENTINEL_MUSE: 'false' }, fetchImpl: throwing }), null);
+});
+
+test('assessment refuses contributor-tier models', async () => {
+  const throwing = async () => { throw new Error('must not call'); };
+  const assessment = await assessAiSignals([advisoryFinding()], { env: { MODEL_API_KEY: 'test-key-not-real-0000', SENTINEL_CLASSIFIER: 'muse-spark-1.3-contributor' }, fetchImpl: throwing });
+  assert.equal(assessment.verdict, 'unclear');
+  assert.match(assessment.note, /Refusing/);
+});
+
+test('comment renders the verdict block', () => {
+  const comment = renderComment([advisoryFinding()], [], {
+    assessment: { verdict: 'likely_agent', confidence: 'high', evidence: [{ signal: 'ai_trailer', why: 'Bot trailer.' }], notes: [{ path: 'a.py', focus: 'Check this.' }], note: null },
+  });
+  assert.match(comment, /PASS/);
+  assert.match(comment, /AI assessment/);
+  assert.match(comment, /likely_agent/);
 });
 
 test('scan helpers push with line mapping', () => {

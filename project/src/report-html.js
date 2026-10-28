@@ -23,6 +23,8 @@ export function renderReport(report, options = {}) {
   const aiRows = advisory.map((finding) => (
     `<tr><td>${escape(finding.rule)}</td><td><code>${escape(`${finding.source} ${finding.path}:${finding.line}`)}</code><div class="masked">${escape(finding.masked || '')}</div></td></tr>`
   )).join('');
+  const verdict = report?.muse?.assessment;
+  const verdictLine = verdict ? `<p class="verdict">Muse verdict: ${escape(String(verdict.verdict).replaceAll('_', ' '))} (confidence ${escape(verdict.confidence || 'low')}). Signals suggest; nothing here blocks the merge.</p>` : '';
   const rows = blocking.map((finding) => {
     const where = `${finding.source} ${finding.path}:${finding.line}`;
     const shown = labels.get(whereOf(finding));
@@ -79,6 +81,7 @@ export function renderReport(report, options = {}) {
     th { color: var(--muted); font-weight: 600; }
     code, pre { font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; }
     .masked { color: var(--muted); font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; margin-top: 4px; }
+    .verdict { color: var(--accent); }
     .case { color: var(--accent); font-size: 13px; margin-bottom: 4px; }
     pre { white-space: pre-wrap; color: var(--muted); margin: 8px 0 0; }
     section { margin-top: 28px; }
@@ -118,7 +121,7 @@ export function renderReport(report, options = {}) {
       <thead><tr><th>Severity</th><th>Rule</th><th>Where</th><th>Label</th><th>Why</th></tr></thead>
       <tbody>${rows || '<tr><td colspan="5">No findings.</td></tr>'}</tbody>
     </table>
-    ${aiRows ? `<section><h2>AI signals (advisory, never blocks)</h2><table><thead><tr><th>Signal</th><th>Where</th></tr></thead><tbody>${aiRows}</tbody></table></section>` : ''}
+    ${aiRows ? `<section><h2>AI signals (advisory, never blocks)</h2>${verdictLine}<table><thead><tr><th>Signal</th><th>Where</th></tr></thead><tbody>${aiRows}</tbody></table></section>` : ''}
     <section>
       <h2>Muse</h2>
       <p>${escape(report.muse?.summary || 'Nothing to explain.')}</p>

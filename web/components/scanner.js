@@ -98,6 +98,9 @@ function Report({ report }) {
       {advisory.length > 0 ? (
         <div className="ai-signals">
           <span>AI signals · advisory, never blocks</span>
+          {report.muse?.assessment ? (
+            <p className="verdict">Muse verdict: {String(report.muse.assessment.verdict).replaceAll('_', ' ')} ({report.muse.assessment.confidence || 'low'} confidence)</p>
+          ) : null}
           <ul>
             {advisory.map((finding) => (
               <li key={`${finding.rule}-${finding.path}-${finding.line}`}>

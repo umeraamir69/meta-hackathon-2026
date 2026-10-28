@@ -1,0 +1,12 @@
+[
+  {
+    "url": "https://github.com/curl/curl-www/pull/652",
+    "expected": "human",
+    "why": "Long-time maintainer (bagder) prose fix on a human branch"
+  },
+  {
+    "url": "https://github.com/curl/curl/pull/23631",
+    "expected": "human",
+    "why": "Maintainer CI fix on a human branch"
+  }
+]

@@ -38,6 +38,17 @@ export function renderComment(findings, labels, explanation) {
   const aiRows = advisory.map((finding) => (
     `| ${cell(finding.rule)} | ${cell(whereOf(finding))} | ${cell(finding.masked)} |`
   ));
+  const assessment = explanation?.assessment;
+  const verdictBlock = assessment ? [
+    '### AI assessment (advisory)',
+    '',
+    `Verdict: ${cell(assessment.verdict)} (confidence ${cell(assessment.confidence || 'low')}). Signals suggest; nothing here blocks the merge.`,
+    '',
+    ...(assessment.evidence || []).map((item) => `- ${cell(item.signal)}: ${cell(item.why)}`),
+    ...((assessment.notes || []).map((item) => `- ${cell(item.path)}: ${cell(item.focus)}`)),
+    ...(assessment.note ? [`_${cell(assessment.note)}_`] : []),
+    '',
+  ] : [];
   const triage = triageOrder(blocking, labels);
   const rotate = (explanation?.rotate || []).flatMap((item) => {
     const lines = [`- ${cell(item.where)}`];
@@ -89,5 +100,6 @@ export function renderComment(findings, labels, explanation) {
       ...aiRows,
       '',
     ] : []),
+    ...verdictBlock,
   ].join('\n').slice(0, 12000);
 }

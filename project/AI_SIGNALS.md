@@ -279,7 +279,7 @@ messages get scanned too); `demo-history.mjs` output unchanged; web
 `next build` green; extension headless harness green.
 *Done when:* all of the above in one clean run, then commit + push.
 
-### Phase 2 — Muse assessment (after Phase 1, eval-gated)
+### Phase 2 — Muse assessment (done 2026-10-28 — CONDITIONAL GO, see 2d)
 
 **2a. Prompts + plumbing — `project/src/muse.js` (or new `assess.js`).**
 Spark verdict call + Wonder review-focus call per §5.2, triggered only
@@ -309,6 +309,17 @@ with the bias checks from §5.4 passing. Otherwise Layer 1 ships alone
 and this doc records the miss honestly.
 *Done when:* a go/no-go line is added to this section with the measured
 numbers.
+
+**Measured 2026-10-28 (eval/results/ai-signals-2026-10-28.json, n=8):**
+6/6 agent PRs → `likely_agent` (high confidence, evidence cites real
+signals, review_focus sensible); 2/2 human PRs → silent (0 signals,
+Layer 2 never ran, 0 tokens); tracker + SecSentry histories → 0 false
+fires (1 true Cursor trailer). Decision: **CONDITIONAL GO** — advisory
+verdicts ship with "signals suggest" wording. Caveats: small-n (the
+200-PR AIDev eval stays follow-up work), 3 agent labels corrected
+post-inspection (circular for Layer-1 recall, valid for verdict
+grounding), live `unclear` abstention not yet observed in the wild
+(mocked only).
 
 Also in Phase 2: one-paragraph privacy note on the site (nothing stored,
 §6) before any hosted verdict goes live.
