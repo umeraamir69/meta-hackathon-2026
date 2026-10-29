@@ -392,7 +392,7 @@ was then audited row by row against the live PR.
 - **~24 rows: the detector was right, the label was wrong.** Human
   accounts whose PRs openly carry `Co-Authored-By: Copilot/Claude/
   Codex/Cursor/gemini-code-assist`, `Assisted-by: Codex/Claude`, or
-  "Generated with Claude Code". ~12% of the "human" sample from top
+  "Generated with"-style Claude Code banners. ~12% of the "human" sample from top
   repos is AI-assisted — a finding in itself (see §10.1).
 - **6 rows: one genuine bug.** Unchecked PR-template boilerplate
   ("- [ ] … I have reviewed the AI-generated content …") matched
