@@ -44,6 +44,7 @@ const entries = JSON.parse(readFileSync(listPath, 'utf8')).slice(0, limit);
 const results = [];
 let stopped = null;
 for (const entry of entries) {
+  await new Promise((r) => setTimeout(r, 1000)); // pace PRs: back-to-back scans trip GitHub abuse limits
   const remaining = await coreRemaining();
   if (remaining < 12) {
     stopped = `GitHub core budget low (${remaining} left); run the rest later.`;

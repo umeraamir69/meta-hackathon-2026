@@ -80,7 +80,28 @@ Early rows: agents mostly `CORRECT … likely_agent` with regular
 one `not public` (repo went private) — retry pass planned for the
 transient failures.
 
-## 6. Commits this session
+## 6. Pass 1 killed by GitHub 503s (root-caused)
+
+269/400 rows completed, then the run was stopped: 89 rows errored
+with `GitHub returned 503` (plus 6 `fetch failed`, 1×500,
+2×not-public, 1 genuine recall miss on
+`tektoncd/pipelines-as-code#2326` — no Layer-1 signals).
+
+Root cause (ours, not GitHub's — status page: all operational):
+`web/lib/remote-scan.js` fired ~11 API calls per PR back-to-back
+with **zero pacing, zero Retry-After handling, zero retries** —
+a textbook trigger for GitHub's secondary/abuse limits, which
+answer 503/429.
+
+Fix:
+
+- `github()` now retries 429/500/502/503 + abuse-limit 403s (max 5
+  attempts), honoring `Retry-After`, else exponential backoff
+  1s→30s. Verified by throwaway probe (`/tmp/retry-probe.mjs`):
+  503, 503, 200 → 3 calls, ~2s waits, scan completes.
+- Harness paces PRs 1s apart (eval-only; product UX untouched).
+
+## 7. Commits this session
 
 - `7b65b8b` eval: AIDev + GitHub samplers and full-eval plan note
 - `5e3dc15` docs: complete AI build log; eval list 400 PRs; sampler flag fix

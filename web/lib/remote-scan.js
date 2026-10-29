@@ -25,13 +25,25 @@ function githubHeaders() {
   return headers;
 }
 
-async function github(path) {
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function github(path, attempt = 1) {
   const response = await fetch(`https://api.github.com${path}`, { headers: githubHeaders() });
-  if (response.status === 403 || response.status === 429) {
-    throw new Error('GitHub rate limit reached. Add GITHUB_TOKEN on the server and try again.');
-  }
   if (response.status === 404) {
     throw new Error('That repository or pull request is not public.');
+  }
+  // 429/5xx + abuse-limit 403s are transient: honor Retry-After, back off, retry.
+  const retryAfter = Number(response.headers.get('retry-after') || 0);
+  const rateLimited = response.status === 429
+    || (response.status === 403 && (retryAfter > 0 || /rate limit|abuse/i.test(response.headers.get('x-ratelimit-reason') || '')));
+  const flaky = response.status === 500 || response.status === 502 || response.status === 503;
+  if ((rateLimited || flaky) && attempt <= 5) {
+    const wait = retryAfter > 0 ? retryAfter * 1000 : Math.min(1000 * 2 ** (attempt - 1), 30000);
+    await sleep(wait);
+    return github(path, attempt + 1);
+  }
+  if (response.status === 403 || response.status === 429) {
+    throw new Error('GitHub rate limit reached. Add GITHUB_TOKEN on the server and try again.');
   }
   if (!response.ok) throw new Error(`GitHub returned ${response.status}.`);
   return response.json();
