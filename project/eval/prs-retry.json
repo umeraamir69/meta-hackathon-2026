@@ -1,0 +1,98 @@
+[
+  {
+    "url": "https://github.com/Provenance-Emu/Provenance/pull/2995",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/Provenance-Emu/Provenance",
+    "user": "github-actions[bot]",
+    "title": "[Agent] fix(boot): prevent hang + show real progress on boot screen"
+  },
+  {
+    "url": "https://github.com/Provenance-Emu/Provenance/pull/2996",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/Provenance-Emu/Provenance",
+    "user": "github-actions[bot]",
+    "title": "[Agent] fix(stability): resolve lock-safety regressions causing UI/gameplay hangs"
+  },
+  {
+    "url": "https://github.com/Provenance-Emu/Provenance/pull/2997",
+    "expected": "agent",
+    "agent": "Claude_Code",
+    "repo": "https://api.github.com/repos/Provenance-Emu/Provenance",
+    "user": "github-actions[bot]",
+    "title": "[Agent] fix(hud): fix touch blocking, JIT indicator gating, toggle button placement"
+  },
+  {
+    "url": "https://github.com/eslint/eslint/pull/21400",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/eslint/eslint",
+    "user": "xbinaryx",
+    "title": "feat: fix property descriptor handling in `func-name-matching`"
+  },
+  {
+    "url": "https://github.com/eslint/eslint/pull/21364",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/eslint/eslint",
+    "user": "Cherry",
+    "title": "perf: cache normalized config globals per languageOptions"
+  },
+  {
+    "url": "https://github.com/eslint/eslint/pull/21335",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/eslint/eslint",
+    "user": "xbinaryx",
+    "title": "fix: support `TSFunctionType` in `getFunctionHeadLoc`"
+  },
+  {
+    "url": "https://github.com/eslint/eslint/pull/21311",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/eslint/eslint",
+    "user": "xbinaryx",
+    "title": "fix: ignore `__proto__` properties in `prefer-object-spread`"
+  },
+  {
+    "url": "https://github.com/prettier/prettier/pull/20391",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/prettier/prettier",
+    "user": "fisker",
+    "title": "Reduce size of postcss plugin"
+  },
+  {
+    "url": "https://github.com/prettier/prettier/pull/20347",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/prettier/prettier",
+    "user": "fisker",
+    "title": "Drop support for legacy flow enum body"
+  },
+  {
+    "url": "https://github.com/prettier/prettier/pull/20326",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/prettier/prettier",
+    "user": "fisker",
+    "title": "Improve comment attach in \"block-like\" node"
+  },
+  {
+    "url": "https://github.com/prettier/prettier/pull/20309",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/prettier/prettier",
+    "user": "sansynx",
+    "title": "Fix range formatting of TypeScript type parameters"
+  },
+  {
+    "url": "https://github.com/prettier/prettier/pull/20279",
+    "expected": "human",
+    "agent": null,
+    "repo": "https://github.com/prettier/prettier",
+    "user": "0xvikram",
+    "title": "Keep Less indirect property lookups on variables tight"
+  }
+]

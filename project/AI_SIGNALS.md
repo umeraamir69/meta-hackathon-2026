@@ -369,7 +369,58 @@ Sampling, 2026-10-28:
   `git/git`, `vim/vim` yielded 0 keepers under the bot/agent
   filters; spare repos topped the class up to 200.
 
-Results and go/no-go: run in progress, recording below on completion.
+Results and go/no-go: DONE 2026-10-29 — **GO for advisory use**.
+
+Main run `eval/results/ai-signals-2026-10-29-1538.json` (400 PRs;
+111,490 in / 133,429 Model API tokens), retry
+`ai-signals-2026-10-29-1541.json` (12 rows; 2,357 in / 3,826 out).
+Naive tally: 347 correct, 4 abstain, 12 warn, 37 error. Every fire
+was then audited row by row against the live PR.
+
+### Audited outcome (labels corrected by inspection)
+
+| Bucket | n | Result |
+|--------|---|--------|
+| True agent PRs (AIDev label holds) | 199 | 193 `likely_agent` (97.0% recall), 4 `unclear` (2.0% abstention), 2 unscorable (repo went private) |
+| True clean-human PRs (no AI evidence) | 165 | 163 silent, 2 `unclear` abstentions, **0 false verdicts** |
+| Human-account PRs with self-declared AI content (sampler label noise) | 27 | 26 flagged `likely_agent`/`mixed` (correct), 1 `unclear` |
+| Gray: AI-generated description only (`coderabbit-ai-generated` marker) | 8 | 5 flagged, 3 `unclear` |
+| AIDev label noise, human-written (`tektoncd/pipelines-as-code#2326`) | 1 | correctly silent |
+
+### What the "false alarms" really were
+
+- **~24 rows: the detector was right, the label was wrong.** Human
+  accounts whose PRs openly carry `Co-Authored-By: Copilot/Claude/
+  Codex/Cursor/gemini-code-assist`, `Assisted-by: Codex/Claude`, or
+  "Generated with Claude Code". ~12% of the "human" sample from top
+  repos is AI-assisted — a finding in itself (see §10.1).
+- **6 rows: one genuine bug.** Unchecked PR-template boilerplate
+  ("- [ ] … I have reviewed the AI-generated content …") matched
+  the message phrase. Fixed in `src/ai.js` (`UNCHECKED_BOX`
+  skip), covered by test, verified in retry (6/6 silent). Checked
+  `- [x]` boxes still fire — the author affirms AI content, so
+  those 3 rows sit in the declared-AI bucket above, not here.
+- **8 rows: gray zone.** CodeRabbit's `ai-generated` marker means
+  an AI-written *description*, not necessarily AI-written code.
+  Kept as signal; documented, not "fixed".
+- **Agentic-PR recall miss: none.** The single no-signal agent row
+  was audited human-written (maintainer, human branch, plain
+  commits) — AIDev mining noise, correctly silent.
+
+### Go/no-go
+
+GO, with standing conditions unchanged: advisory-only, strict
+strictly opt-in, abstention allowed, no stylistic guessing. The bar
+was *zero false verdicts on clean humans with high agent recall*;
+after the template fix the eval shows exactly that (193/199
+recall, 0/165 false verdicts, 7 safe abstentions).
+
+### 10.1 Note for future evals
+
+Naive GitHub sampling undercounts AI authorship: maintainer
+accounts routinely land AI-assisted PRs with full trailers. Any
+"human" baseline needs a trailer/body screen first, or precision
+numbers punish the detector for being right.
 
 ## 11. References
 

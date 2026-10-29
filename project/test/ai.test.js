@@ -52,6 +52,14 @@ test('message trailers and phrases are signals', () => {
   assert.equal(phrase.length, 1);
 });
 
+test('unchecked template boxes are boilerplate, checked boxes are claims', () => {
+  const unchecked = aiMessageHits('Fix\n\n- [ ] I have reviewed the AI-generated content before submitting.');
+  assert.equal(unchecked.length, 0);
+  const checked = aiMessageHits('Fix\n\n- [x] I have reviewed the AI-generated content before submitting.');
+  assert.equal(checked.length, 1);
+  assert.equal(checked[0].rule, 'ai_trailer');
+});
+
 test('authors match agent bots and assistant names, not CI bots', () => {
   assert.equal(isAiAuthor('copilot[bot]'), true);
   assert.equal(isAiAuthor('claude[bot]'), true);

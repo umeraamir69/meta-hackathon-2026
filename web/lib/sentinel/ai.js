@@ -25,6 +25,9 @@ const MESSAGE_PHRASE = new RegExp(
   'i',
 );
 const BRANCH = new RegExp(`(?:^|/)(?:copilot|codex|claude|devin|cursor|swe-agent)/`, 'i');
+// Unchecked PR-template boxes ("- [ ] … AI-generated …") are boilerplate,
+// not a claim. Checked boxes ("- [x] …") affirm AI content: they still fire.
+const UNCHECKED_BOX = /^\s*-\s*\[\s*\]/;
 
 const ARTIFACTS = [
   'AGENTS.md',
@@ -127,6 +130,7 @@ export function aiMessageHits(message) {
     if (match.index === TRAILER.lastIndex) TRAILER.lastIndex += 1;
   }
   for (const [index, line] of body.split('\n').entries()) {
+    if (UNCHECKED_BOX.test(line)) continue;
     if (MESSAGE_PHRASE.test(line)) {
       out.push({ rule: 'ai_trailer', descriptor: `message: ${line.trim()}`.slice(0, 160), line: index + 1 });
     }

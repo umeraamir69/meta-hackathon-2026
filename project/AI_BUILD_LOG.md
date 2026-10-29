@@ -110,8 +110,12 @@ Extension: `node --check extension/popup.js` + popup harness.
 
 - n=8 (2026-10-28): 6/6 agent `likely_agent`, 2/2 human silent —
   conditional GO (`eval/results/ai-signals-2026-10-28.json`).
-- n=400: run in progress; dated results + go/no-go go to
-  `AI_SIGNALS.md` §10 and `eval/results/`.
+- n=400 (2026-10-29): GO. Agent recall 97.0% (193/199),
+  0 false verdicts on 165 clean humans, 7 safe abstentions.
+  27 "human" rows were AI-declared (label noise), 1 AIDev label
+  was human (correctly silent), 8 gray description-level rows.
+  One genuine bug (unchecked template boilerplate) fixed and
+  verified. Full audit in `AI_SIGNALS.md` §10.
 
 ## 6. Standing rules
 

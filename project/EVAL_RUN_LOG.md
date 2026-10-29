@@ -101,7 +101,31 @@ Fix:
   503, 503, 200 → 3 calls, ~2s waits, scan completes.
 - Harness paces PRs 1s apart (eval-only; product UX untouched).
 
-## 7. Commits this session
+## 7. Pass 2 (paced + retries) — complete
+
+Request: `node eval/ai-signals.mjs --write --file prs-full.json`
+(retry: `--file prs-retry.json`, 3×503 agents + 9 template humans).
+
+Output: `eval/results/ai-signals-2026-10-29-1538.json` — 400/400 rows,
+zero 503s, tally `{abstain:4, correct:347, error:37, warn:12}`,
+111,490 in / 133,429 out tokens. Retry file
+`ai-signals-2026-10-29-1541.json`: `{correct:9, error:3}`
+(2,357 in / 3,826 out) — 3/3 transients recovered, 6/6 unchecked
+template rows silent post-fix, 3 checked rows still fire.
+
+Audit (every fire inspected; see AI_SIGNALS.md §10):
+
+- Agent recall 193/199 = 97.0%, abstention 2.0%.
+- Clean humans 0/165 false verdicts (163 silent, 2 `unclear`).
+- 27 "human" rows were AI-declared (trailers/banners) — detector
+  right, sampler label wrong (~12% of the naive human baseline).
+- 1 AIDev label wrong the other way (`tektoncd#2326`, human-written,
+  correctly silent) — true recall misses: zero.
+- 8 gray rows: CodeRabbit description marker (description-level AI).
+- 2 rows unscorable (repo went private mid-eval).
+- Verdict: GO for advisory use.
+
+## 8. Commits this session
 
 - `7b65b8b` eval: AIDev + GitHub samplers and full-eval plan note
 - `5e3dc15` docs: complete AI build log; eval list 400 PRs; sampler flag fix
