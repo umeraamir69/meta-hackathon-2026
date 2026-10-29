@@ -3,3 +3,5 @@
 path fixtures/**
 path .env
 path .env.*
+# Eval records quote third-party PR text (banners/trailers as evidence).
+path eval/results/**
