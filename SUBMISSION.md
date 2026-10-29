@@ -44,9 +44,10 @@ pre-commit parity so the same rule fails locally before it fails in CI.
 
 ## Proof it works
 
-- 72 unit tests green, including a self-scan (the tool scans its own tree).
+- 93 unit tests green, including a self-scan (the tool scans its own tree).
 - `node scripts/demo-history.mjs`: a removed key fails the gate with code 1.
 - One live Muse call verified (HTTP 200); demo runs with no key via fallback.
+- AI-authorship signals (advisory): 400-PR eval, 97.0% agent recall, 0 false verdicts on 165 verified-clean human PRs (see `project/AI_SIGNALS.md` §10).
 - Ships as CLI, GitHub Action, pre-commit hook, local report app, hosted
   Next.js site, and Chrome extension.
 

@@ -174,3 +174,4 @@ Not used. The explanation path is Meta Model API. The gate stays local.
 | 2026-10-27 | Next.js site, Chrome extension, GitHub URL scan. Credits confirmed, rules accepted, Discord joined. |
 | 2026-10-27 | Pre-commit hook + how-to docs. Separate in-progress src/ edits (rules, scan, decode, rotate) broke the self-scan test; hook work is green. |
 | 2026-10-27 | Muse triage upgrade + docs. Blast radius, why_live, fix patches, ignore candidates, triage order, prompt dedupe, 25-finding cap. Full suite 72/72 green. |
+| 2026-10-28/29 | AI-authorship detection (advisory Layer 1 + Muse-verdict Layer 2, rule-scoped strict), Chrome extension polish, 400-PR eval (97% recall, 0 clean-human false verdicts, GO), paper draft. Full suite 93/93 green. |
