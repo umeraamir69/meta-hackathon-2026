@@ -54,5 +54,5 @@ pre-commit parity so the same rule fails locally before it fails in CI.
 ## Links (fill in at submit time)
 
 - Demo video: <URL>
-- Live site: <Vercel URL>
+- Live site: https://pr-diff-sentinel.vercel.app
 - Repo: https://github.com/umeraamir69/meta-hackathon-2026
