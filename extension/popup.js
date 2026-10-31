@@ -9,6 +9,7 @@ const full = document.querySelector('#full');
 
 const DEFAULT_API = 'http://127.0.0.1:3000';
 const GITHUB_RE = /^https:\/\/(www\.)?github\.com\/[^/\s]+\/[^/\s]+(\/.*)?$/;
+const PR_PAGE_RE = /^https:\/\/(www\.)?github\.com\/[^/\s]+\/[^/\s]+\/pull\/\d+/;
 const SHOWN = 6;
 
 const api = globalThis.chrome;
@@ -153,4 +154,9 @@ form.addEventListener('submit', async (event) => {
 });
 
 savedApi().then((value) => { apiInput.value = value; });
-tabUrl().then((value) => { if (value) urlInput.value = value; });
+tabUrl().then((value) => {
+  if (!value) return;
+  urlInput.value = value;
+  // One click: opening the popup on a PR page starts the scan at once.
+  if (PR_PAGE_RE.test(value)) form.requestSubmit();
+});
