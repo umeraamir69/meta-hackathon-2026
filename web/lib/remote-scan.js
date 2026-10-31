@@ -15,6 +15,15 @@ import { aiBranchDescriptor, aiHit, isAiAuthor, isStrictFor, scanAiMessage } fro
 const ARCHIVE_LIMIT = 25_000_000;
 const COMMIT_LIMIT = 8;
 
+function tooLargeError(mb) {
+  const cap = Math.round(ARCHIVE_LIMIT / 1_000_000);
+  const size = mb ? ` (about ${mb} MB)` : '';
+  return new Error(
+    `That repository is too large for the hosted scan${size} — files over ${cap} MB are skipped. ` +
+      'Paste a pull request link instead: PR scans read only the diff and its commits.',
+  );
+}
+
 function githubHeaders() {
   const headers = {
     Accept: 'application/vnd.github+json',
@@ -94,7 +103,7 @@ async function readCapped(response) {
     const { done, value } = await reader.read();
     if (done) break;
     size += value.byteLength;
-    if (size > ARCHIVE_LIMIT) throw new Error('That repository is too large for the hosted scan.');
+    if (size > ARCHIVE_LIMIT) throw tooLargeError();
     chunks.push(Buffer.from(value));
   }
   return Buffer.concat(chunks);
@@ -147,6 +156,10 @@ export async function scanRemote(input) {
     scope = `Pull request diff and ${listed.length} commit${listed.length === 1 ? '' : 's'} on that request.`;
   } else {
     const repo = await github(`/repos/${target.owner}/${target.repo}`);
+    // GitHub reports working-tree size; a 200+ MB tree cannot compress
+    // under the cap, so fail fast instead of a doomed download.
+    const treeMb = Math.round(((repo.size || 0) * 1024) / 1_000_000);
+    if (treeMb > 200) throw tooLargeError(treeMb);
     await scanArchive(target.owner, target.repo, repo.default_branch, treeFindings);
     const commits = await scanRecentCommits(target.owner, target.repo, commitFindings);
     scope = `Current files on ${repo.default_branch}, plus the ${commits} most recent commits.`;
