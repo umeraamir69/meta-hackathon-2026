@@ -44,12 +44,11 @@ header {
   text-transform: uppercase;
 }
 
-.brand i {
-  width: 9px;
-  height: 9px;
-  background: var(--accent);
+.brand .mark {
+  width: 18px;
+  height: 18px;
   display: block;
-  border-radius: 2px;
+  flex: none;
 }
 
 #state {

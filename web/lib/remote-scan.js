@@ -1,8 +1,7 @@
-import { mkdtemp, readdir, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join, resolve, sep } from 'node:path';
 import { gunzipSync } from 'node:zlib';
-import { extract } from 'tar';
 import { parseGitHubUrl } from './sentinel/github-target.js';
 import { applyIgnore, loadIgnore } from './sentinel/ignore.js';
 import { whereOf } from './sentinel/judge.js';
@@ -14,6 +13,62 @@ import { aiBranchDescriptor, aiHit, isAiAuthor, isStrictFor, scanAiMessage } fro
 
 const ARCHIVE_LIMIT = 25_000_000;
 const COMMIT_LIMIT = 8;
+
+/**
+ * Minimal tar reader (ustar/pax), zero dependencies. The npm `tar` package
+ * breaks Vercel's post-build collector, and the serverless runtime has no
+ * `tar` binary — so we parse the 512-byte blocks ourselves. Handles regular
+ * files and directories; pax extended headers override the following entry's
+ * name. Anything else (links, devices, absolute paths, `..`) is skipped.
+ */
+function readCString(block, offset, length) {
+  const end = block.indexOf(0, offset);
+  const stop = end === -1 || end > offset + length ? offset + length : end;
+  return block.toString('utf8', offset, stop);
+}
+
+async function extractTarBuffer(buffer, cwd) {
+  const root = resolve(cwd);
+  let offset = 0;
+  let paxName = null;
+  const take = (entry, size) => {
+    const start = offset;
+    offset += Math.ceil(size / 512) * 512;
+    return entry ? buffer.subarray(start, start + size) : null;
+  };
+  while (offset + 512 <= buffer.length) {
+    const block = buffer.subarray(offset, offset + 512);
+    if (block.every((byte) => byte === 0)) break; // end-of-archive padding
+    offset += 512;
+    const type = String.fromCharCode(block[156]);
+    const size = Number.parseInt(readCString(block, 124, 12).trim() || '0', 8);
+    if (!Number.isFinite(size) || size < 0 || offset + size > buffer.length) break;
+    if (type === 'x' || type === 'g') {
+      const text = (take(true, size) || Buffer.alloc(0)).toString('utf8');
+      const match = text.match(/(\d+) path=([^\n]*)\n/);
+      if (match && type === 'x') paxName = match[2];
+      continue;
+    }
+    if (type === 'L') { // GNU long name: data block is the next entry's name
+      paxName = (take(true, size) || Buffer.alloc(0)).toString('utf8').replace(/\0[\s\S]*$/, '');
+      continue;
+    }
+    const rawName = paxName || join(readCString(block, 345, 155), readCString(block, 0, 100));
+    paxName = null;
+    const isFile = type === '0' || type === '\0';
+    const data = take(isFile || type === '5', size);
+    if (data === null) continue;
+    const dest = resolve(root, rawName);
+    if (dest !== root && !dest.startsWith(root + sep)) continue; // traversal guard
+    if (type === '5') {
+      await mkdir(dest, { recursive: true });
+      continue;
+    }
+    if (!isFile) continue;
+    await mkdir(dirname(dest), { recursive: true });
+    await writeFile(dest, data);
+  }
+}
 
 function tooLargeError(mb) {
   const cap = Math.round(ARCHIVE_LIMIT / 1_000_000);
@@ -103,7 +158,10 @@ async function readCapped(response) {
     const { done, value } = await reader.read();
     if (done) break;
     size += value.byteLength;
-    if (size > ARCHIVE_LIMIT) throw tooLargeError();
+    if (size > ARCHIVE_LIMIT) {
+      await reader.cancel();
+      throw tooLargeError();
+    }
     chunks.push(Buffer.from(value));
   }
   return Buffer.concat(chunks);
@@ -114,12 +172,15 @@ async function scanArchive(owner, repo, branch, findings) {
     headers: { 'User-Agent': 'pr-diff-sentinel' },
   });
   if (!response.ok) throw new Error('Could not download that public repository.');
+  const advertised = Number(response.headers.get('content-length') || 0);
+  if (advertised > ARCHIVE_LIMIT) {
+    await response.body?.cancel();
+    throw tooLargeError(Math.round(advertised / 1_000_000));
+  }
   const dir = await mkdtemp(join(tmpdir(), 'sentinel-web-'));
   try {
-    const tarPath = join(dir, 'repo.tar');
-    await writeFile(tarPath, gunzipSync(await readCapped(response)));
-    await extract({ file: tarPath, cwd: dir });
-    const names = (await readdir(dir)).filter((name) => name !== 'repo.tar');
+    await extractTarBuffer(gunzipSync(await readCapped(response)), dir);
+    const names = await readdir(dir);
     const root = join(dir, names[0] || '');
     const raw = scanWorkingTree(root);
     const { kept } = applyIgnore(raw, loadIgnore(root));
@@ -144,6 +205,7 @@ export async function scanRemote(input) {
   const treeFindings = [];
   const commitFindings = [];
   let scope = '';
+  let treeScanned = false;
   if (target.pull) {
     scanPullMeta(await github(`/repos/${target.owner}/${target.repo}/pulls/${target.pull}`), commitFindings);
     const files = await github(`/repos/${target.owner}/${target.repo}/pulls/${target.pull}/files?per_page=80`);
@@ -156,17 +218,23 @@ export async function scanRemote(input) {
     scope = `Pull request diff and ${listed.length} commit${listed.length === 1 ? '' : 's'} on that request.`;
   } else {
     const repo = await github(`/repos/${target.owner}/${target.repo}`);
-    // GitHub reports working-tree size; a 200+ MB tree cannot compress
-    // under the cap, so fail fast instead of a doomed download.
     const treeMb = Math.round(((repo.size || 0) * 1024) / 1_000_000);
-    if (treeMb > 200) throw tooLargeError(treeMb);
-    await scanArchive(target.owner, target.repo, repo.default_branch, treeFindings);
+    if (treeMb <= 200) {
+      try {
+        await scanArchive(target.owner, target.repo, repo.default_branch, treeFindings);
+        treeScanned = true;
+      } catch (error) {
+        if (!/too large/.test(error.message || '')) throw error;
+      }
+    }
     const commits = await scanRecentCommits(target.owner, target.repo, commitFindings);
-    scope = `Current files on ${repo.default_branch}, plus the ${commits} most recent commits.`;
+    scope = treeScanned
+      ? `Current files on ${repo.default_branch}, plus the ${commits} most recent commits.`
+      : `This repository is over 25 MB, so current files were skipped. Scanned the ${commits} most recent commits. Open a pull request link to scan that diff.`;
   }
 
   const merged = [...treeFindings, ...commitFindings];
-  const unique = dedupe(target.pull ? merged : markTreePresence(merged, treeFindings));
+  const unique = dedupe(target.pull || !treeScanned ? merged : markTreePresence(merged, treeFindings));
   for (const finding of unique) {
     if (finding.advisory && isStrictFor(process.env, finding.rule)) {
       finding.advisory = false;
