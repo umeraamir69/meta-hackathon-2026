@@ -11,7 +11,7 @@ import { configuredSecrets, scrubFindings } from './sentinel/redact.js';
 import { dedupe, markTreePresence, scanPatch, scanText, scanWorkingTree } from './sentinel/scan.js';
 import { aiBranchDescriptor, aiHit, isAiAuthor, isStrictFor, scanAiMessage } from './sentinel/ai.js';
 
-const ARCHIVE_LIMIT = 25_000_000;
+const ARCHIVE_LIMIT = 50_000_000;
 const COMMIT_LIMIT = 8;
 
 /**
@@ -224,7 +224,7 @@ export async function scanRemote(input) {
   } else {
     const repo = await github(`/repos/${target.owner}/${target.repo}`);
     const treeMb = Math.round(((repo.size || 0) * 1024) / 1_000_000);
-    if (treeMb <= 200) {
+    if (treeMb <= 400) {
       try {
         await scanArchive(target.owner, target.repo, repo.default_branch, treeFindings);
         treeScanned = true;
@@ -235,7 +235,7 @@ export async function scanRemote(input) {
     const commits = await scanRecentCommits(target.owner, target.repo, commitFindings);
     scope = treeScanned
       ? `Current files on ${repo.default_branch}, plus the ${commits} most recent commits.`
-      : `This repository is over 25 MB, so current files were skipped. Scanned the ${commits} most recent commits. Open a pull request link to scan that diff.`;
+      : `This repository is over 50 MB, so current files were skipped. Scanned the ${commits} most recent commits. Open a pull request link to scan that diff.`;
   }
 
   const merged = [...treeFindings, ...commitFindings];

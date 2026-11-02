@@ -7,7 +7,7 @@ const form = document.querySelector('#scan');
 const foot = document.querySelector('#foot');
 const full = document.querySelector('#full');
 
-const DEFAULT_API = 'http://127.0.0.1:3000';
+const DEFAULT_API = 'https://pr-diff-sentinel.vercel.app';
 const GITHUB_RE = /^https:\/\/(www\.)?github\.com\/[^/\s]+\/[^/\s]+(\/.*)?$/;
 const PR_PAGE_RE = /^https:\/\/(www\.)?github\.com\/[^/\s]+\/[^/\s]+\/pull\/\d+/;
 const SHOWN = 6;
