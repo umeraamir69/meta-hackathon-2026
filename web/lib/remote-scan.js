@@ -91,7 +91,7 @@ function githubHeaders() {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function github(path, attempt = 1) {
+export async function github(path, attempt = 1) {
   const response = await fetch(`https://api.github.com${path}`, { headers: githubHeaders() });
   if (response.status === 404) {
     throw new Error('That repository or pull request is not public.');
@@ -200,13 +200,18 @@ async function scanRecentCommits(owner, repo, findings) {
 
 export async function scanRemote(input) {
   const target = parseGitHubUrl(input);
-  if (!target) throw new Error('Use a public https://github.com/owner/repo link, or a pull request link.');
+  if (!target) throw new Error('Use a public https://github.com/owner/repo link, a pull request link, or a commit link.');
 
   const treeFindings = [];
   const commitFindings = [];
   let scope = '';
   let treeScanned = false;
-  if (target.pull) {
+  if (target.commit) {
+    const commit = await github(`/repos/${target.owner}/${target.repo}/commits/${target.commit}`);
+    scanCommit(commit, commitFindings);
+    const when = String(commit.commit?.author?.date || '').slice(0, 10) || 'unknown date';
+    scope = `Single commit ${(commit.sha || target.commit).slice(0, 7)} by ${commit.commit?.author?.name || 'unknown'} on ${when}.`;
+  } else if (target.pull) {
     scanPullMeta(await github(`/repos/${target.owner}/${target.repo}/pulls/${target.pull}`), commitFindings);
     const files = await github(`/repos/${target.owner}/${target.repo}/pulls/${target.pull}/files?per_page=80`);
     for (const file of files) {

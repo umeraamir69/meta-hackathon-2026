@@ -19,6 +19,16 @@ test('accepts a repository link and a pull request link', () => {
   assert.equal(tree.pull, null);
 });
 
+test('accepts a commit link and labels the short sha', () => {
+  const commit = parseGitHubUrl('https://github.com/octocat/Hello-World/commit/abc1234def567890123456789012345678901234');
+  assert.equal(commit.owner, 'octocat');
+  assert.equal(commit.commit, 'abc1234def567890123456789012345678901234');
+  assert.equal(commit.pull, null);
+  assert.equal(commit.label, 'octocat/Hello-World@abc1234');
+  assert.equal(parseGitHubUrl('https://github.com/o/r/commit/zzz'), null);
+  assert.equal(parseGitHubUrl('https://github.com/o/r/commit/'), null);
+});
+
 test('rejects hosts and links that are not a public GitHub repo', () => {
   assert.equal(parseGitHubUrl('https://gitlab.com/owner/repo'), null);
   assert.equal(parseGitHubUrl('http://github.com/owner/repo'), null);

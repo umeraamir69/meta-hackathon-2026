@@ -2,6 +2,20 @@
 
 import { useState } from 'react';
 
+const MAX_PICK = 10;
+const DIRECT_RE = /github\.com\/[^/]+\/[^/]+\/(pull|commits?)\//;
+
+async function postJson(path, payload) {
+  const response = await fetch(path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(body.error || 'The request failed.');
+  return body;
+}
+
 export default function Scanner() {
   const [url, setUrl] = useState(() => {
     if (typeof window === 'undefined') return '';
@@ -10,26 +24,58 @@ export default function Scanner() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [report, setReport] = useState(null);
+  const [listing, setListing] = useState(null);
+  const [checked, setChecked] = useState([]);
+  const [batch, setBatch] = useState(null);
+
+  function resetPick() {
+    setListing(null);
+    setChecked([]);
+    setBatch(null);
+  }
 
   async function onSubmit(event) {
     event.preventDefault();
     setBusy(true);
     setError('');
+    setReport(null);
+    resetPick();
     try {
-      const response = await fetch('/api/scan', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url }),
-      });
-      const body = await response.json();
-      if (!response.ok) throw new Error(body.error || 'The scan failed.');
-      setReport(body);
+      if (DIRECT_RE.test(url)) {
+        setReport(await postJson('/api/scan', { url }));
+      } else {
+        setListing(await postJson('/api/list', { url }));
+      }
     } catch (cause) {
-      setReport(null);
       setError(cause.message || 'The scan failed.');
     } finally {
       setBusy(false);
     }
+  }
+
+  function togglePick(itemUrl) {
+    setChecked((prev) => {
+      if (prev.includes(itemUrl)) return prev.filter((candidate) => candidate !== itemUrl);
+      if (prev.length >= MAX_PICK) return prev;
+      return [...prev, itemUrl];
+    });
+  }
+
+  async function onScanPicked(event) {
+    event.preventDefault();
+    setBusy(true);
+    setError('');
+    const rows = [];
+    for (const itemUrl of checked) {
+      try {
+        const body = await postJson('/api/scan', { url: itemUrl });
+        rows.push({ url: itemUrl, ok: body.ok, count: body.count ?? 0, advisory: body.advisory ?? 0 });
+      } catch (cause) {
+        rows.push({ url: itemUrl, ok: false, count: 0, advisory: 0, error: cause.message || 'The scan failed.' });
+      }
+    }
+    setBatch(rows);
+    setBusy(false);
   }
 
   return (
@@ -53,8 +99,90 @@ export default function Scanner() {
       </form>
       <p className="note">Pull request diff and its recent commits. Full history stays on the local gate.</p>
       {error ? <p className="error" role="alert">{error}</p> : null}
-      {report ? <Report report={report} /> : <Waiting busy={busy} />}
+      {listing ? (
+        <Picker
+          listing={listing}
+          checked={checked}
+          busy={busy}
+          batch={batch}
+          onToggle={togglePick}
+          onScan={onScanPicked}
+        />
+      ) : null}
+      {report ? <Report report={report} /> : listing ? null : <Waiting busy={busy} />}
     </section>
+  );
+}
+
+function itemLabel(item) {
+  if (item.kind === 'pull') return `#${item.number} ${item.title}`;
+  return `${(item.sha || '').slice(0, 7)} ${item.subject}`;
+}
+
+function Picker({ listing, checked, busy, batch, onToggle, onScan }) {
+  const items = [...(listing.pulls || []), ...(listing.commits || [])];
+  const full = checked.length >= MAX_PICK;
+  return (
+    <div className="report">
+      <div className="verdict">
+        <strong className={batch && batch.every((row) => row.ok) ? 'pass' : ''}>
+          {batch ? `${batch.filter((row) => row.ok).length}/${batch.length} clean` : 'Pick to scan'}
+        </strong>
+        <span>{listing.source}</span>
+      </div>
+      <p className="scope">Tick up to {MAX_PICK} commits or pull requests, then scan them together.</p>
+      <form onSubmit={onScan}>
+        <ul className="findings pick">
+          {items.map((item) => {
+            const id = `pick-${item.kind}-${item.sha || item.number}`;
+            const disabled = busy || (!checked.includes(item.url) && full);
+            return (
+              <li key={item.url}>
+                <label htmlFor={id}>
+                  <input
+                    id={id}
+                    type="checkbox"
+                    checked={checked.includes(item.url)}
+                    disabled={disabled}
+                    onChange={() => onToggle(item.url)}
+                  />
+                  <span>
+                    <b>{itemLabel(item)}</b>
+                    <span className="pick-meta">
+                      {item.author} {item.date ? `· ${item.date}` : ''}{item.state ? ` · ${item.state}` : ''}
+                    </span>
+                  </span>
+                </label>
+              </li>
+            );
+          })}
+        </ul>
+        <p className="scan-row">
+          <button type="submit" className="cta" disabled={busy || checked.length === 0}>
+            {busy ? 'Scanning…' : `Scan ${checked.length} selected`}
+          </button>
+          <span className="count-note">{checked.length}/{MAX_PICK} picked</span>
+        </p>
+      </form>
+      {batch ? <BatchResults rows={batch} items={items} /> : null}
+    </div>
+  );
+}
+
+function BatchResults({ rows, items }) {
+  const byUrl = new Map(items.map((item) => [item.url, itemLabel(item)]));
+  return (
+    <ul className="findings">
+      {rows.map((row) => (
+        <li key={row.url}>
+          <div className="finding-top">
+            <b className={`sev ${row.ok ? '' : 'high'}`}>{byUrl.get(row.url) || row.url}</b>
+            <em>{row.error ? 'error' : row.ok ? 'clean' : `${row.count} blocking`}</em>
+          </div>
+          <code>{row.error || `${row.count} finding${row.count === 1 ? '' : 's'}${row.advisory ? ` · ${row.advisory} AI signal${row.advisory === 1 ? '' : 's'}` : ''}`}</code>
+        </li>
+      ))}
+    </ul>
   );
 }
 

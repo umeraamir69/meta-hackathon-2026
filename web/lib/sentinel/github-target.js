@@ -30,9 +30,13 @@ export function parseGitHubUrl(input) {
   const repo = parts[1].replace(/\.git$/i, '');
   if (!NAME.test(owner) || !NAME.test(repo)) return null;
   let pull = null;
+  let commit = null;
   if (parts[2] === 'pull' || parts[2] === 'pulls') {
     if (!/^\d{1,10}$/.test(parts[3] || '')) return null;
     pull = parts[3];
+  } else if (parts[2] === 'commit' || parts[2] === 'commits') {
+    if (!/^[0-9a-f]{7,40}$/i.test(parts[3] || '')) return null;
+    commit = parts[3].toLowerCase();
   } else if (parts.length > 2 && parts[2] !== 'tree' && parts[2] !== 'blob') {
     return null;
   }
@@ -40,8 +44,9 @@ export function parseGitHubUrl(input) {
     owner,
     repo,
     pull,
+    commit,
     cloneUrl: `https://github.com/${owner}/${repo}.git`,
-    label: pull ? `${owner}/${repo}#${pull}` : `${owner}/${repo}`,
+    label: pull ? `${owner}/${repo}#${pull}` : commit ? `${owner}/${repo}@${commit.slice(0, 7)}` : `${owner}/${repo}`,
   };
 }
 
@@ -90,6 +95,14 @@ export async function withGitHubCheckout(target, run) {
         } catch {
           await git(['fetch', 'origin', `pull/${target.pull}/head:refs/sentinel/head`], dir);
           head = await git(['rev-parse', 'refs/sentinel/head'], dir);
+        }
+        await git(['checkout', '--detach', head], dir);
+      } else if (target.commit) {
+        try {
+          await git(['fetch', 'origin', target.commit], dir);
+          head = await git(['rev-parse', 'FETCH_HEAD'], dir);
+        } catch {
+          throw new Error('Could not fetch that commit. It has to be a public GitHub commit on the default history.');
         }
         await git(['checkout', '--detach', head], dir);
       }
