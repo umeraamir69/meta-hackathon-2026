@@ -278,21 +278,7 @@ function Report({ report }) {
         </ul>
       )}
       {advisory.length > 0 ? (
-        <div className="ai-signals">
-          <span>AI signals · advisory, never blocks</span>
-          {report.muse?.assessment ? (
-            <p className="verdict">Muse verdict: {String(report.muse.assessment.verdict).replaceAll('_', ' ')} ({report.muse.assessment.confidence || 'low'} confidence)</p>
-          ) : null}
-          <ul>
-            {advisory.map((finding) => (
-              <li key={`${finding.rule}-${finding.path}-${finding.line}`}>
-                <b>{finding.rule}</b>
-                <code>{finding.source} {finding.path}:{finding.line}</code>
-                {finding.masked ? <p>{finding.masked}</p> : null}
-              </li>
-            ))}
-          </ul>
-        </div>
+        <AiSignals report={report} advisory={advisory} />
       ) : null}
       {report.muse?.summary ? (
         <div className="muse">
@@ -318,6 +304,59 @@ function Report({ report }) {
 
 function pretty(label) {
   return label ? String(label).replaceAll('_', ' ') : '';
+}
+
+function AiSignals({ report, advisory }) {
+  const [open, setOpen] = useState(false);
+  const assessment = report.muse?.assessment || null;
+  const verdict = assessment?.verdict;
+  return (
+    <div className="ai-signals">
+      <button type="button" className="ai-toggle" onClick={() => setOpen((value) => !value)} aria-expanded={open}>
+        <span>
+          AI signals · {advisory.length} advisory, never blocks
+          {verdict ? ` · ${String(verdict).replaceAll('_', ' ')}` : ''}
+        </span>
+        <span className={`ai-caret${open ? ' open' : ''}`} aria-hidden="true">▸</span>
+      </button>
+      {open ? (
+        <div className="ai-body">
+          {assessment ? (
+            <>
+              <p className="verdict">
+                Muse verdict: {String(assessment.verdict || 'unclear').replaceAll('_', ' ')} ({assessment.confidence || 'low'} confidence)
+              </p>
+              {(assessment.evidence || []).map((item, index) => (
+                item && (item.signal || item.why) ? (
+                  <p key={index} className="ai-evidence">
+                    <b>{item.signal || 'signal'}</b>
+                    {item.why ? <span> — {item.why}</span> : null}
+                  </p>
+                ) : null
+              ))}
+              {(assessment.review_focus || []).map((focus) => (
+                <p key={focus} className="ai-focus">Check: {focus}</p>
+              ))}
+              {(assessment.notes || []).filter(Boolean).map((note) => (
+                <p key={note} className="ai-note">{note}</p>
+              ))}
+            </>
+          ) : (
+            <p className="ai-note">No model key on the server, so this is Layer 1 only — the signals below, no verdict.</p>
+          )}
+          <ul>
+            {advisory.map((finding) => (
+              <li key={`${finding.rule}-${finding.path}-${finding.line}`}>
+                <b>{finding.rule}</b>
+                <code>{finding.source} {finding.path}:{finding.line}</code>
+                {finding.masked ? <p>{finding.masked}</p> : null}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+    </div>
+  );
 }
 
 function caseLine(finding) {

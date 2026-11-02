@@ -307,13 +307,45 @@ h1 {
 .finding-top .sev.low { color: var(--muted); }
 
 .ai-signals { margin-top: 8px; padding-top: 16px; border-top: 1px solid var(--line); }
-.ai-signals > span { color: var(--faint); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; }
+
+.ai-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--panel);
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font: 600 12px/1.4 var(--sans), sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.ai-toggle:hover { border-color: var(--faint); color: var(--ink); }
+
+.ai-caret { color: var(--faint); font-size: 12px; transition: transform 0.15s ease; }
+.ai-caret.open { transform: rotate(90deg); color: var(--accent); }
+
+.ai-body {
+  margin-top: 6px;
+  padding: 4px 14px 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
 .ai-signals .verdict { color: var(--accent); font-size: 13px; margin: 8px 0 0; }
 .ai-signals ul { margin: 10px 0 0; padding: 0; list-style: none; }
 .ai-signals li { padding: 10px 0; border-top: 1px solid var(--line); }
 .ai-signals b { font-weight: 560; font-size: 13px; }
 .ai-signals code { display: block; margin-top: 4px; color: var(--muted); font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
 .ai-signals p { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
+.ai-evidence b { color: var(--ink); }
+.ai-focus, .ai-note { color: var(--muted); }
 
 .findings .masked { color: var(--ink); }
 .findings .case { color: var(--accent); font-size: 12px; }
