@@ -43,6 +43,8 @@ export async function POST(request) {
           sha: item.sha,
           subject: String(item.commit?.message || '').split('\n')[0] || '(no message)',
           author: item.commit?.author?.name || item.author?.login || 'unknown',
+          avatar: item.author?.avatar_url || null,
+          authorUrl: item.author?.html_url || null,
           date: String(item.commit?.author?.date || '').slice(0, 10) || null,
         })),
         pulls: (Array.isArray(pulls) ? pulls : []).map((item) => ({
@@ -51,6 +53,8 @@ export async function POST(request) {
           number: item.number,
           title: item.title || '(no title)',
           author: item.user?.login || 'unknown',
+          avatar: item.user?.avatar_url || null,
+          authorUrl: item.user?.html_url || null,
           state: item.merged_at ? 'merged' : item.state,
         })),
       },

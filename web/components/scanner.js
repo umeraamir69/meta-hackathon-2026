@@ -27,6 +27,7 @@ export default function Scanner() {
   const [listing, setListing] = useState(null);
   const [checked, setChecked] = useState([]);
   const [batch, setBatch] = useState(null);
+  const [progress, setProgress] = useState(null);
 
   function resetPick() {
     setListing(null);
@@ -65,16 +66,22 @@ export default function Scanner() {
     event.preventDefault();
     setBusy(true);
     setError('');
+    setBatch(null);
     const rows = [];
-    for (const itemUrl of checked) {
+    const total = checked.length;
+    for (let index = 0; index < checked.length; index += 1) {
+      const itemUrl = checked[index];
+      setProgress({ done: index, total, label: itemUrl });
       try {
         const body = await postJson('/api/scan', { url: itemUrl });
         rows.push({ url: itemUrl, ok: body.ok, count: body.count ?? 0, advisory: body.advisory ?? 0 });
       } catch (cause) {
         rows.push({ url: itemUrl, ok: false, count: 0, advisory: 0, error: cause.message || 'The scan failed.' });
       }
+      setBatch([...rows]);
+      setProgress({ done: index + 1, total, label: itemUrl });
     }
-    setBatch(rows);
+    setProgress(null);
     setBusy(false);
   }
 
@@ -105,6 +112,7 @@ export default function Scanner() {
           checked={checked}
           busy={busy}
           batch={batch}
+          progress={progress}
           onToggle={togglePick}
           onScan={onScanPicked}
         />
@@ -119,8 +127,26 @@ function itemLabel(item) {
   return `${(item.sha || '').slice(0, 7)} ${item.subject}`;
 }
 
-function Picker({ listing, checked, busy, batch, onToggle, onScan }) {
+function GitHubMark() {
+  return (
+    <svg className="gh-mark" viewBox="0 0 16 16" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"
+      />
+    </svg>
+  );
+}
+
+function Avatar({ item }) {
+  if (!item.avatar) return <span className="avatar empty" aria-hidden="true" />;
+  return <img className="avatar" src={item.avatar} alt="" width="22" height="22" loading="lazy" />;
+}
+
+function Picker({ listing, checked, busy, batch, progress, onToggle, onScan }) {
   const items = [...(listing.pulls || []), ...(listing.commits || [])];
+  const byUrl = new Map(items.map((item) => [item.url, item]));
+  const picked = checked.map((url) => byUrl.get(url)).filter(Boolean);
   const full = checked.length >= MAX_PICK;
   return (
     <div className="report">
@@ -130,6 +156,33 @@ function Picker({ listing, checked, busy, batch, onToggle, onScan }) {
         </strong>
         <span>{listing.source}</span>
       </div>
+      {progress ? (
+        <div className="progress" role="status">
+          <div className="bar">
+            <i style={{ width: `${Math.round((progress.done / Math.max(1, progress.total)) * 100)}%` }} />
+          </div>
+          <p>
+            Checking {Math.min(progress.done + 1, progress.total)}/{progress.total} — {progress.label}
+          </p>
+        </div>
+      ) : null}
+      {batch ? <BatchResults rows={batch} items={items} /> : null}
+      {picked.length > 0 && !batch ? (
+        <div className="tray">
+          <span className="tray-label">Selected {picked.length}/{MAX_PICK}</span>
+          <ul>
+            {picked.map((item) => (
+              <li key={item.url}>
+                <Avatar item={item} />
+                <span>{itemLabel(item)}</span>
+                <button type="button" onClick={() => onToggle(item.url)} aria-label={`Remove ${itemLabel(item)}`}>
+                  ×
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
       <p className="scope">Tick up to {MAX_PICK} commits or pull requests, then scan them together.</p>
       <form onSubmit={onScan}>
         <ul className="findings pick">
@@ -146,10 +199,12 @@ function Picker({ listing, checked, busy, batch, onToggle, onScan }) {
                     disabled={disabled}
                     onChange={() => onToggle(item.url)}
                   />
+                  <Avatar item={item} />
                   <span>
                     <b>{itemLabel(item)}</b>
                     <span className="pick-meta">
-                      {item.author} {item.date ? `· ${item.date}` : ''}{item.state ? ` · ${item.state}` : ''}
+                      <GitHubMark /> {item.author}
+                      {item.date ? ` · ${item.date}` : ''}{item.state ? ` · ${item.state}` : ''}
                     </span>
                   </span>
                 </label>
@@ -164,7 +219,6 @@ function Picker({ listing, checked, busy, batch, onToggle, onScan }) {
           <span className="count-note">{checked.length}/{MAX_PICK} picked</span>
         </p>
       </form>
-      {batch ? <BatchResults rows={batch} items={items} /> : null}
     </div>
   );
 }
