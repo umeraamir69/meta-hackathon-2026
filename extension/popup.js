@@ -67,11 +67,9 @@ function render(body, apiBase, url) {
   const advisory = body.advisory ?? (body.findings || []).filter((finding) => finding.advisory).length;
   report.append(el('p', 'scope', `${body.source || ''} — ${body.scope || ''}`));
   report.append(el('p', 'count', `${count} finding${count === 1 ? '' : 's'}${body.ok ? '' : ' blocking merge'}`));
-  if (advisory > 0) {
-    const verdict = body.muse?.assessment?.verdict;
-    const extra = verdict ? ` · ${String(verdict).replaceAll('_', ' ')}` : '';
-    report.append(el('p', 'ai', `${advisory} AI signal${advisory === 1 ? '' : 's'}${extra} (advisory, see full report)`));
-  }
+  if (advisory > 0) report.append(aiPanel(body, advisory));
+
+
   if (!findings.length) {
     report.append(el('p', 'empty', 'No findings. Nothing in this scan blocks the merge.'));
   }
@@ -110,6 +108,49 @@ function render(body, apiBase, url) {
   full.href = `${apiBase}/?url=${encodeURIComponent(url)}`;
 }
 
+function aiPanel(body, advisory) {
+  const assessment = body.muse?.assessment || null;
+  const verdict = assessment?.verdict;
+  const box = el('div', 'ai');
+  const toggle = document.createElement('button');
+  toggle.type = 'button';
+  toggle.className = 'ai-toggle';
+  const label = `${advisory} AI signal${advisory === 1 ? '' : 's'}${verdict ? ` · ${String(verdict).replaceAll('_', ' ')}` : ''}`;
+  toggle.append(el('span', '', label));
+  toggle.append(el('span', 'ai-caret', '▸'));
+  const open = el('div', 'ai-body');
+  open.hidden = true;
+  toggle.addEventListener('click', () => {
+    open.hidden = !open.hidden;
+    toggle.className = `ai-toggle${open.hidden ? '' : ' open'}`;
+  });
+  box.append(toggle);
+  if (assessment) {
+    open.append(el('p', 'ai-verdict', `Muse verdict: ${String(assessment.verdict || 'unclear').replaceAll('_', ' ')} (${assessment.confidence || 'low'} confidence)`));
+    for (const item of assessment.evidence || []) {
+      if (!item || (!item.signal && !item.why)) continue;
+      const row = el('p', 'ai-evidence');
+      row.append(el('b', '', item.signal || 'signal'));
+      if (item.why) row.append(el('span', '', ` — ${item.why}`));
+      open.append(row);
+    }
+    for (const focus of assessment.review_focus || []) {
+      open.append(el('p', 'ai-focus', `Check: ${focus}`));
+    }
+    for (const note of assessment.notes || []) {
+      if (note) open.append(el('p', 'ai-note', String(note)));
+    }
+  }
+  for (const finding of (body.findings || []).filter((finding) => finding.advisory)) {
+    const row = el('div', 'ai-finding');
+    row.append(el('b', '', finding.rule));
+    row.append(el('span', 'where', `${finding.source} ${finding.path || ''}${finding.line ? `:${finding.line}` : ''}`.trim()));
+    if (finding.masked) row.append(el('code', 'masked', finding.masked));
+    open.append(row);
+  }
+  box.append(open);
+  return box;
+}
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   const button = form.querySelector('button');
