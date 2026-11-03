@@ -82,7 +82,7 @@ steps:
 
 ### Protect another repository
 
-This tracker repo is private, so a second repo cannot `uses:` it directly. Copy the `project/` folder into that repo and add this workflow at `.github/workflows/sentinel.yml`:
+Use this repo as the Action source, or copy `project/` into the target repo:
 
 ```yaml
 name: Sentinel
@@ -98,7 +98,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: ./project
+      - uses: umeraamir69/meta-hackathon-2026/project@main
         with:
           base: ${{ github.event.pull_request.base.sha }}
           head: ${{ github.event.pull_request.head.sha }}
@@ -106,7 +106,7 @@ jobs:
           github_token: ${{ github.token }}
 ```
 
-If this repo ever goes public, replace `./project` with `umeraamir69/meta-hackathon-2026/project@<sha>`. Put the Model API key in that repo's Actions secrets as `MODEL_API_KEY`. Without it the gate fails exactly the same way; only the Muse labels fall back to local. Then enforce it: Settings → Branches → branch protection → require the `sentinel` status check before merging.
+Pin `@main` to a commit SHA for production. Put the Model API key in that repo's Actions secrets as `MODEL_API_KEY`. Without it the gate fails the same way; only Muse labels fall back to local. Enforce via branch protection → require the `sentinel` status check.
 
 ### SARIF and code scanning
 
@@ -138,8 +138,6 @@ example or fixture; identical hits share one prompt block; findings are capped
 (`SENTINEL_MUSE_MAX_FINDINGS`, default 25) with a disclosure note.
 
 Copy `.env.example` to `.env` for a real Meta Model API key. Contributor-tier models are refused. A failed or refused model call falls back to the local checklist. The exit code does not change.
-
-Full inventory: [`FEATURES.md`](./FEATURES.md).
 
 ## Design
 

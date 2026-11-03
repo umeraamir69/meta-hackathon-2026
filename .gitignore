@@ -9,5 +9,7 @@ project/.tmp/
 .vercel
 .env*
 trajectory-*.json
-demo/video/*.aiff
+demo/video/
 demo/leaky-push-demo/.git/
+extension/pr-diff-sentinel-0.5.1/
+*.aiff

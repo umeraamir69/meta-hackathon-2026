@@ -61,7 +61,7 @@ cd project && node scripts/install-hook.mjs /path/to/your/repo
 | **Muse Spark** | Labels each masked finding after a Fail |
 | **Muse Wonder** | Rotate steps, blast radius, streaming Muse chat on `/report` |
 
-Called via `https://api.meta.ai` (Responses API) with `MODEL_API_KEY`. Details: [`META.md`](./META.md) · submission notes: [`SUBMISSION.md`](./SUBMISSION.md)
+Called via `https://api.meta.ai` (Responses API) with `MODEL_API_KEY`.
 
 ---
 
@@ -71,17 +71,15 @@ Called via `https://api.meta.ai` (Responses API) with `MODEL_API_KEY`. Details: 
 project/     CLI, rules engine, GitHub Action, hooks, tests
 web/         Next.js site (Vercel root directory = web)
 extension/   Chrome MV3 popup + local dashboard
-demo/        Leaky-push demo + video voiceover assets
+demo/        Leaky-push demo (fake secrets for local hooks)
 ```
 
 | Doc | Purpose |
 |-----|---------|
-| [`DEMO_SCRIPT.md`](./DEMO_SCRIPT.md) | 3-minute demo runbook |
-| [`VIDEO_TRANSCRIPT.md`](./VIDEO_TRANSCRIPT.md) | Spoken transcript |
-| [`SHOWCASE.md`](./SHOWCASE.md) | Public PRs for Fail / AI / human scans |
-| [`extension/README.md`](./extension/README.md) | Extension install |
-| [`web/README.md`](./web/README.md) | Site + Vercel |
 | [`project/README.md`](./project/README.md) | Detectors, Action, CLI flags |
+| [`web/README.md`](./web/README.md) | Site + Vercel |
+| [`extension/README.md`](./extension/README.md) | Extension install |
+| [`project/AI_SIGNALS.md`](./project/AI_SIGNALS.md) | Advisory AI-authorship signals |
 
 ---
 
