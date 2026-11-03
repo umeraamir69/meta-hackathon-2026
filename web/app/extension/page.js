@@ -1,53 +1,101 @@
 import Header from '../../components/header';
+import Footer from '../../components/footer';
 
 export const metadata = { title: 'Chrome extension · PR Diff Sentinel' };
+
+const STORE_URL = 'https://chromewebstore.google.com/detail/pr-diff-sentinel/ahlihmimlioaieccfbgbpmfabfjhmfch';
+/** Chrome Web Store is still under review — not publicly installable yet. */
+const STORE_LIVE = false;
 
 export default function ExtensionPage() {
   return (
     <>
       <Header current="extension" />
       <main className="frame">
-        <section className="stage">
+        <section className="stage stage-extension">
           <div className="copy">
             <p className="kicker">Chrome</p>
             <h1>Scan the pull request already open.</h1>
+            <p className="lede">
+              Open any public GitHub PR, click Sentinel, and the scan hits the hosted backend automatically — no API URL to paste.
+            </p>
+
+            <div className="ext-store">
+              {STORE_LIVE ? (
+                <>
+                  <a className="cta" href={STORE_URL} target="_blank" rel="noreferrer">
+                    Add to Chrome
+                  </a>
+                  <p className="ext-store-note">
+                    Live on the Chrome Web Store ·{' '}
+                    <a href={STORE_URL} target="_blank" rel="noreferrer">
+                      chromewebstore.google.com/…/ahlihmimlioaieccfbgbpmfabfjhmfch
+                    </a>
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="ext-store-status">
+                    <span className="ext-pill">Pending review</span>
+                    Submitted to the Chrome Web Store — not publicly installable yet.
+                  </p>
+                  <p className="ext-store-note">
+                    Store listing (goes live after Google approves):{' '}
+                    <a href={STORE_URL} target="_blank" rel="noreferrer">
+                      {STORE_URL.replace('https://', '')}
+                    </a>
+                  </p>
+                </>
+              )}
+            </div>
+
             <ol className="steps">
               <li>
                 <span>01</span>
-                <p>Open <code>chrome://extensions</code> and turn on Developer mode.</p>
+                <p>
+                  {STORE_LIVE
+                    ? <>Install from the <a href={STORE_URL} target="_blank" rel="noreferrer">Chrome Web Store</a>, or load unpacked from this repo.</>
+                    : <>Until the store approves: open <code>chrome://extensions</code> and turn on Developer mode.</>}
+                </p>
               </li>
               <li>
                 <span>02</span>
-                <p>Choose Load unpacked and select the <code>extension</code> folder in this repo.</p>
+                <p>
+                  {STORE_LIVE
+                    ? <>Pin Sentinel, open a public GitHub pull request, then click the icon.</>
+                    : <>Choose Load unpacked and select the <code>extension</code> folder in this repo.</>}
+                </p>
               </li>
               <li>
                 <span>03</span>
-                <p>Open a public GitHub pull request, then the Sentinel icon. It fills the link from the tab.</p>
-              </li>
-              <li>
-                <span>04</span>
-                <p>After this site is on Vercel, put that URL in the popup’s API field. It is saved in the browser.</p>
+                <p>
+                  {STORE_LIVE
+                    ? <>The PR link fills from the tab and scans the live backend automatically.</>
+                    : <>Open a public GitHub pull request, then click the Sentinel icon. It fills the link from the tab and scans — no API field.</>}
+                </p>
               </li>
             </ol>
           </div>
-          <figure className="preview">
-            <figcaption>Popup</figcaption>
-            <div className="preview-card">
-              <div className="preview-top">
-                <b>Sentinel</b>
-                <span>Pass</span>
-              </div>
-              <div className="preview-field">github.com/owner/repo/pull/123</div>
-              <div className="preview-field dim">https://your-app.vercel.app</div>
-              <div className="preview-button">Scan</div>
-              <div className="preview-row">
-                <b>aws_access_key · likely live</b>
-                <span>config.env:4 removed</span>
-              </div>
-            </div>
-          </figure>
+          <aside className="ext-aside" aria-label="What you get">
+            <p className="ext-aside-kicker">Built in</p>
+            <ul className="facts compact-facts">
+              <li>
+                <span>Backend</span>
+                <p>Talks to the live Sentinel API. Nothing to configure.</p>
+              </li>
+              <li>
+                <span>Report</span>
+                <p>Opens the complete Muse report — risk score, findings, and fix plan.</p>
+              </li>
+              <li>
+                <span>Dashboard</span>
+                <p>Local on-device history (ApplySafe-style): fail rate, scores, past scans.</p>
+              </li>
+            </ul>
+          </aside>
         </section>
       </main>
+      <Footer />
     </>
   );
 }

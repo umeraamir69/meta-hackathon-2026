@@ -1,0 +1,5 @@
+{
+  "connectionString": "postgres://demo:FakeDemoPassw0rd!@db.example.internal:5432/demo_app_db",
+  "awsAccessKeyId": "AKIAIOSFODNN7EXAMPLE",
+  "note": "AWS docs example key id + fake DB URL for scanner demos only."
+}

@@ -623,3 +623,450 @@ export async function reviewFindings(findings, options = {}) {
   explanation.comment = renderComment(findings, classified.labels, explanation);
   return explanation;
 }
+
+function blockingFindings(digest) {
+  return (digest?.findings || []).filter((f) => !f.advisory);
+}
+
+function priorityFindings(digest) {
+  const blocking = blockingFindings(digest);
+  const live = blocking.filter((f) => f.label === 'likely_live' || f.label === 'unclear' || !f.label);
+  return (live.length ? live : blocking);
+}
+
+function formatFindingLine(finding, index) {
+  const where = `${finding.path || 'unknown'}${finding.line != null ? `:${finding.line}` : ''}`;
+  const label = finding.label ? ` · ${String(finding.label).replaceAll('_', ' ')}` : '';
+  return `${index}. ${finding.rule} @ ${where} (${finding.severity || 'medium'}${label})`;
+}
+
+function stepsForFinding(finding, fixes) {
+  if (finding?.steps?.length) return finding.steps.slice(0, 3);
+  const path = finding?.path || '';
+  const matched = (fixes || []).filter((step) => String(step.where || '').includes(path)).slice(0, 3);
+  if (matched.length) return matched.map((step) => step.text);
+  return [
+    `Revoke/rotate the ${finding?.rule || 'credential'} (${finding?.masked || 'masked value'}).`,
+    `Remove it from ${finding?.path || 'source'} and purge git history if it remains in older commits.`,
+    'Store the replacement in a secret manager, redeploy, then rescan.',
+  ];
+}
+
+function priorityPlan(digest) {
+  const top = priorityFindings(digest).slice(0, 3);
+  if (!top.length) {
+    return digest?.ok
+      ? 'Nothing blocking. No urgent secret remediations — optional: review any AI advisories.'
+      : 'No findings listed in this digest. Rescan or open a finding’s Muse button for the checklist.';
+  }
+  const lines = [
+    `Do these first (${top.length} highest-priority blocking hit${top.length === 1 ? '' : 's'}):`,
+    '',
+  ];
+  top.forEach((finding, index) => {
+    lines.push(formatFindingLine(finding, index + 1));
+    if (finding.why || finding.why_live) lines.push(`   Why: ${finding.why_live || finding.why}`);
+    const steps = stepsForFinding(finding, digest?.fixes);
+    steps.forEach((step) => lines.push(`   → ${step}`));
+    lines.push('');
+  });
+  lines.push('Order: revoke live credentials → remove from code/history → rescan. Muse cannot clear a Fail.');
+  return lines.join('\n').trim();
+}
+
+function matchFinding(query, digest) {
+  const q = query.toLowerCase();
+  const findings = digest?.findings || [];
+  return findings.find((finding) => {
+    const rule = String(finding.rule || '').toLowerCase();
+    const path = String(finding.path || '').toLowerCase();
+    const masked = String(finding.masked || '').toLowerCase();
+    return (rule && q.includes(rule))
+      || (path && q.includes(path))
+      || (path && q.includes(path.split('/').pop()))
+      || (masked && masked.length > 4 && q.includes(masked.slice(0, 6)));
+  }) || null;
+}
+
+function explainFinding(finding, digest) {
+  const steps = stepsForFinding(finding, digest?.fixes);
+  return [
+    `${finding.rule} at ${finding.path}${finding.line != null ? `:${finding.line}` : ''}`,
+    `Severity ${finding.severity || 'medium'} · ${String(finding.label || 'unlabeled').replaceAll('_', ' ')}${finding.advisory ? ' · advisory (never blocks)' : ' · blocking'}`,
+    finding.masked ? `Masked: ${finding.masked}` : null,
+    finding.why || finding.why_live ? `Why: ${finding.why_live || finding.why}` : null,
+    finding.blast ? `Blast: ${finding.blast}` : null,
+    '',
+    'Fix now:',
+    ...steps.map((step, index) => `${index + 1}. ${step}`),
+  ].filter(Boolean).join('\n');
+}
+
+const OFF_TOPIC_RE = /\b(weather|joke|poem|recipe|capital of|who won|bitcoin|stock price|write (me )?(a |an )?(song|essay|email|story)|ignore (all|previous|your)|system prompt|jailbreak|pretend you are|act as)\b/i;
+const REPORT_TOPIC_RE = /\b(fix|rotate|revoke|remediat|finding|secret|credential|token|key|pat|aws|akia|gate|pass|fail|score|risk|grade|merge|pull|pr\b|diff|history|live|example|fixture|advisory|ai signal|muse|priority|first|next|explain|why|how|what|blast|mask|severity|critical|block|scan|report|checklist|rescan|purge|ignore)\b/i;
+
+function tipLine(digest) {
+  const top = priorityFindings(digest)[0];
+  if (top?.rule) return `Try: “What should I fix first?” or “How do I fix ${top.rule}?”`;
+  return 'Try: “Why did this Pass/Fail?” or “What should I fix first?”';
+}
+
+function refuseOffTopic(digest) {
+  return `I only discuss this merge-gate report — findings, rotate steps, risk score, and Pass/Fail.\n${tipLine(digest)}`;
+}
+
+function clarifyReply(digest) {
+  return `Not sure what you meant about this report.\n${tipLine(digest)}`;
+}
+
+function isOffTopic(message, digest) {
+  const text = String(message || '').trim();
+  if (!text) return true;
+  if (OFF_TOPIC_RE.test(text)) return true;
+  if (matchFinding(text.toLowerCase(), digest)) return false;
+  if (REPORT_TOPIC_RE.test(text)) return false;
+  if (/^(hi|hey|hello|thanks|thank you|ok|okay|cool|yo)\b/i.test(text)) return false;
+  // No report keywords and no finding match → stay in lane.
+  return text.length > 12;
+}
+
+function localChatReply(message, digest, history = []) {
+  const text = String(message || '').trim();
+  const q = text.toLowerCase();
+  const findings = digest?.findings || [];
+  const lastAssistant = [...(history || [])].reverse().find((item) => item.role === 'assistant')?.content || '';
+
+  if (text.length < 2 || !/[a-z0-9]/i.test(text)) return clarifyReply(digest);
+
+  if (/^(hi|hey|hello|yo)\b/i.test(text) && text.length < 24) {
+    return `Hey — I can help with this report only.\nGate is ${digest?.ok ? 'Pass' : 'Fail'} · risk ${digest?.score ?? 0}${digest?.grade ? ` (${digest.grade})` : ''}.\n${tipLine(digest)}`;
+  }
+
+  if (/^(thanks|thank you|ok|okay|cool)\b/i.test(text)) {
+    return `You’re welcome. When you’re ready: ${tipLine(digest)}`;
+  }
+
+  if (isOffTopic(text, digest)) return refuseOffTopic(digest);
+
+  const matched = matchFinding(q, digest);
+  if (matched && (
+    /(fix|explain|about|what|tell|detail|how|rotate|revoke)/.test(q)
+    || q.includes(String(matched.rule || '').toLowerCase())
+  )) {
+    return explainFinding(matched, digest);
+  }
+
+  if (/important|priority|resolve|first|urgent|now|critical|start|worst|top|what should/.test(q)) {
+    if (lastAssistant && lastAssistant.includes('Do these first') && /important|priority|resolve|first|urgent|now/.test(q)) {
+      const first = priorityFindings(digest)[0];
+      if (first) {
+        return `Same top item — start here:\n\n${explainFinding(first, digest)}\n\nWhen that credential is revoked and removed, ask “what’s next?”`;
+      }
+    }
+    return priorityPlan(digest);
+  }
+
+  if (/bad|serious|severe|mistake|wrong|risk|danger|how.?s|how is|grade|score/.test(q)) {
+    const blocking = blockingFindings(digest);
+    const live = blocking.filter((f) => f.label === 'likely_live');
+    const examples = blocking.filter((f) => f.label === 'likely_example' || f.label === 'likely_fixture');
+    const top = priorityFindings(digest)[0];
+    if (digest?.ok) {
+      return `Not a secrets merge problem — gate is Pass (score ${digest.score ?? 0}${digest.grade ? ` · ${digest.grade}` : ''}). AI advisories never block.`;
+    }
+    return [
+      `Yes — this Fail is a real merge blocker.`,
+      `Risk ${digest.score ?? 0}${digest.grade ? ` (${digest.grade})` : ''} · ${blocking.length} blocking · ${live.length} likely live${examples.length ? ` · ${examples.length} sample/fixture` : ''}.`,
+      top ? `Worst right now: ${top.rule} @ ${top.path}${top.line != null ? `:${top.line}` : ''}.` : null,
+      'Ask “What should I fix first?” for the revoke/remove order.',
+    ].filter(Boolean).join('\n');
+  }
+
+  if (/pass|fail|gate|merge|why did|why is/.test(q)) {
+    if (digest?.ok) {
+      return `Merge gate is Pass — no blocking secrets. Risk ${digest.score ?? 0}${digest.grade ? ` (${digest.grade})` : ''}. AI advisories never flip this gate.`;
+    }
+    const live = priorityFindings(digest).filter((f) => f.label === 'likely_live').length;
+    return [
+      `Merge gate is Fail — ${digest.count ?? blockingFindings(digest).length} blocking finding(s)${live ? `, ${live} likely live` : ''}.`,
+      digest.summary ? digest.summary : null,
+      'Rules failed the gate, not Muse. Rotate/remove blocking secrets, then rescan.',
+      'Ask “What should I fix first?” for the ordered plan.',
+    ].filter(Boolean).join('\n');
+  }
+
+  if (/fix|rotate|remediat|how do|checklist/.test(q)) {
+    return priorityPlan(digest);
+  }
+
+  if (/live|example|fixture|false positive|sample/.test(q)) {
+    const blocking = blockingFindings(digest);
+    const live = blocking.filter((f) => f.label === 'likely_live');
+    const examples = blocking.filter((f) => f.label === 'likely_example' || f.label === 'likely_fixture');
+    const lines = [
+      `${live.length} likely live · ${examples.length} sample/fixture · ${blocking.length} blocking.`,
+      'Samples still Fail until removed — only a human clears the gate.',
+    ];
+    live.slice(0, 4).forEach((f, i) => {
+      if (i === 0) lines.push('', 'Likely live first:');
+      lines.push(formatFindingLine(f, i + 1));
+    });
+    examples.slice(0, 3).forEach((f, i) => {
+      if (i === 0) lines.push('', 'Looks like samples:');
+      lines.push(formatFindingLine(f, i + 1));
+    });
+    return lines.join('\n');
+  }
+
+  if (/next|then|after that|done|finished/.test(q)) {
+    const top = priorityFindings(digest);
+    if (top.length > 1) return explainFinding(top[1], digest);
+    if (top[0]) return `After ${top[0].rule} is gone, rescan. If it still Fails, ask about the next finding.`;
+  }
+
+  if (matched) return explainFinding(matched, digest);
+
+  if (findings.length) {
+    return [
+      'I only answer about this report.',
+      `Gate: ${digest?.ok ? 'Pass' : 'Fail'} · ${digest.count ?? blockingFindings(digest).length} blocking.`,
+      tipLine(digest),
+    ].join('\n');
+  }
+
+  return 'Ask about the merge gate, a finding, or how to remediate. Secrets stay masked.';
+}
+
+function buildChatPrompt(text, digest, history = []) {
+  const prior = (Array.isArray(history) ? history : [])
+    .slice(-8)
+    .map((item) => `${item.role === 'user' ? 'User' : 'Muse'}: ${String(item.content || '').slice(0, 700)}`)
+    .join('\n');
+
+  return [
+    'You are Muse, the live triage chat inside PR Diff Sentinel.',
+    'SCOPE LOCK: Answer ONLY about this merge-gate report — findings, labels, rotate/revoke steps, risk score/grade, Pass/Fail meaning, AI advisories, masked values in the digest.',
+    'If the user asks anything else (weather, jokes, general coding, politics, unrelated help), refuse in one short sentence and offer 2 report-specific follow-ups.',
+    'Never decide Pass/Fail — deterministic rules already did. Never invent findings. Never ask for or repeat raw secrets — masked values only.',
+    'Be conversational and specific. Prefer 2–8 short sentences. Use a tight numbered plan only when they ask what to fix / how to remediate.',
+    'Do NOT paste the full findings dump, the entire digest, or repeat a prior answer verbatim. Build on the recent chat.',
+    'If the message is unclear noise, ask them to clarify with 2 concrete report questions.',
+    '',
+    'REPORT DIGEST (JSON):',
+    JSON.stringify(digest || {}).slice(0, 7000),
+    '',
+    prior ? `Recent chat:\n${prior}\n` : '',
+    `User: ${text}`,
+    'Muse:',
+  ].join('\n');
+}
+
+function providerLabel(model) {
+  return String(model).startsWith('muse-wonder') ? 'muse-wonder' : 'meta-model-api';
+}
+
+/**
+ * Short Q&A over a masked report digest. Never decides Pass/Fail.
+ */
+export async function chatWithMuse({ message, digest, history = [] }, options = {}) {
+  const text = String(message || '').trim().slice(0, 1200);
+  if (!text) return { reply: 'Ask a question about this merge gate report.', provider: 'local-fallback', model: null };
+
+  const env = options.env || process.env;
+  const key = apiKey(env);
+  const fallback = localChatReply(text, digest, history);
+
+  if (!key || env.SENTINEL_MUSE === 'false') {
+    return { reply: fallback, provider: 'local-fallback', model: null };
+  }
+
+  const model = env.SENTINEL_MODEL || 'muse-wonder-1.0';
+  if (String(model).endsWith('-contributor')) {
+    return { reply: fallback, provider: 'local-fallback', model: null };
+  }
+
+  const prompt = buildChatPrompt(text, digest, history);
+  if (prompt.includes(key)) {
+    return { reply: fallback, provider: 'local-fallback', model: null };
+  }
+
+  const fetchImpl = options.fetchImpl || globalThis.fetch;
+  const timeout = Number(env.SENTINEL_MUSE_TIMEOUT_MS || 35000);
+  const limit = Number.isFinite(timeout) && timeout > 0 ? timeout : 35000;
+
+  try {
+    let result = await postResponses(fetchImpl, key, { model, input: prompt, reasoning: { effort: 'minimal' } }, limit);
+    if (result.status === 400) result = await postResponses(fetchImpl, key, { model, input: prompt }, limit);
+    if (!result.ok || result.text.includes(key)) {
+      return { reply: fallback, provider: 'local-fallback', model: null, http_status: result.status };
+    }
+    const body = JSON.parse(result.text);
+    const output = extractOutputText(body).trim().slice(0, 4000);
+    if (!output || output.includes(key)) {
+      return { reply: fallback, provider: 'local-fallback', model: null, http_status: result.status };
+    }
+    return {
+      reply: output,
+      provider: providerLabel(model),
+      model,
+      http_status: result.status,
+    };
+  } catch {
+    return { reply: fallback, provider: 'local-fallback', model: null };
+  }
+}
+
+function sseEncode(payload) {
+  return `data: ${JSON.stringify(payload)}\n\n`;
+}
+
+async function parseMetaSse(response, onDelta) {
+  const reader = response.body?.getReader?.();
+  if (!reader) {
+    const text = await response.text();
+    const body = JSON.parse(text);
+    const output = extractOutputText(body).trim();
+    if (output) onDelta(output);
+    return output;
+  }
+
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let full = '';
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const chunks = buffer.split('\n');
+    buffer = chunks.pop() || '';
+    for (const line of chunks) {
+      const trimmed = line.trim();
+      if (!trimmed.startsWith('data:')) continue;
+      const data = trimmed.slice(5).trim();
+      if (!data || data === '[DONE]') continue;
+      let event;
+      try {
+        event = JSON.parse(data);
+      } catch {
+        continue;
+      }
+      if (event?.type === 'response.output_text.delta') {
+        const delta = typeof event.delta === 'string'
+          ? event.delta
+          : (typeof event.delta?.text === 'string' ? event.delta.text : '');
+        if (delta) {
+          full += delta;
+          onDelta(delta);
+        }
+      } else if (event?.type === 'response.failed') {
+        throw new Error(event?.response?.error?.message || 'Muse stream failed.');
+      }
+    }
+  }
+  return full.trim();
+}
+
+/**
+ * SSE ReadableStream for live Muse chat. Falls back to local reply chunks.
+ * Events: {type:'delta', text}, {type:'done', provider, model}, {type:'error', message}
+ */
+export function streamChatWithMuse({ message, digest, history = [] }, options = {}) {
+  const text = String(message || '').trim().slice(0, 1200);
+  const env = options.env || process.env;
+  const key = apiKey(env);
+  const fetchImpl = options.fetchImpl || globalThis.fetch;
+  const model = env.SENTINEL_MODEL || 'muse-wonder-1.0';
+  const fallback = localChatReply(text || '?', digest, history);
+
+  return new ReadableStream({
+    async start(controller) {
+      let started = false;
+      const push = (payload) => {
+        if (payload?.type === 'delta' && payload.text) started = true;
+        controller.enqueue(new TextEncoder().encode(sseEncode(payload)));
+      };
+      const streamLocal = (reason) => {
+        for (const part of fallback.split(/(\s+)/)) {
+          if (part) push({ type: 'delta', text: part });
+        }
+        push({ type: 'done', provider: 'local-fallback', model: null, reply: fallback, note: reason || null });
+        controller.close();
+      };
+
+      try {
+        if (!text) {
+          push({ type: 'delta', text: 'Ask a question about this merge gate report.' });
+          push({ type: 'done', provider: 'local-fallback', model: null });
+          controller.close();
+          return;
+        }
+        if (!key || env.SENTINEL_MUSE === 'false' || String(model).endsWith('-contributor')) {
+          streamLocal();
+          return;
+        }
+
+        const prompt = buildChatPrompt(text, digest, history);
+        if (prompt.includes(key)) {
+          streamLocal('prompt-echo-guard');
+          return;
+        }
+
+        const timeout = Number(env.SENTINEL_MUSE_TIMEOUT_MS || 45000);
+        const limit = Number.isFinite(timeout) && timeout > 0 ? timeout : 45000;
+        const response = await fetchImpl(ENDPOINT, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${key}`,
+            'Content-Type': 'application/json',
+            Accept: 'text/event-stream',
+          },
+          body: JSON.stringify({
+            model,
+            input: prompt,
+            stream: true,
+            reasoning: { effort: 'minimal' },
+          }),
+          signal: AbortSignal.timeout(limit),
+        });
+
+        if (!response.ok) {
+          const once = await chatWithMuse({ message: text, digest, history }, options);
+          push({ type: 'delta', text: once.reply });
+          push({ type: 'done', provider: once.provider, model: once.model || null, http_status: response.status });
+          controller.close();
+          return;
+        }
+
+        const full = await parseMetaSse(response, (delta) => {
+          push({ type: 'delta', text: delta });
+        });
+
+        if (!full || full.includes(key)) {
+          if (!started) streamLocal('empty-or-echo');
+          else {
+            push({ type: 'done', provider: 'local-fallback', model: null, note: 'empty-or-echo' });
+            controller.close();
+          }
+          return;
+        }
+        push({
+          type: 'done',
+          provider: providerLabel(model),
+          model,
+          reply: full.slice(0, 4000),
+        });
+        controller.close();
+      } catch (error) {
+        try {
+          if (!started) streamLocal(error?.message || 'stream-error');
+          else {
+            push({ type: 'done', provider: providerLabel(model), model, note: error?.message || 'stream-error' });
+            controller.close();
+          }
+        } catch {
+          controller.error(error);
+        }
+      }
+    },
+  });
+}

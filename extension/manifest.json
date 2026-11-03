@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "PR Diff Sentinel",
-  "version": "0.3.3",
-  "description": "One click scans the GitHub pull request in this tab. The gate fails if a secret is still in the diff or its commits.",
+  "version": "0.5.2",
+  "description": "Scan a GitHub PR or commit from this tab. On a repo home, tap one item to scan. Muse explains. Local dashboard included.",
   "action": {
     "default_popup": "popup.html",
     "default_title": "PR Diff Sentinel",
@@ -17,11 +17,9 @@
     "48": "icon48.png",
     "128": "icon128.png"
   },
-  "permissions": ["storage", "activeTab"],
+  "permissions": ["activeTab", "storage"],
   "host_permissions": [
     "https://github.com/*",
-    "http://127.0.0.1/*",
-    "http://localhost/*",
-    "https://*.vercel.app/*"
+    "https://pr-diff-sentinel.vercel.app/*"
   ]
 }

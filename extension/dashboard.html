@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sentinel dashboard</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <aside>
+    <div class="logo">
+      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+        <path fill="#e4ff57" d="M5 3h22v13.5L16 29 5 16.5z"/>
+        <path d="M10.5 15.2 14.2 19.2 22 10.4" fill="none" stroke="#14150f" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Sentinel <span>Extension</span>
+    </div>
+    <nav>
+      <button type="button" data-view="overview" class="on">Overview</button>
+      <button type="button" data-view="history">Scan history</button>
+      <button type="button" data-view="settings">Settings</button>
+    </nav>
+    <p class="device">On this device. Metadata only — no raw secrets stored.</p>
+  </aside>
+  <main>
+    <section id="overview">
+      <header>
+        <div>
+          <h1>Overview</h1>
+          <p>PR scans saved on this device. Open the merge gate report for Muse chat, PDF export, and the fix plan.</p>
+        </div>
+        <a class="ext-link" id="open-testing" href="https://pr-diff-sentinel.vercel.app/testing" target="_blank" rel="noreferrer">Testing demos</a>
+      </header>
+      <div class="cards">
+        <article><span>Fail rate</span><strong id="fail-rate">0%</strong><small>Share of scans that blocked merge</small></article>
+        <article><span>PRs scanned</span><strong id="checked">0</strong><small>Saved from the toolbar popup</small></article>
+        <article><span>Fails caught</span><strong id="fails">0</strong><small>Blocking secret findings</small></article>
+        <article><span>Avg risk score</span><strong id="avg-score">0</strong><small>0 clean · 100 critical</small></article>
+      </div>
+      <section class="panel">
+        <h2>AI advisories</h2>
+        <p id="ai-note">No scans yet.</p>
+      </section>
+    </section>
+    <section id="history" hidden>
+      <h1>Scan history</h1>
+      <p>Source, verdict, score, and advisory count. Open the full Muse report on the site.</p>
+      <ul id="list"></ul>
+    </section>
+    <section id="settings" hidden>
+      <h1>Settings</h1>
+      <p>History stays in Chrome on this computer. There is no sign-in.</p>
+      <p>Backend: <code>https://pr-diff-sentinel.vercel.app</code></p>
+      <button id="clear" type="button">Clear scan history</button>
+    </section>
+  </main>
+  <script src="history.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

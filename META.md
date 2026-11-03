@@ -1,15 +1,17 @@
 # Meta Global AI Developer Hackathon — full status
 
-**Last updated:** 2026-10-27 (ET)
+**Last updated:** 2026-11-02 (ET)
 **Owner:** Muhammad Umer Aamir (`umeraamir69`)
 **Event page:** https://cerebralvalley.ai/e/meta-ai-developer-hackathon
+**Live site:** https://pr-diff-sentinel.vercel.app
+**Status report:** [STATUS_REPORT.md](./STATUS_REPORT.md)
 **Notes:** Obsidian vault `/Users/umeraamir/Documents/Obsidian Vault/Meta Hackathon 2026`
 
 ---
 
 ## One-line status
 
-**ACCEPTED** · Indie track · **PR Diff Sentinel** · Regex gate, Muse Spark labels, Muse Wonder notes, local report app, history demo, Next.js site, Chrome extension · Credits, rules, and Discord done · Demo video and submission still open.
+**ACCEPTED** · Indie · **PR Diff Sentinel** · 94/94 tests · site live · Actions secret set · Demo video + Cerebral Valley submit **deferred to tomorrow** · Still need: public repo · Deadline **Nov 4 9pm ET**.
 
 ---
 
@@ -99,9 +101,11 @@ Urdu text-reuse FYP (back-translation + embeddings).
 
 ### Still on you
 
-- [ ] When this repo is on GitHub, add Actions secret `MODEL_API_KEY`. Do not put the value in the workflow file.
-- [ ] Record the demo (history fail → Muse explanation → rotate checklist).
-- [ ] Submit before **Nov 4, 9:00 PM ET**.
+- [ ] Commit + push the web untar fix and extension icon updates (deployed from local CLI; GitHub may still be behind).
+- [ ] Add GitHub Actions secret `MODEL_API_KEY` on this repo. Do not put the value in the workflow file.
+- [ ] Record the demo (history fail → Muse explanation → rotate checklist). Script: `DEMO_SCRIPT.md`.
+- [ ] Submit on Cerebral Valley before **Nov 4, 9:00 PM ET** (links in `SUBMISSION.md`).
+- [ ] Optional: add `GITHUB_TOKEN` on the Vercel `web` project so hosted scans survive rate limits.
 
 ---
 

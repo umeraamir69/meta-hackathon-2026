@@ -102,7 +102,9 @@ label {
   text-transform: uppercase;
 }
 
-.field { margin-bottom: 12px; }
+.scan-bar .field { margin-bottom: 10px; }
+
+.scan-bar.pick-mode .field { margin-bottom: 0; }
 
 input {
   width: 100%;
@@ -119,7 +121,7 @@ input {
 input::placeholder { color: var(--faint); }
 input:focus { border-color: var(--accent); }
 
-button {
+#go {
   width: 100%;
   margin-top: 2px;
   background: var(--accent);
@@ -133,9 +135,11 @@ button {
   transition: filter 0.15s ease, transform 0.05s ease;
 }
 
-button:hover { filter: brightness(1.07); }
-button:active { transform: translateY(1px); }
-button:disabled { opacity: 0.6; cursor: wait; transform: none; }
+#go:hover { filter: brightness(1.07); }
+#go:active { transform: translateY(1px); }
+#go:disabled { opacity: 0.6; cursor: wait; transform: none; }
+#go[hidden] { display: none; }
+
 button:focus-visible, input:focus-visible, a:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
@@ -148,9 +152,15 @@ button:focus-visible, input:focus-visible, a:focus-visible {
   font-size: 12.5px;
 }
 
+#message:empty { display: none; }
+
 #message.error { color: var(--fail); }
 
-#report { margin-top: 6px; }
+#report {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
 
 #report .scope {
   margin: 8px 0 0;
@@ -302,6 +312,16 @@ button:focus-visible, input:focus-visible, a:focus-visible {
 .row .badges .hot { color: var(--fail); border-color: #5a2d22; }
 
 .row .why { margin: 7px 0 0; color: var(--muted); font-size: 12.5px; line-height: 1.5; }
+
+.row .file-link {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--accent);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.row .file-link:hover { text-decoration: underline; }
 #report .more { color: var(--faint); font-size: 12px; margin: 8px 0 0; }
 
 .muse {
@@ -323,20 +343,160 @@ button:focus-visible, input:focus-visible, a:focus-visible {
 .muse ul { margin: 7px 0 0; padding-left: 17px; color: var(--muted); font-size: 12px; line-height: 1.55; }
 .muse li + li { margin-top: 3px; }
 
+#picker {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.picker-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.picker-head strong {
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+
+.text-btn {
+  margin: 0;
+  padding: 0;
+  width: auto;
+  height: auto;
+  background: none;
+  border: 0;
+  color: var(--accent);
+  font: 600 12px/1 inherit;
+  cursor: pointer;
+}
+
+.text-btn:hover { text-decoration: underline; }
+.text-btn[hidden] { display: none; }
+
+.picker-hint {
+  margin: 6px 0 10px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.picker-hint[hidden] { display: none; }
+
+.pick-list {
+  max-height: 260px;
+  overflow-y: auto;
+  display: grid;
+  gap: 5px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+.pick-list[hidden] { display: none; }
+
+.pick-list .group-label {
+  margin: 8px 0 2px;
+  color: var(--faint);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.pick-list .group-label:first-child { margin-top: 0; }
+
+button.pick-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  height: auto;
+  font: inherit;
+}
+
+button.pick-row:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  background: color-mix(in srgb, var(--accent) 6%, var(--panel));
+}
+
+button.pick-row:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.pick-body {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.pick-body strong {
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pick-meta {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.pick-go {
+  flex: none;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #14150f;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.empty-pick {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
 footer {
   flex: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
   padding: 10px 16px 12px;
   border-top: 1px solid var(--line);
   text-align: center;
 }
 
-footer a {
+footer a,
+footer .linkish {
   color: var(--accent);
   font-size: 12.5px;
   text-decoration: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
 }
 
-footer a:hover { text-decoration: underline; }
+footer a:hover,
+footer .linkish:hover { text-decoration: underline; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before { animation: none !important; transition: none !important; }

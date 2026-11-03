@@ -6,6 +6,7 @@ import { parseGitHubUrl } from './sentinel/github-target.js';
 import { applyIgnore, loadIgnore } from './sentinel/ignore.js';
 import { whereOf } from './sentinel/judge.js';
 import { assessAiSignals, reviewFindings } from './sentinel/muse.js';
+import { fixPlan, scoreReport } from './sentinel/score.js';
 import { renderComment } from './sentinel/comment.js';
 import { configuredSecrets, scrubFindings } from './sentinel/redact.js';
 import { dedupe, markTreePresence, scanPatch, scanText, scanWorkingTree } from './sentinel/scan.js';
@@ -206,23 +207,30 @@ export async function scanRemote(input) {
   const commitFindings = [];
   let scope = '';
   let treeScanned = false;
+  let head = target.commit || null;
+  let defaultBranch = null;
   if (target.commit) {
     const commit = await github(`/repos/${target.owner}/${target.repo}/commits/${target.commit}`);
+    head = commit.sha || target.commit;
     scanCommit(commit, commitFindings);
     const when = String(commit.commit?.author?.date || '').slice(0, 10) || 'unknown date';
     scope = `Single commit ${(commit.sha || target.commit).slice(0, 7)} by ${commit.commit?.author?.name || 'unknown'} on ${when}.`;
   } else if (target.pull) {
-    scanPullMeta(await github(`/repos/${target.owner}/${target.repo}/pulls/${target.pull}`), commitFindings);
+    const pull = await github(`/repos/${target.owner}/${target.repo}/pulls/${target.pull}`);
+    head = pull.head?.sha || null;
+    scanPullMeta(pull, commitFindings);
     const files = await github(`/repos/${target.owner}/${target.repo}/pulls/${target.pull}/files?per_page=80`);
     for (const file of files) {
       if (!file.patch || !file.filename) continue;
-      scanPatch(wrapPatch(file.filename, file.patch), { source: 'pr-diff', commit: null, prefix: '' }, commitFindings);
+      scanPatch(wrapPatch(file.filename, file.patch), { source: 'pr-diff', commit: head, prefix: '' }, commitFindings);
     }
     const listed = await github(`/repos/${target.owner}/${target.repo}/pulls/${target.pull}/commits?per_page=${COMMIT_LIMIT}`);
     for (const item of listed) scanCommit(await github(`/repos/${target.owner}/${target.repo}/commits/${item.sha}`), commitFindings);
     scope = `Pull request diff and ${listed.length} commit${listed.length === 1 ? '' : 's'} on that request.`;
   } else {
     const repo = await github(`/repos/${target.owner}/${target.repo}`);
+    defaultBranch = repo.default_branch || 'main';
+    head = repo.default_branch || null;
     const treeMb = Math.round(((repo.size || 0) * 1024) / 1_000_000);
     if (treeMb <= 400) {
       try {
@@ -255,38 +263,48 @@ export async function scanRemote(input) {
     if (muse.assessment) muse.comment = renderComment(scrubbed, muse.labels, muse);
   }
   const labels = new Map((muse?.labels || []).map((label) => [label.where, label]));
-  return {
+  const findings = scrubbed.map((finding) => {
+    const label = labels.get(whereOf(finding));
+    return {
+      severity: finding.severity,
+      advisory: Boolean(finding.advisory),
+      rule: finding.rule,
+      source: finding.source,
+      path: finding.path,
+      line: finding.line,
+      commit: finding.commit || head || null,
+      removed: Boolean(finding.removed),
+      encoding: finding.encoding || null,
+      author: finding.author || null,
+      date: finding.date || null,
+      presentInTree: finding.presentInTree ?? null,
+      masked: finding.masked,
+      label: label?.label || null,
+      why: label?.why || '',
+    };
+  });
+  const payload = {
     ok: blocking.length === 0,
     count: blocking.length,
     advisory: advisory.length,
     source: target.label,
     scope,
-    findings: scrubbed.map((finding) => {
-      const label = labels.get(whereOf(finding));
-      return {
-        severity: finding.severity,
-        advisory: Boolean(finding.advisory),
-        rule: finding.rule,
-        source: finding.source,
-        path: finding.path,
-        line: finding.line,
-        removed: Boolean(finding.removed),
-        encoding: finding.encoding || null,
-        author: finding.author || null,
-        date: finding.date || null,
-        presentInTree: finding.presentInTree ?? null,
-        masked: finding.masked,
-        label: label?.label || null,
-        why: label?.why || '',
-      };
-    }),
+    owner: target.owner,
+    repo: target.repo,
+    pull: target.pull || null,
+    head: head || defaultBranch || null,
+    findings,
     muse: muse ? {
       provider: muse.provider,
       model: muse.model,
       summary: muse.summary,
       classifier: muse.classifier || null,
       rotate: muse.rotate || [],
+      ignore: muse.ignore || [],
       assessment: muse.assessment || null,
     } : null,
   };
+  payload.score = scoreReport(payload);
+  payload.fixes = fixPlan(payload);
+  return payload;
 }

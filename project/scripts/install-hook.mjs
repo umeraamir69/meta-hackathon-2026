@@ -11,13 +11,14 @@ const MARKER = 'pr-diff-sentinel';
 const cli = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'cli.js');
 
 function usage() {
-  return `Install the Sentinel pre-commit hook.
+  return `Install the Sentinel git hook.
 
 Usage:
-  node scripts/install-hook.mjs [--force] [target-repo]
+  node scripts/install-hook.mjs [--force] [--pre-push] [target-repo]
 
   target-repo defaults to the current directory.
-  --force overwrites a pre-commit hook this tool did not install.
+  --force overwrites a hook this tool did not install.
+  --pre-push installs a pre-push hook (scans the working tree) instead of pre-commit.
 `;
 }
 
@@ -25,7 +26,17 @@ function shQuote(value) {
   return `'${value.replaceAll(`'`, `'"'"'`)}'`;
 }
 
-function hookSource() {
+function hookSource(kind) {
+  if (kind === 'pre-push') {
+    return `#!/bin/sh
+# ${MARKER} pre-push hook. Installed by project/scripts/install-hook.mjs.
+# Blocks the push when the working tree still has secret findings.
+# Bypass once with: git push --no-verify
+SENTINEL_MUSE="\${SENTINEL_MUSE:-false}"
+export SENTINEL_MUSE
+exec node ${shQuote(cli)} . > /dev/null
+`;
+  }
   return `#!/bin/sh
 # ${MARKER} pre-commit hook. Installed by project/scripts/install-hook.mjs.
 # Blocks the commit when the staged diff adds secrets. Bypass one commit with:
@@ -60,9 +71,14 @@ function hooksDir(target) {
 function main(argv) {
   const args = [...argv];
   let force = false;
+  let kind = 'pre-commit';
   if (args.includes('--force')) {
     force = true;
     args.splice(args.indexOf('--force'), 1);
+  }
+  if (args.includes('--pre-push')) {
+    kind = 'pre-push';
+    args.splice(args.indexOf('--pre-push'), 1);
   }
   if (args.includes('--help') || args.includes('-h') || args.length > 1) {
     process.stdout.write(usage());
@@ -77,7 +93,7 @@ function main(argv) {
     process.exit(1);
   }
   mkdirSync(dir, { recursive: true });
-  const hook = join(dir, 'pre-commit');
+  const hook = join(dir, kind);
   if (existsSync(hook)) {
     const current = readFileSync(hook, 'utf8');
     if (current.includes(MARKER)) {
@@ -86,14 +102,14 @@ function main(argv) {
     }
     if (!force) {
       process.stderr.write(
-        `A pre-commit hook already exists: ${hook}\nRe-run with --force to replace it, or add this line to it:\n  node ${cli} --staged . > /dev/null\n`,
+        `A ${kind} hook already exists: ${hook}\nRe-run with --force to replace it.\n`,
       );
       process.exit(1);
     }
   }
-  writeFileSync(hook, hookSource(), 'utf8');
+  writeFileSync(hook, hookSource(kind), 'utf8');
   chmodSync(hook, 0o755);
-  process.stdout.write(`Installed the Sentinel pre-commit hook: ${hook}\n`);
+  process.stdout.write(`Installed the Sentinel ${kind} hook: ${hook}\n`);
 }
 
 main(process.argv.slice(2));

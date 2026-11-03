@@ -1,0 +1,51 @@
+/** Demo set: 1 fail · 2 AI · 2 human · 1 mixed. */
+export const SHOWCASE = [
+  {
+    kind: 'fail',
+    label: 'Fail · secrets leak',
+    title: 'Secrets.Sandbox intentional leak',
+    expect: 'Fail · multiple blocking findings (AWS, GitHub PAT, DB URL…)',
+    blurb: 'Public demo PR packed with fake-but-shaped secrets. The gate must Fail — rules block, Muse only explains.',
+    url: 'https://github.com/davidCrejenovschi/Secrets.Sandbox/pull/1',
+  },
+  {
+    kind: 'ai',
+    label: 'AI · Claude agent',
+    title: 'Anthropic skills agent PR',
+    expect: 'Pass · AI advisories fire (never blocks)',
+    blurb: 'Agent-authored work. Verdict stays Pass — expand AI signals. Advisories are evidence, not a merge stop.',
+    url: 'https://github.com/anthropics/skills/pull/66',
+  },
+  {
+    kind: 'ai',
+    label: 'AI · Provenance',
+    title: 'Provenance emulator PR',
+    expect: 'Pass · AI advisories fire (never blocks)',
+    blurb: 'Second agent-leaning PR. Same story: signals show, Pass stays green.',
+    url: 'https://github.com/Provenance-Emu/Provenance/pull/2995',
+  },
+  {
+    kind: 'human',
+    label: 'Human · curl',
+    title: 'curl pull request',
+    expect: 'Pass · silent AI panel',
+    blurb: 'Ordinary human-authored change. Secrets gate runs; AI authorship should stay quiet.',
+    url: 'https://github.com/curl/curl/pull/23631',
+  },
+  {
+    kind: 'human',
+    label: 'Human · eslint',
+    title: 'eslint pull request',
+    expect: 'Pass · silent AI panel',
+    blurb: 'Second human baseline. Use after an AI case to show the contrast.',
+    url: 'https://github.com/eslint/eslint/pull/21400',
+  },
+  {
+    kind: 'mixed',
+    label: 'Mixed · AI checkbox',
+    title: 'eslint PR with AI-generated box',
+    expect: 'Pass · mixed AI disclosure signals',
+    blurb: 'Human PR that still carries AI disclosure. Demo line: signals, not proof — still Pass unless secrets hit.',
+    url: 'https://github.com/eslint/eslint/pull/21364',
+  },
+];

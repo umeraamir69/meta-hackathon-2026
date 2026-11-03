@@ -1,6 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { cacheReport, reportPath } from '../lib/report-cache';
+import { downloadReportPdf } from '../lib/report-pdf';
+import { githubFindingUrl } from '../lib/github-link';
 
 const MAX_PICK = 10;
 const DIRECT_RE = /github\.com\/[^/]+\/[^/]+\/(pull|commits?)\//;
@@ -16,11 +19,31 @@ async function postJson(path, payload) {
   return body;
 }
 
-export default function Scanner() {
-  const [url, setUrl] = useState(() => {
-    if (typeof window === 'undefined') return '';
-    return new URLSearchParams(window.location.search).get('url') || '';
-  });
+function modeFor(value) {
+  return DIRECT_RE.test(value || '') ? 'direct' : 'list';
+}
+
+function chromeOffset(panel) {
+  const chrome = panel?.querySelector?.('.panel-chrome');
+  if (!chrome) return 16;
+  return Math.ceil(chrome.getBoundingClientRect().height) + 12;
+}
+
+function scrollPanelTo(panel, el) {
+  if (!panel || !el) return;
+  const overflowY = window.getComputedStyle(panel).overflowY;
+  const offset = chromeOffset(panel);
+  if (overflowY === 'auto' || overflowY === 'scroll') {
+    const delta = el.getBoundingClientRect().top - panel.getBoundingClientRect().top;
+    panel.scrollTo({ top: Math.max(0, panel.scrollTop + delta - offset), behavior: 'smooth' });
+    return;
+  }
+  const top = window.scrollY + el.getBoundingClientRect().top - offset - 64;
+  window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+}
+
+export default function Scanner({ seedUrl = '', autoRun = false, compact = false } = {}) {
+  const [url, setUrl] = useState(seedUrl || '');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [report, setReport] = useState(null);
@@ -28,31 +51,117 @@ export default function Scanner() {
   const [checked, setChecked] = useState([]);
   const [batch, setBatch] = useState(null);
   const [progress, setProgress] = useState(null);
+  const [showPicker, setShowPicker] = useState(true);
+  const [activeBatchUrl, setActiveBatchUrl] = useState('');
+  const [ready, setReady] = useState(false);
+  const [phase, setPhase] = useState('');
+  const [elapsed, setElapsed] = useState(0);
+  const panelRef = useRef(null);
+  const pickRef = useRef(null);
+  const resultRef = useRef(null);
+  const runId = useRef(0);
+  const autoStarted = useRef(false);
 
-  function resetPick() {
+  const mode = modeFor(url);
+  const step = report ? 'result' : listing ? 'pick' : 'paste';
+  const active = Boolean(listing || report || busy);
+
+  useEffect(() => {
+    const fromQuery = new URLSearchParams(window.location.search).get('url') || '';
+    const next = seedUrl || fromQuery;
+    if (next) setUrl(next);
+    setReady(true);
+  }, [seedUrl]);
+
+  useEffect(() => {
+    const target = report ? resultRef.current : listing ? pickRef.current : null;
+    if (!target || !panelRef.current) return;
+    const timer = window.setTimeout(() => scrollPanelTo(panelRef.current, target), 40);
+    return () => window.clearTimeout(timer);
+  }, [listing, report, batch, showPicker, activeBatchUrl]);
+
+  useEffect(() => {
+    if (!ready || typeof window === 'undefined') return;
+    const next = new URL(window.location.href);
+    if (url.trim()) next.searchParams.set('url', url.trim());
+    else next.searchParams.delete('url');
+    window.history.replaceState({}, '', next);
+  }, [ready, url]);
+
+  function clearResults() {
     setListing(null);
     setChecked([]);
     setBatch(null);
+    setReport(null);
+    setProgress(null);
+    setShowPicker(true);
+    setActiveBatchUrl('');
+    setPhase('');
+  }
+
+  async function runTarget(targetUrl) {
+    const trimmed = String(targetUrl || '').trim();
+    if (!trimmed || busy) return;
+    const id = ++runId.current;
+    const direct = modeFor(trimmed) === 'direct';
+    setUrl(trimmed);
+    setBusy(true);
+    setError('');
+    clearResults();
+    setPhase(direct
+      ? 'Fetching the PR, then Muse triage (often 15–30s)…'
+      : 'Listing public pull requests and commits…');
+    try {
+      if (direct) {
+        const body = await postJson('/api/scan', { url: trimmed });
+        if (runId.current !== id) return;
+        cacheReport(trimmed, body);
+        setReport(body);
+      } else {
+        const body = await postJson('/api/list', { url: trimmed });
+        if (runId.current !== id) return;
+        setListing(body);
+        setShowPicker(true);
+      }
+    } catch (cause) {
+      if (runId.current !== id) return;
+      setError(cause.message || 'The scan failed.');
+    } finally {
+      if (runId.current === id) {
+        setBusy(false);
+        setPhase('');
+      }
+    }
   }
 
   async function onSubmit(event) {
     event.preventDefault();
-    setBusy(true);
-    setError('');
-    setReport(null);
-    resetPick();
-    try {
-      if (DIRECT_RE.test(url)) {
-        setReport(await postJson('/api/scan', { url }));
-      } else {
-        setListing(await postJson('/api/list', { url }));
-      }
-    } catch (cause) {
-      setError(cause.message || 'The scan failed.');
-    } finally {
-      setBusy(false);
-    }
+    await runTarget(url);
   }
+
+  useEffect(() => {
+    if (!ready || autoStarted.current || busy) return;
+    const fromQuery = typeof window !== 'undefined'
+      ? (new URLSearchParams(window.location.search).get('url') || '')
+      : '';
+    const target = (seedUrl || fromQuery || '').trim();
+    if (!target || !autoRun) return;
+    autoStarted.current = true;
+    runTarget(target);
+  }, [ready, seedUrl, autoRun]);
+
+  useEffect(() => {
+    if (!busy) {
+      setElapsed(0);
+      return undefined;
+    }
+    const started = Date.now();
+    setElapsed(0);
+    const tick = window.setInterval(() => {
+      setElapsed(Math.floor((Date.now() - started) / 1000));
+    }, 250);
+    return () => window.clearInterval(tick);
+  }, [busy]);
 
   function togglePick(itemUrl) {
     setChecked((prev) => {
@@ -64,48 +173,134 @@ export default function Scanner() {
 
   async function onScanPicked(event) {
     event.preventDefault();
+    if (!checked.length || busy) return;
+    const id = ++runId.current;
     setBusy(true);
     setError('');
     setBatch(null);
+    setReport(null);
+    setActiveBatchUrl('');
     const rows = [];
     const total = checked.length;
     for (let index = 0; index < checked.length; index += 1) {
+      if (runId.current !== id) return;
       const itemUrl = checked[index];
       setProgress({ done: index, total, label: itemUrl });
       try {
         const body = await postJson('/api/scan', { url: itemUrl });
-        rows.push({ url: itemUrl, ok: body.ok, count: body.count ?? 0, advisory: body.advisory ?? 0 });
+        cacheReport(itemUrl, body);
+        rows.push({
+          url: itemUrl,
+          ok: body.ok,
+          count: body.count ?? 0,
+          advisory: body.advisory ?? 0,
+          report: body,
+        });
       } catch (cause) {
         rows.push({ url: itemUrl, ok: false, count: 0, advisory: 0, error: cause.message || 'The scan failed.' });
       }
       setBatch([...rows]);
       setProgress({ done: index + 1, total, label: itemUrl });
     }
+    if (runId.current !== id) return;
     setProgress(null);
+    setShowPicker(false);
     setBusy(false);
+    const firstHit = rows.find((row) => row.report && !row.ok) || rows.find((row) => row.report);
+    if (firstHit?.report) {
+      setReport(firstHit.report);
+      setActiveBatchUrl(firstHit.url);
+    }
   }
 
+  function openBatchRow(row) {
+    if (row.report) {
+      setReport(row.report);
+      setActiveBatchUrl(row.url);
+      setShowPicker(false);
+      setError('');
+    } else if (row.error) {
+      setError(row.error);
+    }
+  }
+
+  const submitLabel = !ready || busy
+    ? (busy ? (mode === 'direct' ? 'Scanning…' : 'Loading…') : 'Go')
+    : !url.trim()
+      ? 'Go'
+      : mode === 'direct'
+        ? 'Scan PR'
+        : 'List';
+
+  const statusHint = busy
+    ? (phase || (mode === 'direct'
+      ? 'Fetching the PR, then Muse triage (often 15–30s)…'
+      : 'Listing public pull requests and commits…'))
+    : null;
+
   return (
-    <section className="panel" aria-busy={busy}>
-      <div className="panel-label">
-        <span>Public GitHub</span>
-        <span>{busy ? 'Scanning' : 'Ready'}</span>
+    <section
+      ref={panelRef}
+      className={`panel${active ? ' panel-active' : ''}`}
+      aria-busy={busy}
+      data-step={step}
+    >
+      <div className="panel-chrome">
+        <div className="steps-bar" aria-label="Scan steps">
+          <span className={step === 'paste' ? 'on' : 'done'}>1 · Paste</span>
+          <span className={step === 'pick' ? 'on' : listing || report ? 'done' : ''}>2 · Pick</span>
+          <span className={step === 'result' ? 'on' : report ? 'done' : ''}>3 · Verdict</span>
+        </div>
+
+        <div className="panel-label">
+          <span>Public GitHub</span>
+          <span className={busy ? 'pulse' : ''}>
+            {busy ? 'Working' : error ? 'Needs a public link' : 'Ready'}
+          </span>
+        </div>
+
+        <form className="scan" onSubmit={onSubmit}>
+          <label htmlFor="url" className="sr">GitHub repository or pull request</label>
+          <input
+            id="url"
+            value={url}
+            onChange={(event) => setUrl(event.target.value)}
+            placeholder="https://github.com/owner/repo or …/pull/123"
+            autoComplete="off"
+            spellCheck="false"
+            required
+          />
+          <button type="submit" disabled={busy}>{submitLabel}</button>
+        </form>
+
+        <p className="note">
+          {statusHint
+            || (mode === 'direct'
+              ? 'Scans this pull request diff and its recent commits.'
+              : 'Repo links open a picker. Pull request links scan immediately.')}
+        </p>
+
+        {error ? <p className="error" role="alert">{error}</p> : null}
+
+        {busy ? (
+          <ScanLoader
+            phase={statusHint || phase}
+            elapsed={elapsed}
+            direct={mode === 'direct'}
+          />
+        ) : null}
       </div>
-      <form className="scan" onSubmit={onSubmit}>
-        <label htmlFor="url" className="sr">GitHub repository or pull request</label>
-        <input
-          id="url"
-          value={url}
-          onChange={(event) => setUrl(event.target.value)}
-          placeholder="https://github.com/owner/repo/pull/123"
-          autoComplete="off"
-          spellCheck="false"
-          required
+
+      {report ? (
+        <Report
+          report={report}
+          scanUrl={url}
+          compact={compact}
+          onClear={clearResults}
+          anchorRef={resultRef}
         />
-        <button type="submit" disabled={busy}>{busy ? 'Scanning' : 'Scan'}</button>
-      </form>
-      <p className="note">Pull request diff and its recent commits. Full history stays on the local gate.</p>
-      {error ? <p className="error" role="alert">{error}</p> : null}
+      ) : null}
+
       {listing ? (
         <Picker
           listing={listing}
@@ -113,11 +308,21 @@ export default function Scanner() {
           busy={busy}
           batch={batch}
           progress={progress}
+          showPicker={showPicker}
+          activeBatchUrl={activeBatchUrl}
+          anchorRef={pickRef}
           onToggle={togglePick}
           onScan={onScanPicked}
+          onOpenRow={openBatchRow}
+          onTogglePicker={() => setShowPicker((value) => !value)}
+          onReset={() => {
+            clearResults();
+            setError('');
+          }}
         />
       ) : null}
-      {report ? <Report report={report} /> : listing ? null : <Waiting busy={busy} />}
+
+      {!listing && !report && !error && !busy ? <Waiting busy={false} phase="" /> : null}
     </section>
   );
 }
@@ -143,31 +348,81 @@ function Avatar({ item }) {
   return <img className="avatar" src={item.avatar} alt="" width="22" height="22" loading="lazy" />;
 }
 
-function Picker({ listing, checked, busy, batch, progress, onToggle, onScan }) {
-  const items = [...(listing.pulls || []), ...(listing.commits || [])];
+function Picker({
+  listing,
+  checked,
+  busy,
+  batch,
+  progress,
+  showPicker,
+  activeBatchUrl,
+  anchorRef,
+  onToggle,
+  onScan,
+  onOpenRow,
+  onTogglePicker,
+  onReset,
+}) {
+  const items = useMemo(
+    () => [...(listing.pulls || []), ...(listing.commits || [])],
+    [listing],
+  );
   const byUrl = new Map(items.map((item) => [item.url, item]));
-  const picked = checked.map((url) => byUrl.get(url)).filter(Boolean);
+  const picked = checked.map((itemUrl) => byUrl.get(itemUrl)).filter(Boolean);
   const full = checked.length >= MAX_PICK;
+  const pulls = items.filter((item) => item.kind === 'pull');
+  const commits = items.filter((item) => item.kind === 'commit');
+  const empty = pulls.length === 0 && commits.length === 0;
+
   return (
-    <div className="report">
-      <div className="verdict">
-        <strong className={batch && batch.every((row) => row.ok) ? 'pass' : ''}>
-          {batch ? `${batch.filter((row) => row.ok).length}/${batch.length} clean` : 'Pick to scan'}
-        </strong>
-        <span>{listing.source}</span>
+    <div className="report pick-panel" ref={anchorRef}>
+      <div className="pick-head">
+        <div>
+          <p className="pick-kicker">Step 2</p>
+          <h2 className="pick-title">{batch ? 'Batch results' : 'Pick what to scan'}</h2>
+        </div>
+        <div className="pick-actions">
+          <span className="source-chip">{listing.source}</span>
+          <button type="button" className="ghost" onClick={onReset} disabled={busy}>
+            Start over
+          </button>
+        </div>
       </div>
+
+      <p className="scope">
+        {batch
+          ? 'Click a row to open the full verdict above. Change selection to scan again.'
+          : `Tick up to ${MAX_PICK} pull requests or commits, then scan them together.`}
+      </p>
+
       {progress ? (
         <div className="progress" role="status">
           <div className="bar">
             <i style={{ width: `${Math.round((progress.done / Math.max(1, progress.total)) * 100)}%` }} />
           </div>
           <p>
-            Checking {Math.min(progress.done + 1, progress.total)}/{progress.total} — {progress.label}
+            Checking {Math.min(progress.done + (busy ? 1 : 0), progress.total)}/{progress.total}
+            {progress.label ? ` — ${progress.label.replace('https://github.com/', '')}` : ''}
           </p>
         </div>
       ) : null}
-      {batch ? <BatchResults rows={batch} items={items} /> : null}
-      {picked.length > 0 && !batch ? (
+
+      {batch ? (
+        <BatchResults
+          rows={batch}
+          items={items}
+          activeUrl={activeBatchUrl}
+          onOpen={onOpenRow}
+        />
+      ) : null}
+
+      {batch ? (
+        <button type="button" className="ghost linkish" onClick={onTogglePicker}>
+          {showPicker ? 'Hide selection list' : 'Change selection'}
+        </button>
+      ) : null}
+
+      {picked.length > 0 && showPicker ? (
         <div className="tray">
           <span className="tray-label">Selected {picked.length}/{MAX_PICK}</span>
           <ul>
@@ -183,119 +438,345 @@ function Picker({ listing, checked, busy, batch, progress, onToggle, onScan }) {
           </ul>
         </div>
       ) : null}
-      <p className="scope">Tick up to {MAX_PICK} commits or pull requests, then scan them together.</p>
-      <form onSubmit={onScan}>
-        <ul className="findings pick">
-          {items.map((item) => {
-            const id = `pick-${item.kind}-${item.sha || item.number}`;
-            const disabled = busy || (!checked.includes(item.url) && full);
-            return (
-              <li key={item.url}>
-                <label htmlFor={id}>
-                  <input
-                    id={id}
-                    type="checkbox"
-                    checked={checked.includes(item.url)}
-                    disabled={disabled}
-                    onChange={() => onToggle(item.url)}
-                  />
-                  <Avatar item={item} />
-                  <span>
-                    <b>{itemLabel(item)}</b>
-                    <span className="pick-meta">
-                      <GitHubMark /> {item.author}
-                      {item.date ? ` · ${item.date}` : ''}{item.state ? ` · ${item.state}` : ''}
-                    </span>
-                  </span>
-                </label>
-              </li>
-            );
-          })}
-        </ul>
-        <p className="scan-row">
-          <button type="submit" className="cta" disabled={busy || checked.length === 0}>
-            {busy ? 'Scanning…' : `Scan ${checked.length} selected`}
-          </button>
-          <span className="count-note">{checked.length}/{MAX_PICK} picked</span>
-        </p>
-      </form>
+
+      {showPicker ? (
+        <form onSubmit={onScan} className="pick-form">
+          {empty ? (
+            <p className="empty-pick">No open pull requests or recent commits found for this repo.</p>
+          ) : (
+            <div className="pick-scroll">
+              {pulls.length ? (
+                <>
+                  <p className="group-label">Pull requests</p>
+                  <PickList items={pulls} checked={checked} busy={busy} full={full} onToggle={onToggle} />
+                </>
+              ) : null}
+              {commits.length ? (
+                <>
+                  <p className="group-label">Recent commits</p>
+                  <PickList items={commits} checked={checked} busy={busy} full={full} onToggle={onToggle} />
+                </>
+              ) : null}
+            </div>
+          )}
+          <div className="scan-dock">
+            <button type="submit" className="cta" disabled={busy || checked.length === 0}>
+              {busy ? 'Scanning…' : `Scan ${checked.length || ''} selected`.trim()}
+            </button>
+            <span className="count-note">{checked.length}/{MAX_PICK} picked</span>
+          </div>
+        </form>
+      ) : null}
     </div>
   );
 }
 
-function BatchResults({ rows, items }) {
-  const byUrl = new Map(items.map((item) => [item.url, itemLabel(item)]));
+function PickList({ items, checked, busy, full, onToggle }) {
   return (
-    <ul className="findings">
-      {rows.map((row) => (
-        <li key={row.url}>
-          <div className="finding-top">
-            <b className={`sev ${row.ok ? '' : 'high'}`}>{byUrl.get(row.url) || row.url}</b>
-            <em>{row.error ? 'error' : row.ok ? 'clean' : `${row.count} blocking`}</em>
-          </div>
-          <code>{row.error || `${row.count} finding${row.count === 1 ? '' : 's'}${row.advisory ? ` · ${row.advisory} AI signal${row.advisory === 1 ? '' : 's'}` : ''}`}</code>
-        </li>
-      ))}
+    <ul className="findings pick">
+      {items.map((item) => {
+        const id = `pick-${item.kind}-${item.sha || item.number}`;
+        const on = checked.includes(item.url);
+        const disabled = busy || (!on && full);
+        return (
+          <li key={item.url} className={on ? 'is-checked' : ''}>
+            <label htmlFor={id}>
+              <input
+                id={id}
+                type="checkbox"
+                checked={on}
+                disabled={disabled}
+                onChange={() => onToggle(item.url)}
+              />
+              <Avatar item={item} />
+              <span>
+                <b>{itemLabel(item)}</b>
+                <span className="pick-meta">
+                  <GitHubMark /> {item.author}
+                  {item.date ? ` · ${item.date}` : ''}{item.state ? ` · ${item.state}` : ''}
+                </span>
+              </span>
+            </label>
+          </li>
+        );
+      })}
     </ul>
   );
 }
 
-function Waiting({ busy }) {
+function BatchResults({ rows, items, activeUrl, onOpen }) {
+  const byUrl = new Map(items.map((item) => [item.url, itemLabel(item)]));
+  const clean = rows.filter((row) => row.ok && !row.error).length;
   return (
-    <p className="waiting">{busy ? 'Reading the diff and the recent commits.' : 'The verdict replaces this.'}</p>
+    <div className="batch">
+      <p className="batch-summary">
+        <strong>{clean}/{rows.length} clean</strong>
+        <span>Click a row for the full report</span>
+      </p>
+      <ul className="findings">
+        {rows.map((row) => (
+          <li key={row.url} className={row.url === activeUrl ? 'is-active' : ''}>
+            <button type="button" className="batch-row" onClick={() => onOpen(row)}>
+              <div className="finding-top">
+                <b className={`sev ${row.ok && !row.error ? '' : 'high'}`}>{byUrl.get(row.url) || row.url}</b>
+                <em>{row.error ? 'error' : row.ok ? 'clean' : `${row.count} blocking`}</em>
+              </div>
+              <code>
+                {row.error
+                  || `${row.count} finding${row.count === 1 ? '' : 's'}${row.advisory ? ` · ${row.advisory} AI signal${row.advisory === 1 ? '' : 's'}` : ''}`}
+              </code>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
-function Report({ report }) {
+function Waiting({ busy, phase }) {
+  return (
+    <p className={`waiting${busy ? ' pulse-text' : ''}`} role={busy ? 'status' : undefined}>
+      {busy
+        ? (phase || 'Fetching GitHub, then Muse triage (often 15–30s)…')
+        : 'Paste a pull request to get a Pass or Fail. Paste a repo to pick PRs and commits.'}
+    </p>
+  );
+}
+
+function ScanLoader({ phase, elapsed, direct }) {
+  const pct = Math.min(92, Math.round((elapsed / 28) * 100));
+  const stage = !direct
+    ? 'Listing repo'
+    : elapsed < 6
+      ? 'Reading GitHub'
+      : elapsed < 14
+        ? 'Matching secrets'
+        : 'Muse triage';
+  return (
+    <div className="scan-loader" role="status" aria-live="polite">
+      <div className="scan-loader-top">
+        <span className="scan-spinner" aria-hidden="true" />
+        <div>
+          <p className="scan-loader-stage">{stage}</p>
+          <p className="scan-loader-phase">{phase || 'Working…'}</p>
+        </div>
+        <span className="scan-loader-time">{elapsed}s</span>
+      </div>
+      <div className="scan-loader-bar" aria-hidden="true">
+        <i style={{ width: `${pct}%` }} />
+      </div>
+      <p className="scan-loader-hint">
+        {direct
+          ? 'Secret gate + Muse usually finish in 15–30 seconds. Keep this tab open.'
+          : 'Fetching open PRs and recent commits…'}
+      </p>
+    </div>
+  );
+}
+
+function githubBrowseUrl(source) {
+  if (!source) return null;
+  const pull = String(source).match(/^([^/]+\/[^/#]+)#(\d+)$/);
+  if (pull) return `https://github.com/${pull[1]}/pull/${pull[2]}`;
+  const commit = String(source).match(/^([^/]+\/[^/#]+)@([0-9a-f]{7,40})$/i);
+  if (commit) return `https://github.com/${commit[1]}/commit/${commit[2]}`;
+  if (/^[^/]+\/[^/]+$/.test(source)) return `https://github.com/${source}`;
+  return null;
+}
+
+function Report({ report, onClear, anchorRef, compact = false, scanUrl = '' }) {
+  const [copied, setCopied] = useState('');
   const blocking = (report.findings || []).filter((finding) => !finding.advisory);
   const advisory = (report.findings || []).filter((finding) => finding.advisory);
+  const live = blocking.filter((finding) => finding.label === 'likely_live').length;
+  const examples = blocking.filter((finding) => finding.label === 'likely_example' || finding.label === 'likely_fixture').length;
+  const deleted = blocking.filter((finding) => finding.presentInTree === false).length;
+  const githubUrl = githubBrowseUrl(report.source);
+  const targetUrl = scanUrl || githubUrl || '';
+
+  async function copyJson() {
+    await navigator.clipboard.writeText(JSON.stringify(report, null, 2));
+    setCopied('json');
+    setTimeout(() => setCopied(''), 1600);
+  }
+
+  async function copyShare() {
+    const share = `${window.location.origin}/?url=${encodeURIComponent(targetUrl || report.source || '')}`;
+    await navigator.clipboard.writeText(share);
+    setCopied('share');
+    setTimeout(() => setCopied(''), 1600);
+  }
+
+  function downloadPdf() {
+    downloadReportPdf(report, {
+      url: targetUrl,
+      fromCache: false,
+      savedAt: Date.now(),
+    });
+  }
+
+  function openFullReport() {
+    // Same-tab handoff: report is already stashed (memory + session + localStorage).
+    // A new tab used to re-hit /api/scan whenever storage missed — never again from this button.
+    window.location.assign(reportPath(targetUrl, report));
+  }
+
+  if (compact) {
+    return (
+      <div className="report report-verdict report-compact" ref={anchorRef}>
+        <div className="verdict">
+          <strong className={report.ok ? 'pass' : 'fail'}>{report.ok ? 'Pass' : 'Fail'}</strong>
+          <span>
+            {report.count} blocking
+            {advisory.length
+              ? ` · ${advisory.length} AI advisor${advisory.length === 1 ? 'y' : 'ies'}`
+              : ''}
+          </span>
+        </div>
+        <p className="source">{report.source}</p>
+        <p className="scope">{report.scope}</p>
+        {blocking.length > 0 || advisory.length > 0 ? (
+          <div className="stat-row" aria-label="Finding summary">
+            <span><b>{blocking.length}</b> blocking</span>
+            {live ? <span><b>{live}</b> likely live</span> : null}
+            {examples ? <span><b>{examples}</b> sample/fixture</span> : null}
+            {deleted ? <span><b>{deleted}</b> deleted from files</span> : null}
+            {advisory.length ? <span><b>{advisory.length}</b> AI advisory</span> : null}
+          </div>
+        ) : null}
+        {report.muse?.summary ? (
+          <p className="compact-muse">{report.muse.summary}</p>
+        ) : null}
+        <div className="compact-actions">
+          <button type="button" className="cta" onClick={openFullReport}>
+            Open full report
+          </button>
+          {githubUrl ? (
+            <a className="ghost" href={githubUrl} target="_blank" rel="noreferrer">GitHub</a>
+          ) : null}
+          {onClear ? (
+            <button type="button" className="ghost" onClick={onClear}>Clear</button>
+          ) : null}
+        </div>
+        <p className="compact-hint">Opens the saved report here — no second scan. Use Rescan on the report page if you want a fresh run.</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="report">
+    <div className="report report-verdict" ref={anchorRef}>
       <div className="verdict">
         <strong className={report.ok ? 'pass' : 'fail'}>{report.ok ? 'Pass' : 'Fail'}</strong>
-        <span>{report.count} finding{report.count === 1 ? '' : 's'}</span>
+        <span>
+          {report.count} blocking
+          {advisory.length
+            ? ` · ${advisory.length} AI advisor${advisory.length === 1 ? 'y' : 'ies'}`
+            : ''}
+        </span>
       </div>
-      <p className="source">{report.source}</p>
+      <div className="report-meta">
+        <p className="source">{report.source}</p>
+        <div className="report-tools">
+          {githubUrl ? (
+            <a className="ghost" href={githubUrl} target="_blank" rel="noreferrer">GitHub</a>
+          ) : null}
+          <button type="button" className="ghost" onClick={copyShare}>
+            {copied === 'share' ? 'Copied' : 'Share'}
+          </button>
+          <button type="button" className="ghost" onClick={copyJson}>
+            {copied === 'json' ? 'Copied' : 'Copy JSON'}
+          </button>
+          <button type="button" className="ghost" onClick={downloadPdf}>Download PDF</button>
+          {onClear ? (
+            <button type="button" className="ghost" onClick={onClear}>Clear</button>
+          ) : null}
+        </div>
+      </div>
       <p className="scope">{report.scope}</p>
+      {blocking.length > 0 || advisory.length > 0 ? (
+        <div className="stat-row" aria-label="Finding summary">
+          <span><b>{blocking.length}</b> blocking</span>
+          {live ? <span><b>{live}</b> likely live</span> : null}
+          {examples ? <span><b>{examples}</b> sample/fixture</span> : null}
+          {deleted ? <span><b>{deleted}</b> deleted from files</span> : null}
+          {advisory.length ? <span><b>{advisory.length}</b> AI advisory · never blocks</span> : null}
+        </div>
+      ) : null}
       {blocking.length === 0 ? (
-        <p className="clear">Nothing in this scan blocks the merge.</p>
+        <p className="clear">
+          {advisory.length
+            ? 'Pass — no secrets block the merge. AI signals below are advisory only.'
+            : 'Nothing in this scan blocks the merge.'}
+        </p>
       ) : (
         <ul className="findings">
-          {blocking.map((finding) => (
-            <li key={`${finding.source}-${finding.path}-${finding.line}-${finding.rule}-${finding.removed}`}>
-              <div className="finding-top">
-                <b className={`sev ${finding.severity || ''}`}>{finding.rule}</b>
-                <em>{pretty(finding.label) || 'unlabeled'}</em>
-              </div>
-              <code>
-                {finding.source} {finding.path}:{finding.line}{finding.removed ? ' removed' : ''}{finding.encoding ? ` encoded ${finding.encoding}` : ''}
-              </code>
-              {finding.masked ? <code className="masked">{finding.masked}</code> : null}
-              {caseLine(finding) ? <p className="case">{caseLine(finding)}</p> : null}
-              {finding.why ? <p>{finding.why}</p> : null}
-            </li>
-          ))}
+          {blocking.map((finding) => {
+            const fileUrl = githubFindingUrl(report, finding);
+            return (
+              <li key={`${finding.source}-${finding.path}-${finding.line}-${finding.rule}-${finding.removed}`}>
+                <div className="finding-top">
+                  <b className={`sev ${finding.severity || ''}`}>{finding.rule}</b>
+                  <em>{pretty(finding.label) || 'unlabeled'}</em>
+                </div>
+                <code>
+                  {finding.source} {finding.path}:{finding.line}{finding.removed ? ' removed' : ''}{finding.encoding ? ` encoded ${finding.encoding}` : ''}
+                </code>
+                {finding.masked ? <code className="masked">{finding.masked}</code> : null}
+                {caseLine(finding) ? <p className="case">{caseLine(finding)}</p> : null}
+                {finding.why ? <p>{finding.why}</p> : null}
+                {fileUrl ? (
+                  <p className="finding-actions">
+                    <a href={fileUrl} target="_blank" rel="noreferrer">Open file on GitHub</a>
+                  </p>
+                ) : null}
+              </li>
+            );
+          })}
         </ul>
       )}
-      {advisory.length > 0 ? (
-        <AiSignals report={report} advisory={advisory} />
+      {advisory.length > 0 ? <AiSignals report={report} advisory={advisory} /> : null}
+      {report.muse?.summary || (report.muse?.rotate || []).length ? (
+        <MusePanel muse={report.muse} />
       ) : null}
-      {report.muse?.summary ? (
-        <div className="muse">
-          <span>Muse · {report.muse.provider || 'local'}</span>
-          <p>{report.muse.summary}</p>
-          {Array.isArray(report.muse.rotate) && report.muse.rotate.length > 0 ? (
-            <ol className="rotate">
-              {report.muse.rotate.slice(0, 6).map((item) => (
-                <li key={item.where}>
-                  <code>{item.where}</code>
-                  <ul>
-                    {(item.steps || []).slice(0, 3).map((step) => <li key={step}>{step}</li>)}
-                  </ul>
-                </li>
-              ))}
-            </ol>
-          ) : null}
+    </div>
+  );
+}
+
+function MusePanel({ muse }) {
+  const rotate = Array.isArray(muse?.rotate) ? muse.rotate : [];
+  const ignore = Array.isArray(muse?.ignore) ? muse.ignore : [];
+  return (
+    <div className="muse">
+      <span>Muse · {muse.provider || 'local'}{muse.model ? ` · ${muse.model}` : ''}</span>
+      {muse.summary ? <p>{muse.summary}</p> : null}
+      {rotate.length > 0 ? (
+        <ol className="rotate">
+          {rotate.slice(0, 8).map((item) => (
+            <li key={`${item.where}-${item.rule}`}>
+              <code>{item.where || item.rule}</code>
+              {item.why_live ? <p className="why-live">{item.why_live}</p> : null}
+              {item.blast ? <p className="blast">Blast: {item.blast}</p> : null}
+              {item.fix?.path ? (
+                <pre className="fix-patch">{`--- a/${item.fix.path}\n+++ b/${item.fix.path}\n- ${item.fix.before || ''}\n+ ${item.fix.after || ''}`}</pre>
+              ) : null}
+              <ul>
+                {(item.steps || []).slice(0, 4).map((step) => <li key={step}>{step}</li>)}
+              </ul>
+            </li>
+          ))}
+        </ol>
+      ) : null}
+      {ignore.length > 0 ? (
+        <div className="ignore-box">
+          <span>.sentinelignore candidates</span>
+          <ul>
+            {ignore.slice(0, 6).map((item) => (
+              <li key={item.pattern}>
+                <code>{item.pattern}</code>
+                {item.reason ? <p>{item.reason}</p> : null}
+              </li>
+            ))}
+          </ul>
         </div>
       ) : null}
     </div>
@@ -307,7 +788,7 @@ function pretty(label) {
 }
 
 function AiSignals({ report, advisory }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(Boolean(report.muse?.assessment));
   const assessment = report.muse?.assessment || null;
   const verdict = assessment?.verdict;
   return (

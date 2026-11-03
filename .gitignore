@@ -7,3 +7,7 @@ node_modules/
 .meta-api-key
 project/.tmp/
 .vercel
+.env*
+trajectory-*.json
+demo/video/*.aiff
+demo/leaky-push-demo/.git/

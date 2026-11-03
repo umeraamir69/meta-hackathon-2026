@@ -17,24 +17,37 @@
     </strong>
     <span id="state">Ready</span>
   </header>
+
   <main>
-    <form id="scan">
+    <form id="scan" class="scan-bar">
       <div class="field">
         <label for="url">GitHub link</label>
-        <input id="url" name="url" type="text" placeholder="Pull request or repository" required autocomplete="off" spellcheck="false">
+        <input id="url" name="url" type="text" placeholder="PR, commit, or repository" required autocomplete="off" spellcheck="false">
       </div>
-      <div class="field">
-        <label for="api">API</label>
-        <input id="api" name="api" type="text" spellcheck="false" value="http://127.0.0.1:3000" autocomplete="off">
-      </div>
-      <button type="submit">Scan</button>
+      <button type="submit" id="go">Scan</button>
     </form>
+
     <p id="message"></p>
+
+    <!-- Results first so Pass/Fail is never buried under the list -->
     <section id="report" hidden></section>
+
+    <section id="picker" hidden>
+      <div class="picker-head">
+        <strong id="picker-title">Pick a PR or commit</strong>
+        <button type="button" id="change-pick" class="text-btn" hidden>Change</button>
+      </div>
+      <p class="picker-hint" id="picker-hint">Tap one row to scan it.</p>
+      <div id="pick-list" class="pick-list"></div>
+    </section>
   </main>
+
   <footer id="foot" hidden>
-    <a id="full" href="#" target="_blank" rel="noreferrer">Open full report</a>
+    <a id="full" href="#" target="_blank" rel="noreferrer">Full report</a>
+    <button type="button" id="dash" class="linkish">Dashboard</button>
   </footer>
+
+  <script src="history.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>
