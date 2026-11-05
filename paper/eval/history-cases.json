@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "source_of_truth": "scripts/secrets.mjs",
+  "note": "Case ids and expectations. Synthetic secret bodies live only in secrets.mjs so lengths stay rule-correct.",
+  "cases": [
+    { "id": "h01-aws-example-deleted", "expect_sentinel_history": "fail", "expect_tree_only": "pass" },
+    { "id": "h02-github-pat-deleted", "expect_sentinel_history": "fail", "expect_tree_only": "pass" },
+    { "id": "h03-db-url-deleted", "expect_sentinel_history": "fail", "expect_tree_only": "pass" },
+    { "id": "h04-openai-key-deleted", "expect_sentinel_history": "fail", "expect_tree_only": "pass" },
+    { "id": "h05-slack-token-deleted", "expect_sentinel_history": "fail", "expect_tree_only": "pass" },
+    { "id": "h06-stripe-key-deleted", "expect_sentinel_history": "fail", "expect_tree_only": "pass" },
+    { "id": "h07-private-key-deleted", "expect_sentinel_history": "fail", "expect_tree_only": "pass" },
+    { "id": "h08-gitlab-pat-deleted", "expect_sentinel_history": "fail", "expect_tree_only": "pass" },
+    { "id": "h09-sendgrid-deleted", "expect_sentinel_history": "fail", "expect_tree_only": "pass" },
+    { "id": "h10-twilio-deleted", "expect_sentinel_history": "fail", "expect_tree_only": "pass" },
+    { "id": "h11-npm-token-deleted", "expect_sentinel_history": "fail", "expect_tree_only": "pass" },
+    { "id": "h12-slack-webhook-deleted", "expect_sentinel_history": "fail", "expect_tree_only": "pass" },
+    { "id": "h13-generic-password-deleted", "expect_sentinel_history": "fail", "expect_tree_only": "pass" },
+    { "id": "h14-anthropic-key-deleted", "expect_sentinel_history": "fail", "expect_tree_only": "pass" },
+    { "id": "h15-aws-secret-pair-deleted", "expect_sentinel_history": "fail", "expect_tree_only": "pass" },
+    { "id": "h16-clean-control", "expect_sentinel_history": "pass", "expect_tree_only": "pass", "control": true }
+  ]
+}

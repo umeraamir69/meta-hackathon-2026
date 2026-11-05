@@ -1,0 +1,538 @@
+{
+  "generated_at": "2026-11-05T03:08:11.645Z",
+  "gitleaks": "8.30.1",
+  "n_leak_cases": 15,
+  "n_rq1_hits": 15,
+  "rq1_rate": 1,
+  "n_control_pass": 1,
+  "rows": [
+    {
+      "id": "h01-aws-example-deleted",
+      "family": "aws",
+      "control": false,
+      "expect_sentinel_history": "fail",
+      "expect_tree_only": "pass",
+      "sentinel_history": {
+        "fail": true,
+        "ok": false,
+        "count": 2,
+        "exit": 1
+      },
+      "sentinel_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_git": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "rq1_pattern": true,
+      "notes": "AWS docs example access key deleted from HEAD"
+    },
+    {
+      "id": "h02-github-pat-deleted",
+      "family": "github",
+      "control": false,
+      "expect_sentinel_history": "fail",
+      "expect_tree_only": "pass",
+      "sentinel_history": {
+        "fail": true,
+        "ok": false,
+        "count": 2,
+        "exit": 1
+      },
+      "sentinel_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_git": {
+        "fail": true,
+        "ok": false,
+        "count": 1,
+        "exit": 1
+      },
+      "rq1_pattern": true,
+      "notes": "Fake ghp_ PAT deleted from app.py"
+    },
+    {
+      "id": "h03-db-url-deleted",
+      "family": "database",
+      "control": false,
+      "expect_sentinel_history": "fail",
+      "expect_tree_only": "pass",
+      "sentinel_history": {
+        "fail": true,
+        "ok": false,
+        "count": 2,
+        "exit": 1
+      },
+      "sentinel_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_git": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "rq1_pattern": true,
+      "notes": "Fake postgres URL deleted from config.json"
+    },
+    {
+      "id": "h04-openai-key-deleted",
+      "family": "openai",
+      "control": false,
+      "expect_sentinel_history": "fail",
+      "expect_tree_only": "pass",
+      "sentinel_history": {
+        "fail": true,
+        "ok": false,
+        "count": 4,
+        "exit": 1
+      },
+      "sentinel_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_git": {
+        "fail": true,
+        "ok": false,
+        "count": 1,
+        "exit": 1
+      },
+      "rq1_pattern": true,
+      "notes": "Fake OpenAI sk- key deleted from .env"
+    },
+    {
+      "id": "h05-slack-token-deleted",
+      "family": "slack",
+      "control": false,
+      "expect_sentinel_history": "fail",
+      "expect_tree_only": "pass",
+      "sentinel_history": {
+        "fail": true,
+        "ok": false,
+        "count": 2,
+        "exit": 1
+      },
+      "sentinel_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_git": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "rq1_pattern": true,
+      "notes": "Fake Slack xoxb token deleted"
+    },
+    {
+      "id": "h06-stripe-key-deleted",
+      "family": "stripe",
+      "control": false,
+      "expect_sentinel_history": "fail",
+      "expect_tree_only": "pass",
+      "sentinel_history": {
+        "fail": true,
+        "ok": false,
+        "count": 4,
+        "exit": 1
+      },
+      "sentinel_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_git": {
+        "fail": true,
+        "ok": false,
+        "count": 1,
+        "exit": 1
+      },
+      "rq1_pattern": true,
+      "notes": "Fake Stripe sk_live key deleted"
+    },
+    {
+      "id": "h07-private-key-deleted",
+      "family": "pem",
+      "control": false,
+      "expect_sentinel_history": "fail",
+      "expect_tree_only": "pass",
+      "sentinel_history": {
+        "fail": true,
+        "ok": false,
+        "count": 1,
+        "exit": 1
+      },
+      "sentinel_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_git": {
+        "fail": true,
+        "ok": false,
+        "count": 1,
+        "exit": 1
+      },
+      "rq1_pattern": true,
+      "notes": "Fake PEM header deleted (detector matches BEGIN line)"
+    },
+    {
+      "id": "h08-gitlab-pat-deleted",
+      "family": "gitlab",
+      "control": false,
+      "expect_sentinel_history": "fail",
+      "expect_tree_only": "pass",
+      "sentinel_history": {
+        "fail": true,
+        "ok": false,
+        "count": 2,
+        "exit": 1
+      },
+      "sentinel_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_git": {
+        "fail": true,
+        "ok": false,
+        "count": 2,
+        "exit": 1
+      },
+      "rq1_pattern": true,
+      "notes": "Fake GitLab glpat deleted"
+    },
+    {
+      "id": "h09-sendgrid-deleted",
+      "family": "sendgrid",
+      "control": false,
+      "expect_sentinel_history": "fail",
+      "expect_tree_only": "pass",
+      "sentinel_history": {
+        "fail": true,
+        "ok": false,
+        "count": 2,
+        "exit": 1
+      },
+      "sentinel_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_git": {
+        "fail": true,
+        "ok": false,
+        "count": 1,
+        "exit": 1
+      },
+      "rq1_pattern": true,
+      "notes": "Fake SendGrid SG. key deleted"
+    },
+    {
+      "id": "h10-twilio-deleted",
+      "family": "twilio",
+      "control": false,
+      "expect_sentinel_history": "fail",
+      "expect_tree_only": "pass",
+      "sentinel_history": {
+        "fail": true,
+        "ok": false,
+        "count": 6,
+        "exit": 1
+      },
+      "sentinel_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_git": {
+        "fail": true,
+        "ok": false,
+        "count": 1,
+        "exit": 1
+      },
+      "rq1_pattern": true,
+      "notes": "Fake Twilio SK hex key deleted"
+    },
+    {
+      "id": "h11-npm-token-deleted",
+      "family": "npm",
+      "control": false,
+      "expect_sentinel_history": "fail",
+      "expect_tree_only": "pass",
+      "sentinel_history": {
+        "fail": true,
+        "ok": false,
+        "count": 2,
+        "exit": 1
+      },
+      "sentinel_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_git": {
+        "fail": true,
+        "ok": false,
+        "count": 1,
+        "exit": 1
+      },
+      "rq1_pattern": true,
+      "notes": "Fake npm_ token deleted from .npmrc"
+    },
+    {
+      "id": "h12-slack-webhook-deleted",
+      "family": "slack",
+      "control": false,
+      "expect_sentinel_history": "fail",
+      "expect_tree_only": "pass",
+      "sentinel_history": {
+        "fail": true,
+        "ok": false,
+        "count": 2,
+        "exit": 1
+      },
+      "sentinel_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_git": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "rq1_pattern": true,
+      "notes": "Fake Slack webhook URL deleted"
+    },
+    {
+      "id": "h13-generic-password-deleted",
+      "family": "password",
+      "control": false,
+      "expect_sentinel_history": "fail",
+      "expect_tree_only": "pass",
+      "sentinel_history": {
+        "fail": true,
+        "ok": false,
+        "count": 2,
+        "exit": 1
+      },
+      "sentinel_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_git": {
+        "fail": true,
+        "ok": false,
+        "count": 1,
+        "exit": 1
+      },
+      "rq1_pattern": true,
+      "notes": "password= literal with entropy deleted"
+    },
+    {
+      "id": "h14-anthropic-key-deleted",
+      "family": "anthropic",
+      "control": false,
+      "expect_sentinel_history": "fail",
+      "expect_tree_only": "pass",
+      "sentinel_history": {
+        "fail": true,
+        "ok": false,
+        "count": 4,
+        "exit": 1
+      },
+      "sentinel_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_git": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "rq1_pattern": true,
+      "notes": "Fake Anthropic sk-ant key deleted"
+    },
+    {
+      "id": "h15-aws-secret-pair-deleted",
+      "family": "aws",
+      "control": false,
+      "expect_sentinel_history": "fail",
+      "expect_tree_only": "pass",
+      "sentinel_history": {
+        "fail": true,
+        "ok": false,
+        "count": 4,
+        "exit": 1
+      },
+      "sentinel_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_git": {
+        "fail": true,
+        "ok": false,
+        "count": 1,
+        "exit": 1
+      },
+      "rq1_pattern": true,
+      "notes": "Docs-shaped AWS id + 40-char secret deleted"
+    },
+    {
+      "id": "h16-clean-control",
+      "family": "control",
+      "control": true,
+      "expect_sentinel_history": "pass",
+      "expect_tree_only": "pass",
+      "sentinel_history": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "sentinel_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_tree": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "gitleaks_git": {
+        "fail": false,
+        "ok": true,
+        "count": 0,
+        "exit": 0
+      },
+      "rq1_pattern": true,
+      "notes": "Negative control — never committed a secret"
+    }
+  ]
+}

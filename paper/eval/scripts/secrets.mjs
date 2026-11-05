@@ -1,0 +1,197 @@
+/** Synthetic secrets that match project/src/rules.js shapes. Not real credentials. */
+
+const ALNUM = 'aB3dE5fG7hJ9kL1mN3pQ5rStUvWxYz2468';
+const HEX = 'abcdef0123456789';
+const AWS_ALNUM = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+
+export function tok(n, alphabet = ALNUM) {
+  let out = '';
+  while (out.length < n) out += alphabet;
+  return out.slice(0, n);
+}
+
+/** Case definitions with values that the Sentinel rule engine accepts. */
+export const CASES = [
+  {
+    id: 'h01-aws-example-deleted',
+    family: 'aws',
+    control: false,
+    expect_sentinel_history: 'fail',
+    expect_tree_only: 'pass',
+    notes: 'AWS docs example access key deleted from HEAD',
+    files: [{ path: 'config.env', content: `AWS_ACCESS_KEY_ID=${['AKIA', 'IOSFODNN7EXAMPLE'].join('')}\n` }],
+    scrub: [{ path: 'config.env', content: '# removed\n' }],
+  },
+  {
+    id: 'h02-github-pat-deleted',
+    family: 'github',
+    control: false,
+    expect_sentinel_history: 'fail',
+    expect_tree_only: 'pass',
+    notes: 'Fake ghp_ PAT deleted from app.py',
+    files: [{ path: 'app.py', content: `token = "ghp_${tok(36)}"\n` }],
+    scrub: [{ path: 'app.py', content: 'token = None  # rotated\n' }],
+  },
+  {
+    id: 'h03-db-url-deleted',
+    family: 'database',
+    control: false,
+    expect_sentinel_history: 'fail',
+    expect_tree_only: 'pass',
+    notes: 'Fake postgres URL deleted from config.json',
+    files: [{
+      path: 'config.json',
+      content: `{\n  "connectionString": "postgres://admin:${tok(16)}@db.example.internal:5432/eval_db"\n}\n`,
+    }],
+    scrub: [{ path: 'config.json', content: '{\n  "connectionString": "${DATABASE_URL}"\n}\n' }],
+  },
+  {
+    id: 'h04-openai-key-deleted',
+    family: 'openai',
+    control: false,
+    expect_sentinel_history: 'fail',
+    expect_tree_only: 'pass',
+    notes: 'Fake OpenAI sk- key deleted from .env',
+    files: [{ path: '.env', content: `OPENAI_API_KEY=sk-${tok(24)}\n` }],
+    scrub: [{ path: '.env', content: 'OPENAI_API_KEY=\n' }],
+  },
+  {
+    id: 'h05-slack-token-deleted',
+    family: 'slack',
+    control: false,
+    expect_sentinel_history: 'fail',
+    expect_tree_only: 'pass',
+    notes: 'Fake Slack xoxb token deleted',
+    files: [{ path: 'bot.js', content: `const SLACK = 'xoxb-${tok(20)}';\n` }],
+    scrub: [{ path: 'bot.js', content: "const SLACK = process.env.SLACK_TOKEN;\n" }],
+  },
+  {
+    id: 'h06-stripe-key-deleted',
+    family: 'stripe',
+    control: false,
+    expect_sentinel_history: 'fail',
+    expect_tree_only: 'pass',
+    notes: 'Fake Stripe sk_live key deleted',
+    files: [{ path: 'payments.env', content: `STRIPE_SECRET_KEY=sk_live_${tok(26)}\n` }],
+    scrub: [{ path: 'payments.env', content: 'STRIPE_SECRET_KEY=\n' }],
+  },
+  {
+    id: 'h07-private-key-deleted',
+    family: 'pem',
+    control: false,
+    expect_sentinel_history: 'fail',
+    expect_tree_only: 'pass',
+    notes: 'Fake PEM header deleted (detector matches BEGIN line)',
+    files: [{
+      path: 'deploy/id_rsa',
+      content: '-----BEGIN RSA PRIVATE KEY-----\nMIIEvalOnlyNotARealPrivateKeyMaterialForFixturesXXXX\n-----END RSA PRIVATE KEY-----\n',
+    }],
+    scrub: [{ path: 'deploy/id_rsa', content: '# key moved to secret store\n' }],
+  },
+  {
+    id: 'h08-gitlab-pat-deleted',
+    family: 'gitlab',
+    control: false,
+    expect_sentinel_history: 'fail',
+    expect_tree_only: 'pass',
+    notes: 'Fake GitLab glpat deleted',
+    files: [{ path: 'ci.env', content: `GITLAB_TOKEN=glpat-${tok(24)}\n` }],
+    scrub: [{ path: 'ci.env', content: 'GITLAB_TOKEN=\n' }],
+  },
+  {
+    id: 'h09-sendgrid-deleted',
+    family: 'sendgrid',
+    control: false,
+    expect_sentinel_history: 'fail',
+    expect_tree_only: 'pass',
+    notes: 'Fake SendGrid SG. key deleted',
+    files: [{
+      path: 'mailer.py',
+      content: `SENDGRID_API_KEY = "${['SG.', tok(22), '.', tok(43)].join('')}"\n`,
+    }],
+    scrub: [{ path: 'mailer.py', content: 'SENDGRID_API_KEY = None\n' }],
+  },
+  {
+    id: 'h10-twilio-deleted',
+    family: 'twilio',
+    control: false,
+    expect_sentinel_history: 'fail',
+    expect_tree_only: 'pass',
+    notes: 'Fake Twilio SK hex key deleted',
+    files: [{ path: 'sms.env', content: `TWILIO_API_KEY=SK${tok(32, HEX)}\n` }],
+    scrub: [{ path: 'sms.env', content: 'TWILIO_API_KEY=\n' }],
+  },
+  {
+    id: 'h11-npm-token-deleted',
+    family: 'npm',
+    control: false,
+    expect_sentinel_history: 'fail',
+    expect_tree_only: 'pass',
+    notes: 'Fake npm_ token deleted from .npmrc',
+    files: [{ path: '.npmrc', content: `//registry.npmjs.org/:_authToken=npm_${tok(36)}\n` }],
+    scrub: [{ path: '.npmrc', content: '//registry.npmjs.org/:_authToken=${NPM_TOKEN}\n' }],
+  },
+  {
+    id: 'h12-slack-webhook-deleted',
+    family: 'slack',
+    control: false,
+    expect_sentinel_history: 'fail',
+    expect_tree_only: 'pass',
+    notes: 'Fake Slack webhook URL deleted',
+    files: [{
+      path: 'notify.js',
+      content: `WEBHOOK = "hooks.slack.com/services/T${tok(8, AWS_ALNUM)}/B${tok(8, AWS_ALNUM)}/${tok(20)}"\n`,
+    }],
+    scrub: [{ path: 'notify.js', content: 'WEBHOOK = process.env.SLACK_WEBHOOK;\n' }],
+  },
+  {
+    id: 'h13-generic-password-deleted',
+    family: 'password',
+    control: false,
+    expect_sentinel_history: 'fail',
+    expect_tree_only: 'pass',
+    notes: 'password= literal with entropy deleted',
+    files: [{ path: 'secrets.env', content: `db_password = "${tok(20)}"\n` }],
+    scrub: [{ path: 'secrets.env', content: 'db_password =\n' }],
+  },
+  {
+    id: 'h14-anthropic-key-deleted',
+    family: 'anthropic',
+    control: false,
+    expect_sentinel_history: 'fail',
+    expect_tree_only: 'pass',
+    notes: 'Fake Anthropic sk-ant key deleted',
+    files: [{
+      path: 'llm.env',
+      content: `ANTHROPIC_API_KEY=${['sk-ant-api03-', tok(80), 'AA'].join('')}\n`,
+    }],
+    scrub: [{ path: 'llm.env', content: 'ANTHROPIC_API_KEY=\n' }],
+  },
+  {
+    id: 'h15-aws-secret-pair-deleted',
+    family: 'aws',
+    control: false,
+    expect_sentinel_history: 'fail',
+    expect_tree_only: 'pass',
+    notes: 'Docs-shaped AWS id + 40-char secret deleted',
+    files: [{
+      path: 'aws.env',
+      content: [
+        `AWS_ACCESS_KEY_ID=${['AKIA', 'IOSFODNN7EXAMPLE'].join('')}`,
+        `aws_secret_access_key = "${['wJalrXUtnFEMI/K7MDENG/', 'bPxRfiCYzv9Q2aB4cD'].join('')}"`,
+        '',
+      ].join('\n'),
+    }],
+    scrub: [{ path: 'aws.env', content: '# credentials moved to IAM role\n' }],
+  },
+  {
+    id: 'h16-clean-control',
+    family: 'control',
+    control: true,
+    expect_sentinel_history: 'pass',
+    expect_tree_only: 'pass',
+    notes: 'Negative control — never committed a secret',
+    files: [{ path: 'README.md', content: '# clean control\nNo secrets were ever committed.\n' }],
+    scrub: null,
+  },
+];

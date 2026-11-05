@@ -1,0 +1,51 @@
+% FSE 2027 Tool Demonstrations draft (ACM, ≤4 pages + 1 refs)
+% Compile later with: pdflatex / latexmk once ACM template class is added.
+% For now this is a content scaffold matching paper/PLAN.md.
+\documentclass[sigconf]{acmart}
+
+\title{Rules Block, Models Explain: PR Diff Sentinel --- A History-Aware Merge Gate for Secrets}
+
+\author{Muhammad Umer Aamir}
+\affiliation{%
+  \institution{Wilfrid Laurier University}
+  \city{Brantford}
+  \country{Canada}
+}
+\email{TODO@mylaurier.ca}
+
+\begin{abstract}
+Deleting a credential from the latest file does not remove it from git history.
+Diff-only and working-tree scanners can report a clean pull request while the leak remains recoverable from prior commits.
+We present \emph{PR Diff Sentinel}, a deterministic merge gate over the working tree, the pull-request diff, and git history.
+Pass/Fail is decided only by rules.
+Meta Muse Spark labels masked findings and Muse Wonder writes rotation guidance and report chat; neither model can clear a Fail.
+We report a mini-evaluation on synthetic history-leak fixtures comparing history-aware Sentinel against tree-only baselines (Sentinel with history disabled; Gitleaks \texttt{--no-git}).
+\end{abstract}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+% Problem: delete ≠ gone; vibe coding; green CI.
+% Contribution: history-aware gate + LLM triage that cannot pass the gate.
+
+\section{Tool Overview}
+% Surfaces: CLI, GitHub Action, pre-commit/pre-push, hosted site, Chrome extension.
+% Fail-closed shallow clones. Masking before Muse.
+
+\section{Muse Role}
+% Spark labels; Wonder rotate + chat; contributor models refused; local fallback.
+
+\section{Evaluation}
+% RQ1--RQ3. Paste tables from paper/eval/results/rq1.md
+
+\section{Related Work}
+% Gitleaks, TruffleHog, Keysentinel, AssetHarvester, IssueGuard --- position ours.
+
+\section{Limitations and Conclusion}
+% Small N; not SOTA recall; ethics on synthetic secrets.
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{refs}
+
+\end{document}
