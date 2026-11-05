@@ -1,31 +1,32 @@
-# RQ1 results
+# Mini-eval results (combined)
 
-Generated: 2026-11-05T03:08:11.645Z
-Gitleaks: 8.30.1
+Generated from `results/rq1.md`, `rq2.md`, `rq3.md`. Re-run scripts to refresh.
 
-**History-leak cases:** 15
-**RQ1 pattern (Sentinel history Fail ∧ Sentinel tree Pass ∧ Gitleaks tree Pass):** 15/15 (100.0%)
+## Summary
 
-| Case | Sent hist | Sent tree | Gitleaks tree | Gitleaks git | RQ1 |
-|------|-----------|-----------|---------------|--------------|-----|
-| h01-aws-example-deleted | Fail(2) | Pass | Pass | Pass | yes |
-| h02-github-pat-deleted | Fail(2) | Pass | Pass | Fail(1) | yes |
-| h03-db-url-deleted | Fail(2) | Pass | Pass | Pass | yes |
-| h04-openai-key-deleted | Fail(4) | Pass | Pass | Fail(1) | yes |
-| h05-slack-token-deleted | Fail(2) | Pass | Pass | Pass | yes |
-| h06-stripe-key-deleted | Fail(4) | Pass | Pass | Fail(1) | yes |
-| h07-private-key-deleted | Fail(1) | Pass | Pass | Fail(1) | yes |
-| h08-gitlab-pat-deleted | Fail(2) | Pass | Pass | Fail(2) | yes |
-| h09-sendgrid-deleted | Fail(2) | Pass | Pass | Fail(1) | yes |
-| h10-twilio-deleted | Fail(6) | Pass | Pass | Fail(1) | yes |
-| h11-npm-token-deleted | Fail(2) | Pass | Pass | Fail(1) | yes |
-| h12-slack-webhook-deleted | Fail(2) | Pass | Pass | Pass | yes |
-| h13-generic-password-deleted | Fail(2) | Pass | Pass | Fail(1) | yes |
-| h14-anthropic-key-deleted | Fail(4) | Pass | Pass | Pass | yes |
-| h15-aws-secret-pair-deleted | Fail(4) | Pass | Pass | Fail(1) | yes |
-| h16-clean-control | Pass | Pass | Pass | Pass | control |
+| RQ | Question | Result |
+|----|----------|--------|
+| **RQ1** | History Fail vs tree-only Pass | **15/15 (100%)** |
+| **RQ2** | Muse Spark vs fixture GT labels | **41/41 (100%)** |
+| **RQ3** | Muse changes Pass/Fail? | **0 flips / 16 cases (PASS)** |
 
-## Notes
+Details: [`results/rq1.md`](./results/rq1.md) · [`results/rq2.md`](./results/rq2.md) · [`results/rq3.md`](./results/rq3.md)
 
-- RQ1 targets **tree/diff-only** miss after delete-from-HEAD.
-- `gitleaks git` may also Fail (history-capable); reported for honesty, not as the RQ1 baseline.
+## How to reproduce
+
+See [`DOCUMENTATION.md`](./DOCUMENTATION.md).
+
+```bash
+cd paper/eval
+node scripts/build-history-fixtures.mjs
+node scripts/run-rq1.mjs
+node scripts/run-rq3.mjs   # needs project/.env MODEL_API_KEY
+node scripts/run-rq2.mjs   # needs project/.env MODEL_API_KEY
+```
+
+## Caveats (write these in the paper)
+
+1. **N is small** (15 leak fixtures + 1 control; 41 findings).
+2. **RQ2 ground truth** is author-verified from fixture construction (docs-example vs live-shaped), not a large multi-annotator study.
+3. **Gitleaks with git history** also Fails on many cases — RQ1 targets **tree/diff-only** miss, not “only Sentinel sees history.”
+4. Secrets are **synthetic**; no live credentials in the dataset or paper tables.

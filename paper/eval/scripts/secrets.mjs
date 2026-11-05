@@ -195,3 +195,18 @@ export const CASES = [
     scrub: null,
   },
 ];
+
+/** Fixture-construction ground truth for RQ2 (author-verified). */
+for (const c of CASES) {
+  if (c.control) {
+    c.ground_truth_label = null;
+    continue;
+  }
+  // Known AWS documentation example material (AKIA…EXAMPLE / docs secret shape).
+  if (c.id === 'h01-aws-example-deleted' || c.id === 'h15-aws-secret-pair-deleted') {
+    c.ground_truth_label = 'likely_example';
+  } else {
+    // Synthetic but live-shaped credentials that should be treated as live until rotated.
+    c.ground_truth_label = 'likely_live';
+  }
+}

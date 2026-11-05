@@ -7,7 +7,9 @@
 | Milestone | Target date | Status |
 |-----------|-------------|--------|
 | Mini-eval RQ1 smoke (15 fixtures) | **4 Nov 2026** | **Done — 15/15** |
-| Mini-eval v1 done (RQ2+RQ3) | **Fri 18 Dec 2026** | In progress |
+| Mini-eval RQ3 (Muse no flip) | **5 Nov 2026** | **Done — 0/16 flips** |
+| Mini-eval RQ2 (Spark labels) | **5 Nov 2026** | **Done — 41/41** |
+| Mini-eval v1 done (write-up ready) | **Fri 18 Dec 2026** | **Core numbers done** — expand H2/public PRs optional |
 | Paper draft v1 (4 pages) | **Fri 2 Jan 2027** |
 | Screencast ≤3 min | **Fri 9 Jan 2027** |
 | **arXiv submit** | **Mon 12 Jan 2027** |

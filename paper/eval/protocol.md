@@ -1,7 +1,8 @@
 # Mini-eval protocol — PR Diff Sentinel
 
-**Status:** Phase A in progress  
-**Ethics:** All secrets are **synthetic / documentation-shaped**. Never commit live credentials. Paper tables use rule id + path + SHA-256 fingerprint only.
+**Status:** RQ1–RQ3 core complete (2026-11-05). See [`DOCUMENTATION.md`](./DOCUMENTATION.md) + [`results.md`](./results.md).  
+**Ethics:** All secrets are **synthetic / documentation-shaped**. Never commit live credentials. Paper tables use rule id + path + SHA-256 fingerprint only.  
+**API key:** Loaded from `project/.env` (`MODEL_API_KEY`). Scripts never print the value.
 
 ## Research questions
 
@@ -52,15 +53,24 @@ Builder: [`scripts/build-history-fixtures.mjs`](./scripts/build-history-fixtures
 ```bash
 # from repo root
 brew install gitleaks   # once
+# project/.env must contain MODEL_API_KEY for RQ2/RQ3
+
 cd paper/eval
 node scripts/build-history-fixtures.mjs
 node scripts/run-rq1.mjs
-# writes results/rq1.json + updates results.md
+node scripts/run-rq3.mjs
+node scripts/run-rq2.mjs
 ```
+
+| Script | Output |
+|--------|--------|
+| `run-rq1.mjs` | `results/rq1.md`, `rq1.json` |
+| `run-rq3.mjs` | `results/rq3.md`, `rq3.json` |
+| `run-rq2.mjs` | `results/rq2.md`, `rq2.json`, `labels.csv` |
 
 ## Install notes
 
 - **Node:** ≥20  
 - **Gitleaks:** Homebrew `gitleaks` (tested 8.30.x) or GitHub releases  
 - **Sentinel:** `project/` — no npm deps for core CLI  
-- **Muse (RQ2):** `MODEL_API_KEY` in `project/.env` (never commit)
+- **Muse (RQ2/RQ3):** `MODEL_API_KEY` in `project/.env` (never commit)
